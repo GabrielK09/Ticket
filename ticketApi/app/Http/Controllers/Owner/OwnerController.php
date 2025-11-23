@@ -12,13 +12,6 @@ class OwnerController extends Controller
     public function __construct(
         protected OwnerService $ownerService
     ){}
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -26,14 +19,6 @@ class OwnerController extends Controller
     public function store(OwnerRequest $request)
     {
         return apiSuccess('Emitente cadastrado com sucesso!', $this->ownerService->store($request->validated()));
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -51,13 +36,5 @@ class OwnerController extends Controller
             return apiError('Erro ao atualizar emitente: ' . $e->getMessage(), 500);
             
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

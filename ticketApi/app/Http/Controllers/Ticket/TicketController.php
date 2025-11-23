@@ -3,14 +3,10 @@
 namespace App\Http\Controllers\Ticket;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Ticket\TicketPayMentRequest;
 use App\Http\Requests\Ticket\TicketRequest;
-use App\Http\Requests\Ticket\TicketUpdateRequest;
 use App\Services\Ticket\TicketService;
-
 class TicketController extends Controller
 {
-
     public function __construct(
         protected TicketService $ticketService
 
@@ -19,9 +15,9 @@ class TicketController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(string $id, int $paginate)
     {
-        //
+        return apiSuccess('Retornando todos os tickets!', $this->ticketService->index($id, $paginate));
     }
 
     /**
@@ -53,13 +49,5 @@ class TicketController extends Controller
     {
         $data = $request->validated();
         return apiSuccess('Ticket finalizado com sucesso!', $this->ticketService->update($data, $data['ticket_id'], 'FINALIZADO_E_FATURADO'));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

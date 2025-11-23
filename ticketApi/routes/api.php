@@ -32,26 +32,28 @@ Route::prefix('v1')->group(function() {
 
         Route::prefix('customer')->group(function() {
             Route::controller(CustomerController::class)->group(function() {
+                Route::get('/all/{paginate}', 'index');
                 Route::post('/create', 'store');
                 Route::put('/update/{id}', 'update');
+                Route::put('/{owner_id}/{id}/{action}', 'activeOrDisable');
             });
         }); 
 
         Route::prefix('ticket')->group(function() {
             Route::controller(TicketController::class)->group(function(){ 
+                Route::get('/all/{paginate}', 'index');
                 Route::post('/create', 'store');
                 Route::put('/update/{id}', 'update');
                 Route::put('/finish', 'finishTicket');
                 Route::get('/show/{id}/{code}', 'show');
-
             });
         });
 
         Route::prefix('pay-ment-form')->group(function() {
             Route::controller(PayMentFormController::class)->group(function() {
+                Route::get('/all', 'index');
                 Route::post('/create', 'store');
                 Route::put('/update/{id}', 'update');
-
             });
         });
     });

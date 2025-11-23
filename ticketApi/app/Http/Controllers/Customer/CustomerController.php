@@ -15,9 +15,9 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(string $id, int $paginate)
     {
-        //
+        return apiSuccess('Retornando todos os clientes!', $this->customerService->index($id, $paginate));
     }
 
     /**
@@ -31,9 +31,9 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $ownerId, string $id)
     {
-        //
+        return apiSuccess('Dados do cliente selecionado', $this->customerService->show($ownerId, $id));
     }
 
     /**
@@ -41,14 +41,13 @@ class CustomerController extends Controller
      */
     public function update(CustomerRequest $request, string $id)
     {
-        //
+        return apiSuccess('Cliente alterado com sucesso!', $this->customerService->update($request->validated(), $id));   
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function activeOrDisable(string $ownerId, string $id, string $action)
     {
-        //
+        $message = $action === 'active' ? 'ativado' : 'desativado';
+
+        return apiSuccess("Cliente {$message} com sucesso!", $this->customerService->activeOrDisable($ownerId, $id, $action));
     }
 }

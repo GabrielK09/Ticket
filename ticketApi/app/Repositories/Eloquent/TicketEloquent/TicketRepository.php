@@ -51,7 +51,10 @@ class TicketRepository implements TicketContract
         return round($base, 2);
     }
 
-    public function index(string $id){}
+    public function index(string $id, int $paginate)
+    {
+        return Ticket::where('owner_id', $id)->paginate($paginate);
+    }
 
     public function store(array $data, string $newCode)
     {

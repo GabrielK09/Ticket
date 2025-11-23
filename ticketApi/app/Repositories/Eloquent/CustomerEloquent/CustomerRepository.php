@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\Log;
 
 class CustomerRepository implements CustomerContract
 {
-    public function index(string $id){}
+    public function index(string $id, int $paginate)
+    {
+        return Customer::where('owner_id', $id)->paginate($paginate);
+    }
 
     public function store(array $data)
     {
@@ -60,5 +63,14 @@ class CustomerRepository implements CustomerContract
         return Customer::where('owner_id', $ownerId)
                         ->where('customer_id', $customerId)
                         ->first();
+    }
+
+    public function activeOrDisable(string $ownerId, string $id, string $action)
+    {
+        $customer = $this->findById($ownerId, $id);
+
+        $action === 'active' ? $customer->update(['active' => 1]) : $customer->update(['active' => 0]);
+
+        return $customer->fresh();
     }
 }

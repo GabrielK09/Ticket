@@ -14,6 +14,11 @@ class TicketService
         protected TicketContract $ticketRepository
     ){}
 
+    public function index(string $id, int $paginate)
+    {
+        return $this->ticketRepository->index($id, $paginate);
+    }
+
     public function store(array $data)
     {
         do {
