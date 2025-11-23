@@ -13,15 +13,19 @@ return new class extends Migration
     {
         Schema::create('owners', function (Blueprint $table) {
             $table->id();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->unsignedBigInteger('user_id');
+
             $table->string('company_name', 120);
             $table->string('trade_name', 120);
-            $table->string('cnpj_cpf', 14);
+            $table->string('cnpj_cpf', 14)->unique();
             $table->string('phone', 24);
-            $table->string('cep', 60);
+            $table->string('cep', 8);
             $table->string('address', 60);
-            $table->string('number', 10);
-            $table->string('cnae', 14);
-            $table->string('active', 120);
+            $table->string('number', 16);
+            $table->string('cnae', 24);
+            $table->string('activity', 120);
+            $table->boolean('active', 1)->default(1);
             $table->timestamps();
         });
     }

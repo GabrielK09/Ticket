@@ -127,6 +127,28 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
-    ],
+        'owners' => [
+            'driver' => 'daily',
+            'level' => 'debug',
+            'path' => storage_path('logs/owners/owner.log')
+        ],
 
+        'customers' => [
+            'driver' => 'daily',
+            'level' => 'debug',
+            'path' => storage_path('logs/customers/customer.log')
+        ],
+
+        'tickets' => [
+            'driver' => 'daily',
+            'level' => 'debug',
+            'path' => storage_path('logs/tickets/ticket.log')
+        ],
+
+        'utils' => [
+            'driver' => 'daily',
+            'level' => 'debug',
+            'path' => storage_path('logs/utils/util.log')
+        ],
+    ],
 ];
