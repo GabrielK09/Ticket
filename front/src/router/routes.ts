@@ -1,12 +1,16 @@
-import type { RouteRecordRaw } from 'vue-router';
-
-const routes: RouteRecordRaw[] = [
+const routes = [
     {
         path: '/',
         component: () => import('src/modules/index/IndexPage.vue')
     },
-    
-
+    {
+        path: '/login',
+        component: () => import('src/pages/auth/Login.vue')
+    },
+    {
+        path: '/register',
+        component: () => import('src/pages/auth/Register.vue')
+    },
     // Always leave this as last one,
     // but you can also remove it
     {

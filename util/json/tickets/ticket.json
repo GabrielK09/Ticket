@@ -1,0 +1,16 @@
+{
+    "owner_id": 1,
+    "customer_id": 1,
+    "title": "Reparo de computador",
+    "description": "Depois de uma queda de luz, o computador não está mais ligando",
+    "location": "blalddlasdks",
+    "customer": "Cliente não identificado",
+    "priority": "Padrão",
+    "location_value": 0,
+    "increase_value": 0,
+    "increase_tpye": "R$",
+    "discount_value": 0,
+    "discount_type": "R$",
+    "base_value": 100,
+    "date_paid": "01.01.2025"
+}

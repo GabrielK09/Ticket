@@ -10,11 +10,10 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "types": ["vite/client"],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "src/*": ["src/*"],
-      "src/services/*": ["src/services/*"],
       "#q-app/*": ["src/*"]
 
     }
