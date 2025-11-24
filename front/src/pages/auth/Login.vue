@@ -75,8 +75,11 @@
     import { ref } from 'vue';
     import { LocalStorage, useQuasar } from 'quasar';
     import { loginService } from 'src/services/auth/authService';
-    
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
     const $q = useQuasar();
+
     let hiddenPassword = ref<boolean>(false);
 
     const loginData = ref<authContract>({
@@ -110,6 +113,9 @@
                 position: 'top'
             });
 
+            router.replace({
+                path: '/'
+            });
         } else {
             $q.notify({
                 type: 'negative',

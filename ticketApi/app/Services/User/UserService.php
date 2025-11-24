@@ -14,6 +14,11 @@ class UserService
 
     public function store(array $data)
     {
+        if($this->userRepository->findByMail($data['email']))
+        {
+            throw new Exception('Esse e-mail já está cadastrado!');
+        }
+
         return DB::transaction(fn() => $this->userRepository->store($data));
     }
     

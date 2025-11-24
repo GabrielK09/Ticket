@@ -27,7 +27,7 @@ export async function loginService(email: string, password: string): Promise<any
     };
 };
 
-export async function register(name:string, email: string, password: string) {
+export async function registerService(name:string, email: string, password: string) {
     try {
         const res = await api.post('/auth/register', {
             name: name,

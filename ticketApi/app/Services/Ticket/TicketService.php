@@ -21,7 +21,17 @@ class TicketService
 
     public function store(array $data)
     {
+        $safeCounter = 0;
+        $maxAttempts = 6;
+        $newTicketCode = null;
+        
         do {
+            if($safeCounter > $maxAttempts)
+            {
+                break;
+
+            }
+
             Log::channel('tickets')->debug('Dentro do do while');
             
             $newTicketCode = Str::random(24);
@@ -32,6 +42,7 @@ class TicketService
 
             $find = is_null($ticketCode) ? 'Não' : 'Sim';
             Log::channel('tickets')->debug("TicketCode encontrado? {$find}");
+            $safeCounter += 1;
 
         } while ($ticketCode);
 

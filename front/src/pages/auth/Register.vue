@@ -127,9 +127,13 @@
 
 <script setup lang="ts">
     import { ref } from 'vue';
-    import { LocalStorage, useQuasar } from 'quasar';
+    import { useQuasar } from 'quasar';
+    import { registerService } from 'src/services/auth/authService';
+    import { useRouter } from 'vue-router';
     
+    const router = useRouter();
     const $q = useQuasar();
+
     let hiddenPassword = ref<boolean>(false);
     let hiddenConfirmPassword = ref<boolean>(false);
 
@@ -148,23 +152,18 @@
 
         });
 
-        /*
-        const data = await loginService(loginData.value.email, loginData.value.password);
+        const data = await registerService(registerData.value.name, registerData.value.email, registerData.value.password);
         
         if(data.success)
         {
-            LocalStorage.set('auth_token', data.data.token);
-            
-            // 1 data: linha 91;
-            // 2 data: .data do await;
-            // 3 data: .data que é retornado pelo backend;
-            LocalStorage.set('user_id', data.data.data.user.id);
-            LocalStorage.set('user', data.data.data.user.name);
-
             $q.notify({
                 type: 'positive',
                 message: data.message,
                 position: 'top'
+            });
+
+            router.replace({
+                path: '/login'
             });
 
         } else {
@@ -175,7 +174,6 @@
 
             });
         };
-        */
     };
 
     const checkEqualPassword = (val: any) => {

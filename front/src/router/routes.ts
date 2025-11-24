@@ -1,7 +1,15 @@
-const routes = [
+import type { RouteRecordRaw } from 'vue-router';
+
+const routes: RouteRecordRaw[] = [
     {
-        path: '/',
-        component: () => import('src/modules/index/IndexPage.vue')
+        path: '',
+        component: () => import('src/layouts/DashBoard/DashBoard.vue'),
+        children: [
+            {
+                path: '/',
+                component: () => import('src/modules/index/IndexPage.vue')
+            },
+        ]        
     },
     {
         path: '/login',

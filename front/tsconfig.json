@@ -10,7 +10,9 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "types": ["node"],
+    "types": [
+      
+    ],
     "baseUrl": ".",
     "paths": {
       "src/*": ["src/*"],
