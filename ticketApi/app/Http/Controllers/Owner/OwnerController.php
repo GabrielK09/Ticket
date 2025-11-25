@@ -37,4 +37,9 @@ class OwnerController extends Controller
             
         }
     }
+
+    public function show(string $id)
+    {
+        return apiSuccess('Emitente localizado com sucesso!', $this->ownerService->show($id));
+    }
 }

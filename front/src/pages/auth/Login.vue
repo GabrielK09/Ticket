@@ -114,8 +114,9 @@
             });
 
             router.replace({
-                path: '/'
+                path: '/owner/register'
             });
+
         } else {
             $q.notify({
                 type: 'negative',

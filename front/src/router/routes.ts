@@ -3,13 +3,17 @@ import type { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
     {
         path: '',
-        component: () => import('src/layouts/DashBoard/DashBoard.vue'),
+        component: () => import('src/layouts/DashBoard/DashBoardLayout.vue'),
         children: [
             {
                 path: '/',
                 component: () => import('src/modules/index/IndexPage.vue')
             },
         ]        
+    },
+    {
+        path: '/owner/register',
+        component: () => import('src/modules/owner/pages/RegisterOwner.vue')
     },
     {
         path: '/login',

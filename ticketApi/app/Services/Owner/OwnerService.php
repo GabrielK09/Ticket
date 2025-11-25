@@ -22,4 +22,16 @@ class OwnerService
         return DB::transaction(fn() => $this->ownerRepository->update($data, $id));
         
     }
+
+    public function show(string $id)
+    {
+        $owner = $this->ownerRepository->findById($id);
+
+        if(!$owner)
+        {
+            throw new Exception('Erro ao atualizar o emitente!');
+        }
+
+        return $owner;
+    }
 }

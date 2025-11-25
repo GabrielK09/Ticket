@@ -1,6 +1,11 @@
 <template>
     <q-layout view="hHr LpR lFf">
-        <q-btn @click="drawerLeft = !drawerLeft" flat class="rounded btn-menu" icon="menu" />
+        <q-btn 
+            @click="drawerLeft = !drawerLeft" 
+            flat 
+            class="rounded" 
+            icon="menu" 
+        />
 
         <q-drawer
             v-model="drawerLeft"
@@ -12,6 +17,7 @@
                 <div class="flex flex-col gap-2" v-for="ticketRow in ticketRows">
                     {{ ticketRow.label }}
                 </div>
+                
             </q-toolbar>
         </q-drawer>
 

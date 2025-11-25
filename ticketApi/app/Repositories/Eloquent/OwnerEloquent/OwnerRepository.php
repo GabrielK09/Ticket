@@ -70,4 +70,9 @@ class OwnerRepository implements OnwerContract
 
         return $owner->fresh();
     }
+
+    public function findById(string $id)
+    {
+        return Owner::findOrFail($id);
+    }
 }

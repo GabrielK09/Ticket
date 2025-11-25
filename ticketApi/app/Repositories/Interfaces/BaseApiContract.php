@@ -6,4 +6,5 @@ interface BaseApiContract
 {
     public function store(array $data);
     public function update(array $data, string $id);
+    public function findById(string $id);
 }
