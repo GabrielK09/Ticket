@@ -34,4 +34,16 @@ class OwnerService
 
         return $owner;
     }
+
+    public function findByUserId(string $id)
+    {
+        $owner = $this->ownerRepository->findByUserId($id);
+
+        if(!$owner)
+        {
+            throw new Exception('Erro ao atualizar o emitente!');
+        }
+
+        return $owner;
+    }
 }

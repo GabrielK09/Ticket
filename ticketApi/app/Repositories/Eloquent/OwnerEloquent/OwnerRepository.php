@@ -75,4 +75,9 @@ class OwnerRepository implements OnwerContract
     {
         return Owner::findOrFail($id);
     }
+
+    public function findByUserId(string $id)
+    {
+        return Owner::where('user_id', $id)->first();
+    }
 }

@@ -14,10 +14,26 @@
             class="bg-[#03202e] text-white rounded-r-md dashboard"
         >
             <q-toolbar>
-                <div class="flex flex-col gap-2" v-for="ticketRow in ticketRows">
-                    {{ ticketRow.label }}
-                </div>
-                
+                <q-list padding>
+                    <q-item 
+                        v-for="row in ticketRows"
+                        v-ripple
+                        :key="row.name"
+                        clickable
+                        :to="row.path"
+                        :active="route.path === row.path"
+                        class="rounded"
+                        active-class="my-link"
+                    >
+                        <q-item-section avatar>
+                            <q-icon :name="row.icon" />
+                        </q-item-section>
+
+                        <q-item-section>
+                            {{ row.label }}
+                        </q-item-section>
+                    </q-item>
+                </q-list>
             </q-toolbar>
         </q-drawer>
 
@@ -29,11 +45,21 @@
 
 <script setup lang="ts">
     import { ref } from 'vue';
+    import { useRoute } from 'vue-router';
 
+    const route = useRoute();
     const drawerLeft = ref<boolean>(true);
 
     const ticketRows = ref<ticketRows[]>([
-        { label: 'DashBoard', icon: 'dashBoard', name: 'dashBoard', path: '/dashBoard'},
-        { label: 'Clientes', icon: 'customer', name: 'customer', path: '/customer'},
+        { label: 'DashBoard', icon: 'dashboard', name: 'dashboard', path: '/'},
+        { label: 'Clientes', icon: 'group', name: 'customer', path: '/customer'},
+        { label: 'Tickets', icon: 'confirmation_number', name: 'ticket', path: '/ticket'},
     ]);
 </script>
+
+<style lang="scss">
+    .my-link {
+        color: #fff;
+        background: #adaaaa;
+    }
+</style>
