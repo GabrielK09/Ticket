@@ -22,49 +22,152 @@
 
                 <div>
                     <q-form
-                        @submit="createAttendant"
+                        @submit="submitCustomer"
                         class="q-gutter-md mt-4 form"
                     >
-                        <div class="bg-gray-200 p-4 rounded-md grid grid-cols-4 gap-4">
+                        <div class="p-4 inputs">
                             <q-select 
-                                v-model="attendant.confirmPassword" 
+                                v-model="customer.customerType" 
                                 :options="customerTypes" 
                                 label="Tipo de cadastro" 
                                 outlined
                                 stack-label
                                 dense
-
+                                class="mb-4"
                             />
 
                             <q-input 
                                 label="" 
-                                v-model="attendant.name" 
+                                v-model="customer.company_name" 
                                 stack-label
                                 outlined
                                 type="text"
                                 dense
+                                class="mb-4"
                             >
                                 <template v-slot:label>
                                     <div class="text-sm">
-                                        Nome do cliente <span class="text-red-500">*</span>
+                                        Razão social <span class="text-red-500">*</span>
                                     </div>
                                 </template>
                             </q-input>
                         
                             <q-input 
-                                v-model="attendant.email" 
+                                v-model="customer.trade_name" 
                                 type="text" 
                                 label="E-mail *" 
                                 stack-label
                                 outlined
                                 dense
+                                class="mb-4"
                             >
                                 <template v-slot:label>
                                     <div class="text-sm">
-                                        Nome do cliente <span class="text-red-500">*</span>
+                                        Nome fantasia <span class="text-red-500">*</span>
                                     </div>
                                 </template>
                             </q-input>
+
+                            <q-input 
+                                v-model="customer.cnpj_cpf" 
+                                type="text" 
+                                label="E-mail *" 
+                                stack-label
+                                outlined
+                                dense
+                                :mask="
+                                    customer.customerType === 'Júridica'
+                                    ? '##.###.###/####-##'
+                                    : '###.###.###-##'
+                                "
+                                class="mb-4"
+                            >
+                                <template v-slot:label>
+                                    <div class="text-sm">
+                                        {{ 
+                                            customer.customerType === 'Júridica' 
+                                            ? 'CNPJ'
+                                            : 'CPF'
+                                        }} <span class="text-red-500">*</span>
+                                    </div>
+                                </template>
+                            </q-input>
+
+                            <q-input 
+                                v-model="customer.phone" 
+                                type="text" 
+                                label="" 
+                                stack-label
+                                outlined
+                                dense
+                                mask="(##) ####-####"
+                                class="mb-4"
+                            >
+                                <template v-slot:label>
+                                    <div class="text-sm">
+                                        Telefone <span class="text-red-500">*</span>
+                                    </div>
+                                </template>
+                            </q-input>
+
+                            <q-input 
+                                v-model="customer.cep" 
+                                type="text" 
+                                label="" 
+                                stack-label
+                                outlined
+                                dense
+                                mask="#####-###"
+                                class="mb-4"
+                            >
+                                <template v-slot:label>
+                                    <div class="text-sm">
+                                        CEP <span class="text-red-500">*</span>
+                                    </div>
+                                </template>
+                            </q-input>
+
+                            <q-input 
+                                v-model="customer.address" 
+                                type="text" 
+                                label="" 
+                                stack-label
+                                outlined
+                                dense
+                                class="mb-4"
+                            >
+                                <template v-slot:label>
+                                    <div class="text-sm">
+                                        Endereço <span class="text-red-500">*</span>
+                                    </div>
+                                </template>
+                            </q-input>
+
+                            <q-input 
+                                v-model="customer.number" 
+                                type="text" 
+                                label="" 
+                                stack-label
+                                outlined
+                                dense
+                                class="mb-4"
+                            >
+                                <template v-slot:label>
+                                    <div class="text-sm">
+                                        Número do endereço <span class="text-red-500">*</span>
+                                    </div>
+                                </template>
+                            </q-input>
+
+                            <div class="flex flex-center">
+                                <q-btn 
+                                    color="primary" 
+                                    type="submit" 
+                                    label="Cadastrar cliente"
+                                    no-caps
+
+                                />
+                            </div>
                         </div>
                     </q-form>
                 </div>
@@ -75,10 +178,10 @@
 
 <script setup lang="ts">
     import { api } from 'src/boot/axios';
-    import camelcaseKeys from 'camelcase-keys';
-    import { LocalStorage, useQuasar } from 'quasar';
-    import { onMounted, ref } from 'vue';
+    import { useQuasar } from 'quasar';
+    import { ref } from 'vue';
     import { useRouter } from 'vue-router';
+import { createCustomer } from '../../customerService';
 
     const customerTypes: string[] = [
         'Júridica',
@@ -87,17 +190,35 @@
 
     const router = useRouter();
     const $q = useQuasar();
-    const ownerCode = LocalStorage.getItem("ownerCode") as number;
-    
-    const attendant = ref({
-        ownerCode: ownerCode,
-        name: '',
-        email: '',
-        confirmPassword: 'Júridica',
-        password: ''
+
+    const customer = ref<customerContract>({
+        owner_id: '',
+        company_name: '',
+        trade_name: '',
+        cnpj_cpf: '',
+        phone: '',
+        cep: '',
+        address: '',
+        number: '',
+        customerType: 'Júridica'
     });
-    const createAttendant = async () => {
-        
+
+    const submitCustomer = async () => {
+        const res = await createCustomer(customer.value);
+
+        if(res.data.success)
+        {
+            $q.notify({
+                type: 'positive',
+                message: res.data.message
+            });
+            
+        } else {
+            $q.notify({
+                type: 'negative',
+                message: res.data.message
+            });
+        };
     };
 </script>
 
@@ -121,13 +242,7 @@
         .back-row {
             width: 0.75rem;
             height: 0.75rem;
-        }
 
-        .form {
-            .inputs {
-                padding: 15px;
-                margin: 10px;
-            }
         }
     }
 </style>

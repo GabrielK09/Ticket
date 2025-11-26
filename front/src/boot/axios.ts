@@ -27,7 +27,8 @@ export default boot(({ app, router }) => {
             const token = LocalStorage.getItem('auth_token');
 
             const isPublicRoutes = [
-                '/login'
+                '/auth/login',
+                '/auth/register'
             ];
 
             const isPublic = isPublicRoutes.some(route => config.url.includes(route));

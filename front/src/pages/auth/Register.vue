@@ -10,14 +10,19 @@
                 <q-input 
                     v-model="registerData.name" 
                     type="text" 
-                    label="Nome" 
+                    label="" 
                     stack-label
                     class="w-full"
                     :rules="[
                         val => !!val || 'Seu nome é necessário'
                     ]"
-
-                />
+                >
+                    <template v-slot:label>
+                        <div class="text-sm">
+                            Nome <span class="text-red-500">*</span>
+                        </div>
+                    </template>
+                </q-input>
 
                 <q-input 
                     v-model="registerData.email" 
@@ -28,10 +33,15 @@
                     :rules="[
                         val => !!val || 'Informe o seu e-mail!'
                     ]"
+                >
+                    <template v-slot:label>
+                        <div class="text-sm">
+                            E-mail <span class="text-red-500">*</span>
+                        </div>
+                    </template>
+                </q-input>
 
-                />
-
-                <div class="flex">
+                <div class="password-inputs">
                     <q-input 
                         v-model="registerData.password" 
                         :type="!hiddenPassword ? 'password' : 'text'" 
@@ -43,6 +53,12 @@
                             val => !!val || 'Informe a sua senha!'
                         ]"
                     >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                Senha <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                
                         <template v-slot:append>
                             <svg 
                                 v-if="!hiddenPassword"
@@ -78,10 +94,16 @@
                         :type="!hiddenConfirmPassword ? 'password' : 'text'" 
                         label="Senha" 
                         stack-label
-                        class="ml-4 w-max"
+                        class="mr-4 w-max"
                         no-error-icon
                         :rules="[checkEqualPassword]"
                     >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                Confirme a sua senha <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+
                         <template v-slot:append>
                             <svg 
                                 v-if="!hiddenConfirmPassword"
@@ -153,7 +175,7 @@
         });
 
         const data = await registerService(registerData.value.name, registerData.value.email, registerData.value.password);
-        
+
         if(data.success)
         {
             $q.notify({
@@ -205,6 +227,12 @@
                 width: 20rem;
 
             }
+        }
+    }
+
+    @media (min-width: 1336px) {
+        .password-inputs {
+            display: flex;
         }
     }
 </style>

@@ -29,13 +29,11 @@ class AuthController extends Controller
         if($user && Hash::check($credentials['password'], $user->password))
         {
             $token = $user->createToken('api-token')->plainTextToken;
-            $ownerData = $this->ownerService->findByUserId($user->id);
 
             return apiSuccess('Login bem sucedido!', [
                 'token' => $token,
-                'user' => $user,
-                'owner_id' => $ownerData->id,
-                'owner_data' => $ownerData
+                'user' => $user
+                
             ]);
 
         } else {
