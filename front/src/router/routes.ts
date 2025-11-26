@@ -10,8 +10,12 @@ const routes: RouteRecordRaw[] = [
                 component: () => import('src/modules/index/IndexPage.vue')
             },
             {
-                path: '/customer',
-                component: () => import('src/modules/owner/pages/RegisterOwner.vue')
+                path: '/customers',
+                component: () => import('src/modules/customer/pages/AllCustomers.vue')
+            },
+            {
+                path: '/register/customer',
+                component: () => import('src/modules/customer/pages/Register/RegisterCustomer.vue')
             },
             {
                 path: '/ticket',
