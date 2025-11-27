@@ -28,6 +28,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/modules/owner/pages/RegisterOwner.vue')
     },
     {
+        path: '/owners',
+        component: () => import('src/modules/owner/pages/OwnerIndex.vue')
+    },
+    {
         path: '/login',
         component: () => import('src/pages/auth/Login.vue')
     },

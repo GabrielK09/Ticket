@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     import { LocalStorage, useQuasar } from 'quasar';
     import { loginService } from 'src/services/auth/authService';
     import { useRouter } from 'vue-router';
@@ -95,17 +95,18 @@
 
         });
 
-        const data = await loginService(loginData.value.email, loginData.value.password);
+        const res = await loginService(loginData.value.email, loginData.value.password);
+        const data = res.data;
         
-        if(data.success)
-        {
-            LocalStorage.set('auth_token', data.data.token);
+        if(res.success)
+        {            
+            LocalStorage.set('auth_token', data.token);
             
             // 1 data: linha 91;
             // 2 data: .data do await;
             // 3 data: .data que é retornado pelo backend;
-            LocalStorage.set('user_id', data.data.data.user.id);
-            LocalStorage.set('user', data.data.data.user.name);
+            LocalStorage.set('user_id', data.user.id);
+            LocalStorage.set('user', data.user.name);
 
             $q.notify({
                 type: 'positive',
@@ -114,7 +115,7 @@
             });
 
             router.replace({
-                path: '/owner/register'
+                path: '/owners'
             });
 
         } else {
@@ -126,6 +127,16 @@
             });
         }
     };
+
+    onMounted(() => {
+        
+        if(LocalStorage.getItem('auth_token')) 
+        {
+            router.replace({
+                path: '/owners'
+            });
+        };
+    });
 </script>
 
 <style lang="scss">

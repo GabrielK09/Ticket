@@ -30,11 +30,13 @@ class AuthController extends Controller
         {
             $token = $user->createToken('api-token')->plainTextToken;
 
-            return apiSuccess('Login bem sucedido!', [
+            return response()->json([
+                'message' => 'Login bem sucedido!',
+                'success' => true,
                 'token' => $token,
                 'user' => $user
                 
-            ]);
+            ], 200);
 
         } else {
             throw new Exception('Credencias incorretas!');

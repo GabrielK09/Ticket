@@ -8,6 +8,9 @@ export async function loginService(email: string, password: string): Promise<any
             password: password
 
         });
+
+        console.log('Res: ', res.data);
+        
         
         return {
             success: res.data.success,

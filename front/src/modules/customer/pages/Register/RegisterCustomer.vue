@@ -206,17 +206,23 @@ import { createCustomer } from '../../customerService';
     const submitCustomer = async () => {
         const res = await createCustomer(customer.value);
 
-        if(res.data.success)
+        console.log(res);
+        
+        if(res.success)
         {
             $q.notify({
                 type: 'positive',
+                position: 'top',
                 message: res.data.message
+                
             });
             
         } else {
             $q.notify({
                 type: 'negative',
-                message: res.data.message
+                position: 'top',
+                message: res.message
+
             });
         };
     };

@@ -46,9 +46,36 @@ export default boot(({ app, router }) => {
             return config;
         },
         (error) => {
+            console.error('Erro: ', error);
+            
             return Promise.reject(error);
         }
     );
+
+    api.interceptors.response.use(
+        (response) => {
+            return response;
+        },
+        (error) => {
+            console.warn(error.status);
+            
+            if(error.status === 401) {
+                app.config.globalProperties.$q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: 'Usuário deslogado!'
+
+                });
+                
+                router.replace({
+                    path: '/login'
+
+                });                
+            };
+
+            return Promise.reject(error);
+        }
+    )
 
     app.config.globalProperties.$axios = axios;
     // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)

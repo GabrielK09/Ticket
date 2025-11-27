@@ -2,13 +2,12 @@ import { api } from "src/boot/axios";
 
 export async function createCustomer(payMent: customerContract) {
     try {
-        const res = await api.post('/customer/create');
+        const res = await api.post('/customer/create', payMent);
 
         return {
             success: res.data.success,
             message: res.data.message,
             data: res.data
-
         };
 
     } catch (error) {
