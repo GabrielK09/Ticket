@@ -24,7 +24,8 @@ export async function loginService(email: string, password: string): Promise<any
         return {
             success: false,
             message: error.response.data?.message || 'Erro na operação!',
-            status: error.response.status
+            status: error.response.status,
+            data: error.response?.data?.data
 
         };
     };
@@ -51,7 +52,8 @@ export async function registerService(name:string, email: string, password: stri
         return {
             success: false,
             message: error.response.data?.message || 'Erro na operação!',
-            status: error.response.status
+            status: error.response.status,
+            data: error.response?.data?.data
 
         };
     };   

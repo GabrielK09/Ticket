@@ -34,6 +34,9 @@
                                 stack-label
                                 dense
                                 class="mb-4"
+                                :rules="[
+                                    val => !!val || 'O tipo de cadastro é necessário!'
+                                ]"
                             />
 
                             <q-input 
@@ -181,7 +184,18 @@
     import { useQuasar } from 'quasar';
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
-import { createCustomer } from '../../customerService';
+    import { createCustomer } from '../../customerService';
+    import * as Yup from 'yup';
+
+    const customerSchema = Yup.object({
+        company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
+        trade_name: Yup.string().required('A razão social do cliente é obrigatório!'),
+        cnpj_cpf: Yup.string().required('A razão social do cliente é obrigatório!'),
+        phone: Yup.string().required('A razão social do cliente é obrigatório!'),
+        cep: Yup.string().required('A razão social do cliente é obrigatório!'),
+        address: Yup.string().required('A razão social do cliente é obrigatório!'),
+        number: Yup.string().required('A razão social do cliente é obrigatório!'), 
+    });
 
     const customerTypes: string[] = [
         'Júridica',
@@ -204,26 +218,42 @@ import { createCustomer } from '../../customerService';
     });
 
     const submitCustomer = async () => {
-        const res = await createCustomer(customer.value);
-
-        console.log(res);
-        
-        if(res.success)
-        {
-            $q.notify({
-                type: 'positive',
-                position: 'top',
-                message: res.data.message
-                
-            });
+        try {
+            await customerSchema.validate(customer.value, { abortEarly: true });
             
-        } else {
-            $q.notify({
-                type: 'negative',
-                position: 'top',
-                message: res.message
+            const res = await createCustomer(customer.value);
 
-            });
+            console.log(res);
+            
+            if(res.success)
+            {
+                $q.notify({
+                    type: 'positive',
+                    position: 'top',
+                    message: res.data.message
+                    
+                });
+                
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: res.message
+
+                });
+            };
+            
+        } catch (error: any) {
+            if(error.inner)
+            {
+                error.inner.forEach(err => {
+                    $q.notify({
+                        type: 'negative',
+                        message: err.message
+
+                    });
+                });  
+            };
         };
     };
 </script>

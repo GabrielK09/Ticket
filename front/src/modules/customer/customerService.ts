@@ -11,12 +11,12 @@ export async function createCustomer(payMent: customerContract) {
         };
 
     } catch (error) {
-        console.error(error);
+        console.error(error.response.data.errors);
         
         return {
             success: false,
             message: error.response.data?.message || 'Erro na operação!',
-            status: error.response.status
+            status: error.response.status,
 
         };
     };   

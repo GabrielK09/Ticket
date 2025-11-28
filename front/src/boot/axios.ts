@@ -57,16 +57,7 @@ export default boot(({ app, router }) => {
             return response;
         },
         (error) => {
-            console.warn(error.status);
-            
             if(error.status === 401) {
-                app.config.globalProperties.$q.notify({
-                    type: 'negative',
-                    position: 'top',
-                    message: 'Usuário deslogado!'
-
-                });
-                
                 router.replace({
                     path: '/login'
 
