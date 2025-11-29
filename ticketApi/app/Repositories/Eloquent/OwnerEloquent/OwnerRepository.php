@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class OwnerRepository implements OnwerContract
 {
-    public function index(string $id){}
+    public function index(string $id)
+    {
+        return Owner::where('user_id', $id)->get();
+    }
 
     public function store(array $data)
     {

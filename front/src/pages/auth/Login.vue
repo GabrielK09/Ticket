@@ -96,47 +96,33 @@
         });
 
         const res = await loginService(loginData.value.email, loginData.value.password);
-        const data = res.data;
-        
+
+        console.log(res);
+                
         if(res.success)
         {            
-            LocalStorage.set('auth_token', data.token);
+            LocalStorage.set('auth_token', res.token);
             
-            // 1 data: linha 91;
-            // 2 data: .data do await;
-            // 3 data: .data que é retornado pelo backend;
-            LocalStorage.set('user_id', data.user.id);
-            LocalStorage.set('user', data.user.name);
+            LocalStorage.set('user_id', res.user.id);
+            LocalStorage.set('user', res.user.name);
 
             $q.notify({
                 type: 'positive',
-                message: data.message,
+                message: res.message,
                 position: 'top'
             });
-
-            router.replace({
-                path: '/owners'
-            });
+            
+            router.replace({ path: '/owners' });
 
         } else {
             $q.notify({
                 type: 'negative',
-                message: data.message,
+                message: res.message,
                 position: 'top'
 
             });
-        }
-    };
-
-    onMounted(() => {
-        
-        if(LocalStorage.getItem('auth_token')) 
-        {
-            router.replace({
-                path: '/owners'
-            });
         };
-    });
+    };
 </script>
 
 <style lang="scss">

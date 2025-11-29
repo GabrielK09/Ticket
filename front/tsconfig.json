@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
     "allowJs": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -10,14 +10,11 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "types": [
-      
-    ],
     "baseUrl": ".",
+    "types": [],
     "paths": {
       "src/*": ["src/*"],
       "#q-app/*": ["src/*"]
-
     }
   },
   "include": [

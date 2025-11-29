@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('owner')->group(function() {
     Route::controller(OwnerController::class)->group(function() {
+        Route::get('/all/{id}', 'index');
         Route::post('/create', 'store');
         Route::put('/update/{id}', 'update');
     });

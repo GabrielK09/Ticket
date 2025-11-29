@@ -20,7 +20,7 @@
                         v-ripple
                         clickable
                         :key="row.name"
-                        :to="row.path"
+                        :to="`/admin/${row.path}`"
                         :active="route.path === row.path"
                         class="rounded mt-3"
                         active-class="my-link"
@@ -51,9 +51,9 @@
     const drawerLeft = ref<boolean>(true);
 
     const ticketRows = ref<ticketRows[]>([
-        { label: 'DashBoard', icon: 'dashboard', name: 'dashboard', path: '/'},
-        { label: 'Clientes', icon: 'group', name: 'customers', path: '/customers'},
-        { label: 'Tickets', icon: 'confirmation_number', name: 'ticket', path: '/ticket'},
+        { label: 'DashBoard', icon: 'dashboard', name: 'dashboard', path: ''},
+        { label: 'Clientes', icon: 'group', name: 'customers', path: 'customers'},
+        { label: 'Tickets', icon: 'confirmation_number', name: 'ticket', path: 'ticket'},
     ]);
 </script>
 

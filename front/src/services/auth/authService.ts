@@ -9,13 +9,13 @@ export async function loginService(email: string, password: string): Promise<any
 
         });
 
-        console.log('Res: ', res.data);
-        
+        //console.log('Res in authService: ', res.data);
         
         return {
             success: res.data.success,
             message: res.data.message,
-            data: res.data
+            user: res.data.user,
+            token: res.data.token
 
         };
     } catch (error) {

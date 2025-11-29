@@ -2,10 +2,7 @@ import { api } from "src/boot/axios";
 
 export default async function ownerRegister(ownerData: ownerContract) {
     try {
-        const res = await api.post('/owner/create', {
-            
-
-        });
+        const res = await api.post('/owner/create', ownerData);
         
         return {
             success: res.data.success,

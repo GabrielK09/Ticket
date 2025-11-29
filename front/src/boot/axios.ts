@@ -25,7 +25,7 @@ export default boot(({ app, router }) => {
     api.interceptors.request.use(
         (config) => {
             const token = LocalStorage.getItem('auth_token');
-
+            
             const isPublicRoutes = [
                 '/auth/login',
                 '/auth/register'
@@ -39,9 +39,13 @@ export default boot(({ app, router }) => {
                 LocalStorage.remove('auth_token');
 
                 router.replace({ path: '/login' });
+
+                return Promise.reject("Usuário não autenticado");
             };
 
-            if(token) config.headers.Authorization = `Bearer ${token}`;
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
 
             return config;
         },
@@ -53,9 +57,7 @@ export default boot(({ app, router }) => {
     );
 
     api.interceptors.response.use(
-        (response) => {
-            return response;
-        },
+        (response) => response,
         (error) => {
             if(error.status === 401) {
                 router.replace({

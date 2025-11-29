@@ -12,6 +12,11 @@ class OwnerService
         protected OnwerContract $ownerRepository
     ){}
 
+    public function index(string $id)
+    {
+        return $this->ownerRepository->index($id);
+    }
+
     public function store(array $data)
     {
         return DB::transaction(fn() => $this->ownerRepository->store($data));

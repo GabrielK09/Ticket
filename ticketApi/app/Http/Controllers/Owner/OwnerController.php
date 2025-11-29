@@ -13,6 +13,11 @@ class OwnerController extends Controller
         protected OwnerService $ownerService
     ){}
 
+    public function index(string $id)
+    {
+        return apiSuccess('Retornando todos as empresas do usuário', $this->ownerService->index($id));
+    }
+
     /**
      * Store a newly created resource in storage.
      */

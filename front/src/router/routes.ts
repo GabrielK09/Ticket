@@ -2,42 +2,47 @@ import type { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
     {
-        path: '',
+        path: '/admin/',
         component: () => import('src/layouts/DashBoard/DashBoardLayout.vue'),
         children: [
             {
-                path: '/',
+                path: '',
                 component: () => import('src/modules/index/IndexPage.vue')
             },
             {
-                path: '/customers',
-                component: () => import('src/modules/customer/pages/AllCustomers.vue')
+                path: 'customers',
+                children: [
+                    {
+                        path: '',
+                        component: () => import('src/modules/customer/pages/AllCustomers.vue')
+                    },
+                    {
+                        path: '/register/customer',
+                        component: () => import('src/modules/customer/pages/Register/RegisterCustomer.vue')
+                    },
+                ]
             },
             {
-                path: '/register/customer',
-                component: () => import('src/modules/customer/pages/Register/RegisterCustomer.vue')
-            },
-            {
-                path: '/ticket',
+                path: 'ticket',
                 component: () => import('src/modules/owner/pages/RegisterOwner.vue')
             }
         ]        
-    },
-    {
-        path: '/owner/register',
-        component: () => import('src/modules/owner/pages/RegisterOwner.vue')
     },
     {
         path: '/owners',
         component: () => import('src/modules/owner/pages/OwnerIndex.vue')
     },
     {
-        path: '/login',
-        component: () => import('src/pages/auth/Login.vue')
-    },
-    {
         path: '/register',
         component: () => import('src/pages/auth/Register.vue')
+    },
+    {
+       path: '/register/owner',
+       component: () => import('src/modules/owner/pages/RegisterOwner.vue')
+    },
+    {
+        path: '/login',
+        component: () => import('src/pages/auth/Login.vue')
     },
     // Always leave this as last one,
     // but you can also remove it
