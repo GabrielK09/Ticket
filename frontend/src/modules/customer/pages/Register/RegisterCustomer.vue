@@ -272,6 +272,13 @@
 
                     });
                 });  
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: error.response?.data?.message
+
+                });
             };
         };
     };

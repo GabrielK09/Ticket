@@ -20,6 +20,7 @@ class OwnerRequest extends FormRequest
     {
         $this->merge([
             'cnpj_cpf' => $this->cnpj_cpf ? formatCPFCNPJ($this->cnpj_cpf) : null,
+            'cep' => formatCEP($this->cep)
         ]);
     }
 
@@ -43,7 +44,7 @@ class OwnerRequest extends FormRequest
             ],
             
             'phone' => [$required, 'string', 'max:24',],
-            'cep' => [$required, 'string', 'max:8'],
+            'cep' => [$required, 'string', 'max:8', ],
             'address' => [$required, 'string', 'max:60'],
             'number' => [$required, 'string', 'max:16'],
             'cnae' => [$required, 'max:14'],

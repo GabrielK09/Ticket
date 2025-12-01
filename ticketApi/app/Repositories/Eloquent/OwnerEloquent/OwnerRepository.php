@@ -12,7 +12,11 @@ class OwnerRepository implements OnwerContract
 {
     public function index(string $id)
     {
-        return Owner::where('user_id', $id)->get();
+
+        return Owner::where('user_id', $id)
+                        ->select('company_name', 'cnpj_cpf')
+                        ->get();
+
     }
 
     public function store(array $data)

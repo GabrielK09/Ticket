@@ -2,7 +2,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
     {
-        path: '/admin/',
+        path: '/:company_name/admin/',
         component: () => import('src/layouts/DashBoard/DashBoardLayout.vue'),
         children: [
             {
@@ -44,11 +44,15 @@ const routes: RouteRecordRaw[] = [
         path: '/login',
         component: () => import('src/pages/auth/Login.vue')
     },
+    {
+        path: '/',
+        component: () => import('src/pages/home/HomePage.vue')
+    },
     // Always leave this as last one,
     // but you can also remove it
     {
         path: '/:catchAll(.*)*',
-        component: () => import('src/pages/ErrorNotFound.vue'),
+        component: () => import('src/pages/ErrorNotFound.vue')
     },
 ];
 

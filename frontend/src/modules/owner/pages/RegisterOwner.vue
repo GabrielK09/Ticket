@@ -157,11 +157,48 @@
                         </template>
                     </q-input>
 
+                    <q-input 
+                        v-model="owner.cnae" 
+                        type="text" 
+                        label="" 
+                        stack-label
+                        outlined
+                        dense
+                        class="mb-4"
+                        :error="!!formErrors.number"
+                        :error-message="formErrors.number"
+                        maxlength="24"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                CNAE <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+
+                    <q-input 
+                        v-model="owner.activity" 
+                        type="text" 
+                        label="" 
+                        stack-label
+                        outlined
+                        dense
+                        class="mb-4"
+                        :error="!!formErrors.number"
+                        :error-message="formErrors.number"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                Atividade <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+
                     <div class="flex flex-center">
                         <q-btn 
                             color="primary" 
                             type="submit" 
-                            label="Cadastrar cliente"
+                            label="Cadastrar empresa"
                             no-caps
 
                         />
@@ -175,10 +212,12 @@
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
     import { ref } from 'vue';
+    import { ownerRegister } from '../services/ownerServices';
     import * as Yup from 'yup';
+    import { useRouter } from 'vue-router';
 
     const $q = useQuasar();
-
+    const router = useRouter();
     const formErrors = ref<Record<string, string>>({});
 
     const ownerTypes: string[] = [
@@ -188,15 +227,16 @@
 
     const ownerSchema = Yup.object({
         user_id: Yup.string().required(''),
-        company_name: Yup.string().required(''),
-        trade_name: Yup.string().required(''),
-        cnpj_cpf: Yup.string().required(''),
-        phone: Yup.string().required(''),
-        cep: Yup.string().required(''),
-        address: Yup.string().required(''),
-        number: Yup.string().required(''),
-        cnae: Yup.string().required(''),
-        activity: Yup.string().required(''),
+        company_name: Yup.string().required('A razão social da empresa é obrigatório!'),
+        trade_name: Yup.string().required('O nome fantasia da empresa é obrigatório!'),
+        cnpj_cpf: Yup.string().required('O CPF/CNPJ da empresa é obrigatório!'),
+        phone: Yup.string().required('O telefone da empresa é obrigatório!'),
+        cep: Yup.string().required('O CEP da empresa é obrigatório!'),
+        address: Yup.string().required('O endereço da empresa é obrigatório!'),
+        number: Yup.string().required('O número da empresa é obrigatório!'), 
+        cnae: Yup.string().required('O CNAE da empresa é obrigatório!'),
+        activity: Yup.string().required('A atividade da empresa é obrigatório!'),
+
     });
     
     const owner = ref<ownerContract>({
@@ -216,6 +256,29 @@
     const submitRegisterOwner = async () => {
         try {
             await ownerSchema.validate(owner.value, { abortEarly: false });
+
+            const res = await ownerRegister(owner.value);
+
+            if(res.success)
+            {
+                $q.notify({
+                    type: 'positive',
+                    message: res.message,
+                    position: 'top'
+                });
+
+                router.replace({
+                    path: '/owners'
+
+                });
+            } else {
+                 $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: res.message
+
+                });   
+            };
 
         } catch (error) {
             if(error.inner)
