@@ -21,6 +21,16 @@ class UserService
 
         return DB::transaction(fn() => $this->userRepository->store($data));
     }
+
+    public function update(array $data)
+    {
+        if(!$this->userRepository->findById($data['user_id']))
+        {
+            throw new Exception('Usuário não localizado!');
+        }
+
+        return DB::transaction(fn() => $this->userRepository->update($data));
+    }
     
     public function findByMail(string $email)
     {
@@ -28,7 +38,20 @@ class UserService
 
         if(!$user)
         {
-            throw new Exception('Usuário não localizado');
+            throw new Exception('Usuário não localizado!');
+            
+        }
+
+        return $user;
+    }
+
+    public function findById(string $id)
+    {
+        $user = $this->userRepository->findById($id);
+
+        if(!$user)
+        {
+            throw new Exception('Usuário não localizado!');
             
         }
 

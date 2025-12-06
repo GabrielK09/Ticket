@@ -16,6 +16,18 @@ class UserRepository
         ]);
     }
 
+    public function update(array $data)
+    {
+        $user = $this->findById($data['user_id']);
+
+        $user->update([
+            'name' => $data['name'],
+            'email' => $data['email'],
+        ]);
+
+        return $user;
+    }
+
     public function findById(string $id)
     {
         return User::findOrFail($id);
@@ -25,4 +37,5 @@ class UserRepository
     {
         return User::where('email', $email)->first();
     }
+
 }

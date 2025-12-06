@@ -56,5 +56,7 @@ Route::prefix('v1')->group(function() {
         //         Route::put('/update/{id}', 'update');
         //     });
         // });
+
+        require_once __DIR__.'/user/userApi.php';
     });
 });

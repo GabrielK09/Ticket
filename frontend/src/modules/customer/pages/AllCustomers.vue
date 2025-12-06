@@ -12,7 +12,7 @@
                             no-caps 
                             class="bg-sky-500 text-white" 
                             label="Cadastrar novo cliente"
-                            to="/register/customer"
+                            :to="`/${LocalStorage.getItem('companie_name')}/register/customer`"
                         />
                     </div>
                 </div>
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-    import { QTableColumn } from 'quasar';
+    import { QTableColumn, LocalStorage } from 'quasar';
     import { ref } from 'vue';
 
     let searchInput = ref<string>('');

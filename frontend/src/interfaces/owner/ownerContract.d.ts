@@ -1,4 +1,5 @@
 interface ownerContract {
+    readonly id: string;
     readonly user_id: string;
     company_name: string;
     trade_name: string;

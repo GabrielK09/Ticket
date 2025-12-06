@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-    import { onMounted, ref } from 'vue';
+    import { ref } from 'vue';
     import { LocalStorage, useQuasar } from 'quasar';
     import { loginService } from 'src/services/auth/authService';
     import { useRouter } from 'vue-router';

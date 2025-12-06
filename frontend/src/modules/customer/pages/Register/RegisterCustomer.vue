@@ -8,7 +8,7 @@
 
             <div class="ml-2 text-xs">
                 <div 
-                    @click="router.replace({ path: '/admin/customers' })"
+                    @click="router.replace({ path: `/${LocalStorage.getItem('companie_name')}/admin/customers` })"
                     class="flex mb-auto mt-auto cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 back-row">
@@ -190,7 +190,6 @@
 </template>
 
 <script setup lang="ts">
-    import { api } from 'src/boot/axios';
     import { LocalStorage, useQuasar } from 'quasar';
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
@@ -235,8 +234,6 @@
             
             const res = await createCustomer(customer.value);
 
-            console.log(res);
-            
             if(res.success)
             {
                 $q.notify({

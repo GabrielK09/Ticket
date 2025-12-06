@@ -11,11 +11,10 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
-    "types": [],
     "paths": {
       "src/*": ["src/*"],
       "#q-app/*": ["src/*"]
-    }
+    }    
   },
   "include": [
     "src/**/*.ts",

@@ -85,7 +85,7 @@ class OwnerRequest extends FormRequest
             'number.max' => 'O número do enedereço ter no máximo 16 caracteres!',
             
             'cnae.required' => 'O CNAE da empresa é obrigatório!',
-            'cnae.max' => 'O CNAE da empresa ter no máximo 24 caracteres!',
+            'cnae.max' => 'O CNAE da empresa deve ter no máximo 24 caracteres!',
             
             'activity.required' => 'A atividade da empresa é obrigatório!',
             'activity.string' => 'A atividade da empresa precisa estar em um formato válido!',

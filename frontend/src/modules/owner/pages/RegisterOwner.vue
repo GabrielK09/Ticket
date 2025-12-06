@@ -3,7 +3,7 @@
         <div
             class="m-2"
         >        
-            <h2 class="text-gray-600 register-title m-2">Cadastre o seu emitente!</h2>
+            <h2 class="text-gray-600 register-title m-2">Cadastre sua empresa!</h2>
 
             <q-form
                 @submit="submitRegisterOwner"
@@ -17,7 +17,7 @@
                         outlined
                         stack-label
                         dense
-                        class="mb-4"
+                        class="mb-6"
                     />
 
                     <q-input 
@@ -71,6 +71,7 @@
                         class="mb-4"
                         :error="!!formErrors.cnpj_cpf"
                         :error-message="formErrors.cnpj_cpf"
+                        :rules="[owner.ownerType !== 'Jurídica' ? validateCPF : null]"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -159,15 +160,15 @@
 
                     <q-input 
                         v-model="owner.cnae" 
-                        type="text" 
+                        type="number"
                         label="" 
                         stack-label
                         outlined
                         dense
-                        class="mb-4"
-                        :error="!!formErrors.number"
-                        :error-message="formErrors.number"
-                        maxlength="24"
+                        class="mb-4 q-input"
+                        :error="!!formErrors.cnae"
+                        :error-message="formErrors.cnae"
+                        maxlength="14"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -184,8 +185,8 @@
                         outlined
                         dense
                         class="mb-4"
-                        :error="!!formErrors.number"
-                        :error-message="formErrors.number"
+                        :error="!!formErrors.activity"
+                        :error-message="formErrors.activity"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -215,6 +216,7 @@
     import { ownerRegister } from '../services/ownerServices';
     import * as Yup from 'yup';
     import { useRouter } from 'vue-router';
+import validateCPF from 'src/util/validate/validateCPFCNPJ';
 
     const $q = useQuasar();
     const router = useRouter();

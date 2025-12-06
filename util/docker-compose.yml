@@ -1,0 +1,44 @@
+services:
+  laravel:
+    build:
+      context: ./ticketApi
+      dockerfile: Dockerfile
+    container_name: laravel-app
+    volumes:
+      - ./ticketApi:/var/www/html
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mariadb
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_DATABASE: tickets
+      DB_USERNAME: root
+      DB_PASSWORD: masterkey
+
+  mariadb:
+    image: mariadb:10.4.13
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: masterkey
+      MYSQL_DATABASE: tickets
+      MYSQL_USER: root
+      MYSQL_PASSWORD: masterkey
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./dbdata:/var/lib/mysql
+
+  quasar:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: quasar-app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "9000:9000"

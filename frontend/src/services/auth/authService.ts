@@ -58,3 +58,26 @@ export async function registerService(name:string, email: string, password: stri
         };
     };   
 };
+
+export async function logoutService() {
+    try {
+        const res = await api.post('/auth/logout');
+        
+        return {
+            success: res.data.success,
+            message: res.data.message,
+            data: res.data
+
+        };
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            message: error.response.data?.message || 'Erro na operação!',
+            status: error.response.status,
+            data: error.response?.data?.data
+
+        };       
+    }
+}
