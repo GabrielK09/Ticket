@@ -40,7 +40,7 @@
                 </q-list>
             </q-toolbar>
 
-            <div class="fixed bottom-0 flex flex-center justify-between">
+            <div class="fixed bottom-0 flex flex-center mt-4">
                 <q-btn 
                     class=" mb-4" 
                     icon="store" 

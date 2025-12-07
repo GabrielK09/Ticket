@@ -65,7 +65,7 @@
                         viewBox="0 0 24 24" 
                         stroke-width="1.5" 
                         stroke="currentColor" 
-                        class="size-12 bg-blue-400 text-white"
+                        class="size-12 bg-blue-400 text-white rounded-md"
                     >
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>       
@@ -79,7 +79,13 @@
             <q-card-section class="flex flex-col companie-card">
                 <div class="text-center">
                     <h2>{{ companie.company_name }}</h2>
-                    <h3>{{ formatCPFCNPJ(companie.cnpj_cpf) }}</h3>
+                    <h3
+                        class="btn cursor-pointer"
+                        @click="tryClipBoard"
+                        :data-clipboard-text="formatCPFCNPJ(companie.cnpj_cpf)"
+                    >
+                        {{ formatCPFCNPJ(companie.cnpj_cpf) }}
+                    </h3>
 
                 </div>
 
@@ -108,6 +114,7 @@
     import formatCPFCNPJ from 'src/util/formatCPFCNPJ';
     import { useRouter } from 'vue-router';
     import UserData from 'src/components/User/UserData.vue';
+    import { clipBoardFunction } from 'src/util/clipBoard/clipBoard';
 
     const $q = useQuasar();
     const router = useRouter();
@@ -200,9 +207,28 @@
         };
     };
     
+    const tryClipBoard = async() => {
+        console.log('Init tryClipBoard');
+        
+        try {
+            if(await clipBoardFunction())
+            {
+                $q.notify({
+                    type: 'positive',
+                    message: 'Conteúdo copiado para a área de transferência!',
+                    position: 'top'
+
+                });
+            };
+        } catch (error) {
+            console.error('Erro:', error);
+              
+        };
+    };
+
     onMounted(async () => {
         await index();
-
+        showOptions.value = false;
     });
 </script>
 
