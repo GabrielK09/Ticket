@@ -5,6 +5,20 @@
         >        
             <h2 class="text-gray-600 register-title m-2">Cadastre sua empresa!</h2>
 
+            <div class="ml-2 text-xs">
+                <div 
+                    @click="router.replace({ path: '/owners' })"
+                    class="flex mb-auto mt-auto cursor-pointer"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 back-row">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                    </svg>      
+                    <span class="back-customer-label">
+                        Voltar para listagem
+                    </span>
+                </div>
+            </div>
+
             <q-form
                 @submit="submitRegisterOwner"
                 class="q-gutter-md mt-4 form"
@@ -216,7 +230,7 @@
     import { ownerRegister } from '../services/ownerServices';
     import * as Yup from 'yup';
     import { useRouter } from 'vue-router';
-import validateCPF from 'src/util/validate/validateCPFCNPJ';
+    import { validateCPF } from 'src/util/validate/validateCPFCNPJ';
 
     const $q = useQuasar();
     const router = useRouter();
@@ -242,6 +256,7 @@ import validateCPF from 'src/util/validate/validateCPFCNPJ';
     });
     
     const owner = ref<ownerContract>({
+        id: null,
         user_id: LocalStorage.getItem('user_id'),
         company_name: '',
         trade_name: '',
@@ -301,3 +316,28 @@ import validateCPF from 'src/util/validate/validateCPFCNPJ';
     };
 
 </script>
+
+<style lang="scss">
+    @media (max-width: 1336px) {
+        .register-title {
+            text-align: center;
+        }
+
+        .back-customer-label {
+            display: none;
+        }
+
+        .back-row {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    @media (min-width: 1336px) {
+        .back-row {
+            width: 0.75rem;
+            height: 0.75rem;
+
+        }
+    }
+</style>

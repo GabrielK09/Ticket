@@ -150,13 +150,9 @@
         location: Yup.string().required('O local do ticket é necessário'),
         increase_tpye: Yup.string().required('O tipo de acréscimo do ticket é necessário'),
         discount_type: Yup.string().required('O tipo do desconto  do ticket é necessário'),
-
     });
 
-    const prioritys: string[] = [
-        'Baixa',
-        'Alta'
-    ];
+    const prioritys = ref<'Baixa'|'Alta'>('Baixa') as any;
 
     const formErrors = ref<Record<string, string>>({});
 

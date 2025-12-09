@@ -1,4 +1,4 @@
-export default function validateCPF (cpf: string): boolean|string {
+export function validateCPF (cpf: string): boolean|string {
     cpf = cpf.replace(/\D/g, '');
 
     if(cpf.length !== 11)

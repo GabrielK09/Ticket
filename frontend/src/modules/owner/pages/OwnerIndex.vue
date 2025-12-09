@@ -55,8 +55,8 @@
         </div>
     </header>
 
-    <div class="flex flex-row justify-center mt-14">
-        <div class="mr-10">
+    <div class="all-companies mt-14">
+        <div class="mr-10 q-btn-add-new-owner">
             <router-link to="/register/owner">
                 <div class="flex justify-center mt-8">
                     <svg   
@@ -75,8 +75,8 @@
             </router-link>
         </div>
 
-        <q-card v-for="companie in allCompanies" class="mr-6 companie-cards">
-            <q-card-section class="flex flex-col companie-card">
+        <q-card v-for="companie in allCompanies" class="companie-cards">
+            <q-card-section class="companie-card">
                 <div class="text-center">
                     <h2>{{ companie.company_name }}</h2>
                     <h3
@@ -111,7 +111,7 @@
     import { getAllCompanies } from '../services/ownerServices';
     import { logoutService } from 'src/services/auth/authService';
     import { onMounted, ref} from 'vue';
-    import formatCPFCNPJ from 'src/util/formatCPFCNPJ';
+    import { formatCPFCNPJ } from 'src/util/formatCPFCNPJ';
     import { useRouter } from 'vue-router';
     import UserData from 'src/components/User/UserData.vue';
     import { clipBoardFunction } from 'src/util/clipBoard/clipBoard';
@@ -233,8 +233,7 @@
 </script>
 
 <style lang="scss">
-
-    .companie-cards:hover {
+    .q-btn-add-new-owner:hover, .companie-cards:hover {
         transition-property: transform;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         transition-duration: 150ms;
@@ -243,10 +242,58 @@
 
     @media (min-width: 1100px) {
         .companie-card {
+            margin: 15px;
+            height: 240px;
+            width:  240px;   
+        }
+    
+        .companie-cards {
+            margin: 0 1rem 0 1rem;
+        }
+
+        .all-companies {
             display: flex;
+            flex-direction: row;
             justify-content: center;
+        }
+
+        .companie-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+        }
+    }
+    
+    @media (max-width: 1100px) {
+        .companie-card {
+            margin: 15px;
+            height: 240px;
+            width:  240px;   
+        }
+        
+        .q-btn-add-new-owner {
+            margin: 20px auto 10px auto;
+        }
+
+        .companie-cards {
+            margin: 20px auto 10px auto;
             height: 240px;
             width:  240px;
+
+        }
+        
+        .all-companies {
+            display: flex;
+            flex-direction: column;
+            margin: 1rem 0 1rem 0;
+        }
+
+        .companie-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;    
+            margin: 0 auto 0 auto;
         }
     }
 </style>

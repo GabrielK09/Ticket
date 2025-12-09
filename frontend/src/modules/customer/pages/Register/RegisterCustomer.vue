@@ -1,5 +1,4 @@
-<template>
-    
+<template>    
     <section class="text-2xl">
         <div
             class="m-2"
@@ -20,171 +19,169 @@
                 </div>
             </div>
 
-            <div>
-                <q-form
-                    @submit="submitCustomer"
-                    class="q-gutter-md mt-4 form"
-                >
-                    <div class="p-4 inputs">
-                        <q-select 
-                            v-model="customer.customerType" 
-                            :options="customerTypes" 
-                            label="Tipo de cadastro" 
-                            outlined
-                            stack-label
-                            dense
-                            class="mb-4"
+            <q-form
+                @submit="submitCustomer"
+                class="q-gutter-md mt-4 form"
+            >
+                <div class="p-4 inputs">
+                    <q-select 
+                        v-model="customer.customerType" 
+                        :options="customerTypes" 
+                        label="Tipo de cadastro" 
+                        outlined
+                        stack-label
+                        dense
+                        class="mb-4"
+                    />
+
+                    <q-input 
+                        label="" 
+                        v-model="customer.company_name" 
+                        stack-label
+                        outlined
+                        type="text"
+                        dense
+                        class="mb-4"
+                        :error="!!formErrors.company_name"
+                        :error-message="formErrors.company_name"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                Razão social <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+                
+                    <q-input 
+                        v-model="customer.trade_name" 
+                        type="text" 
+                        label="E-mail *" 
+                        stack-label
+                        outlined
+                        dense
+                        class="mb-4"
+                        :error="!!formErrors.trade_name"
+                        :error-message="formErrors.trade_name"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                Nome fantasia <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+
+                    <q-input 
+                        v-model="customer.cnpj_cpf" 
+                        type="text" 
+                        label="E-mail *" 
+                        stack-label
+                        outlined
+                        dense
+                        :mask="
+                            customer.customerType === 'Jurídica'
+                            ? '##.###.###/####-##'
+                            : '###.###.###-##'
+                        "
+                        class="mb-4"
+                        :error="!!formErrors.cnpj_cpf"
+                        :error-message="formErrors.cnpj_cpf"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                {{ 
+                                    customer.customerType === 'Jurídica' 
+                                    ? 'CNPJ'
+                                    : 'CPF'
+                                }} <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+
+                    <q-input 
+                        v-model="customer.phone" 
+                        type="text" 
+                        label="" 
+                        stack-label
+                        outlined
+                        dense
+                        mask="(##) ####-####"
+                        class="mb-4"
+                        :error="!!formErrors.phone"
+                        :error-message="formErrors.phone"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                Telefone <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+
+                    <q-input 
+                        v-model="customer.cep" 
+                        type="text" 
+                        label="" 
+                        stack-label
+                        outlined
+                        dense
+                        mask="#####-###"
+                        class="mb-4"
+                        :error="!!formErrors.cep"
+                        :error-message="formErrors.cep"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                CEP <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+
+                    <q-input 
+                        v-model="customer.address" 
+                        type="text" 
+                        label="" 
+                        stack-label
+                        outlined
+                        dense
+                        class="mb-4"
+                        :error="!!formErrors.address"
+                        :error-message="formErrors.address"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                Endereço <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+
+                    <q-input 
+                        v-model="customer.number" 
+                        type="text" 
+                        label="" 
+                        stack-label
+                        outlined
+                        dense
+                        class="mb-4"
+                        :error="!!formErrors.number"
+                        :error-message="formErrors.number"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                Número do endereço <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+                    </q-input>
+
+                    <div class="flex flex-center">
+                        <q-btn 
+                            color="primary" 
+                            type="submit" 
+                            label="Cadastrar cliente"
+                            no-caps
+
                         />
-
-                        <q-input 
-                            label="" 
-                            v-model="customer.company_name" 
-                            stack-label
-                            outlined
-                            type="text"
-                            dense
-                            class="mb-4"
-                            :error="!!formErrors.company_name"
-                            :error-message="formErrors.company_name"
-                        >
-                            <template v-slot:label>
-                                <div class="text-sm">
-                                    Razão social <span class="text-red-500">*</span>
-                                </div>
-                            </template>
-                        </q-input>
-                    
-                        <q-input 
-                            v-model="customer.trade_name" 
-                            type="text" 
-                            label="E-mail *" 
-                            stack-label
-                            outlined
-                            dense
-                            class="mb-4"
-                            :error="!!formErrors.trade_name"
-                            :error-message="formErrors.trade_name"
-                        >
-                            <template v-slot:label>
-                                <div class="text-sm">
-                                    Nome fantasia <span class="text-red-500">*</span>
-                                </div>
-                            </template>
-                        </q-input>
-
-                        <q-input 
-                            v-model="customer.cnpj_cpf" 
-                            type="text" 
-                            label="E-mail *" 
-                            stack-label
-                            outlined
-                            dense
-                            :mask="
-                                customer.customerType === 'Jurídica'
-                                ? '##.###.###/####-##'
-                                : '###.###.###-##'
-                            "
-                            class="mb-4"
-                            :error="!!formErrors.cnpj_cpf"
-                            :error-message="formErrors.cnpj_cpf"
-                        >
-                            <template v-slot:label>
-                                <div class="text-sm">
-                                    {{ 
-                                        customer.customerType === 'Jurídica' 
-                                        ? 'CNPJ'
-                                        : 'CPF'
-                                    }} <span class="text-red-500">*</span>
-                                </div>
-                            </template>
-                        </q-input>
-
-                        <q-input 
-                            v-model="customer.phone" 
-                            type="text" 
-                            label="" 
-                            stack-label
-                            outlined
-                            dense
-                            mask="(##) ####-####"
-                            class="mb-4"
-                            :error="!!formErrors.phone"
-                            :error-message="formErrors.phone"
-                        >
-                            <template v-slot:label>
-                                <div class="text-sm">
-                                    Telefone <span class="text-red-500">*</span>
-                                </div>
-                            </template>
-                        </q-input>
-
-                        <q-input 
-                            v-model="customer.cep" 
-                            type="text" 
-                            label="" 
-                            stack-label
-                            outlined
-                            dense
-                            mask="#####-###"
-                            class="mb-4"
-                            :error="!!formErrors.cep"
-                            :error-message="formErrors.cep"
-                        >
-                            <template v-slot:label>
-                                <div class="text-sm">
-                                    CEP <span class="text-red-500">*</span>
-                                </div>
-                            </template>
-                        </q-input>
-
-                        <q-input 
-                            v-model="customer.address" 
-                            type="text" 
-                            label="" 
-                            stack-label
-                            outlined
-                            dense
-                            class="mb-4"
-                            :error="!!formErrors.address"
-                            :error-message="formErrors.address"
-                        >
-                            <template v-slot:label>
-                                <div class="text-sm">
-                                    Endereço <span class="text-red-500">*</span>
-                                </div>
-                            </template>
-                        </q-input>
-
-                        <q-input 
-                            v-model="customer.number" 
-                            type="text" 
-                            label="" 
-                            stack-label
-                            outlined
-                            dense
-                            class="mb-4"
-                            :error="!!formErrors.number"
-                            :error-message="formErrors.number"
-                        >
-                            <template v-slot:label>
-                                <div class="text-sm">
-                                    Número do endereço <span class="text-red-500">*</span>
-                                </div>
-                            </template>
-                        </q-input>
-
-                        <div class="flex flex-center">
-                            <q-btn 
-                                color="primary" 
-                                type="submit" 
-                                label="Cadastrar cliente"
-                                no-caps
-
-                            />
-                        </div>
                     </div>
-                </q-form>
-            </div>
+                </div>
+            </q-form>
         </div>
     </section>
 </template>

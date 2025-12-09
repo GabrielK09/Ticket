@@ -1,8 +1,6 @@
 package frontEnd
 
 import (
-	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -10,37 +8,16 @@ import (
 
 var finalPath string = "D:\\Gabriel\\MVPs\\1\\frontend"
 
-func checkExistEnv() (bool, error) {
-	envPath := fmt.Sprintf("%s\\.env", finalPath)
-	log.Println(envPath)
-
-	_, err := os.Stat(envPath)
-
-	if err == nil {
-		log.Println("O arquivo existe: ", err)
-		return true, nil
-	}
-
-	if errors.Is(err, os.ErrNotExist) {
-		return false, nil
-	}
-
-	return false, err
-}
-
 func MoveFile() error {
-	exists, err := checkExistEnv()
+	// Precisa conferir se no caminho final já tem uma .env com o IP
+
+	existsFileButOtherIp, err := ReadFile()
 
 	if err != nil {
-		log.Println("Erro ao validar se o arquivo existe: ", err)
 		return err
 	}
 
-	if exists {
-		log.Println("O arquivo existe")
-		return nil
-
-	} else {
+	if !existsFileButOtherIp {
 		currentPath, err := os.Getwd()
 
 		if err != nil {
@@ -49,7 +26,7 @@ func MoveFile() error {
 
 		}
 
-		log.Println("O arquivo não existe, vai criar")
+		log.Println("Vai criar um novo .env com o IP atual")
 		fileName, err := CreateFile()
 
 		if err != nil {
@@ -58,7 +35,7 @@ func MoveFile() error {
 
 		}
 
-		log.Println("arquivo criado, vai mover ele")
+		log.Println("Arquivo criado, vai mover ele para: ", finalPath)
 
 		oldPath := filepath.Join(currentPath, fileName)
 
@@ -75,6 +52,8 @@ func MoveFile() error {
 
 		log.Printf("Dir: %s", newPath)
 
+		return nil
+	} else {
 		return nil
 	}
 }
