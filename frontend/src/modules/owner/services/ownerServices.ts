@@ -1,45 +1,24 @@
 import { api } from "src/boot/axios";
+import { returnErrorApi, returnSuccessApi } from "src/helpers/return/returnApi";
 
 export async function getAllCompanies(id: string): Promise<any> {
     try {
         const res = await api.get(`/owner/all/${id}`);
-        
-        return {
-            success: res.data.success,
-            message: res.data.message,
-            data: res.data
 
-        };       
+        return returnSuccessApi(true, res.data.message, res.data);
 
     } catch (error) {
-        return {
-            success: false,
-            message: error.response.data?.message || 'Erro na operação!',
-            status: error.response.status
-
-        };
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
     };
 };
 
 export async function ownerRegister(ownerData: ownerContract): Promise<any> {
     try {
         const res = await api.post('/owner/create', ownerData);
-        
-        return {
-            success: res.data.success,
-            message: res.data.message,
-            data: res.data
 
-        };
-        
+        return returnSuccessApi(true, res.data.message, res.data);
+
     } catch (error) {
-        console.error('Erro: ', error);
-        
-        return {
-            success: false,
-            message: error.response.data?.message || 'Erro na operação!',
-            status: error.response.status
-
-        };
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
     };
 };

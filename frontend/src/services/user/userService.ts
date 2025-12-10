@@ -1,25 +1,14 @@
 import { api } from "src/boot/axios";
+import { returnErrorApi, returnSuccessApi } from "src/helpers/return/returnApi";
 
 export async function getUserDataService(id: any): Promise<any> {
     try {
         const res = await api.get(`/user/find/${id}`);
 
-        const data = res.data;
-
-        return {
-            success: res.data.success,
-            message: data.message,
-            data: data
-
-        };
+        return returnSuccessApi(true, res.data.message, res.data.data);
 
     } catch (error) {
-        return {
-            success: false,
-            message: error.response.data?.message || 'Erro na operação!',
-            status: error.response.status
-
-        };
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
     };
 };
 
@@ -31,19 +20,9 @@ export async function updateUserService(userData: userContract): Promise<any> {
             email: userData.email
         });
 
-        return {
-            success: res.data.success,
-            message: res.data.message,
-            data: res.data
-
-        };
+        return returnSuccessApi(true, res.data.message, res.data);
 
     } catch (error) {
-        return {
-            success: false,
-            message: error.response.data?.message || 'Erro na operação!',
-            status: error.response.status
-
-        };  
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
     };
 };

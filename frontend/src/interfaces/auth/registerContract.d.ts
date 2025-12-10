@@ -3,4 +3,4 @@ interface registerContract {
     email: string;
     password: string;
     confirmPassword: string;
-}
+};

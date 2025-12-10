@@ -1,23 +1,15 @@
 import { api } from "src/boot/axios";
+import { returnErrorApi, returnSuccessApi } from "src/helpers/return/returnApi";
 
 export async function createCustomer(payMent: customerContract) {
     try {
         const res = await api.post('/customer/create', payMent);
 
-        return {
-            success: res.data.success,
-            message: res.data.message,
-            data: res.data
-        };
+        return returnSuccessApi(true, res.data.message, res.data);
 
     } catch (error) {
         console.error(error.response.data.errors);
-        
-        return {
-            success: false,
-            message: error.response.data?.message || 'Erro na operação!',
-            status: error.response.status,
 
-        };
-    };   
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
+    };
 };
