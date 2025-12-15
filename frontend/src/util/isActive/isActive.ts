@@ -1,0 +1,1 @@
+export function isActive(n: number): boolean { return n === 1; };

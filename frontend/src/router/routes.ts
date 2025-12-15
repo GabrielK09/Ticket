@@ -23,6 +23,18 @@ const routes: RouteRecordRaw[] = [
                 component: () => import('src/modules/tickets/pages/AllTickets.vue')
             },
             {
+                path: 'pay_ment_forms',
+                component: () => import('src/modules/payMentForms/pages/AllPayMentForms.vue')
+            },
+            {
+                path: 'history',
+                component: () => import('src/modules/history/pages/History.vue')
+            },
+            {
+                path: 'technicals',
+                component: () => import('src/modules/technicals/pages/AllTechnicals.vue')
+            },
+            {
                 path: '/:company_name/register/',
                 children: [
                     {
@@ -32,10 +44,22 @@ const routes: RouteRecordRaw[] = [
                     {
                         path: 'ticket',
                         component: () => import('src/modules/tickets/pages/Register/RegisterTickets.vue')
+                    },
+                    {
+                        path: 'pay_ment_forms',
+                        component: () => import('src/modules/payMentForms/pages/Register/RegisterPayMentForms.vue')
                     }
                 ]
-                
             },
+            {
+                path: '/:company_name/edit/',
+                children: [
+                    {
+                        path: 'customer/:customer_id',
+                        component: () => import('src/modules/customer/pages/Update/UpdateRegisterCustomer.vue')
+                    }
+                ]
+            }
         ]        
     },
     {

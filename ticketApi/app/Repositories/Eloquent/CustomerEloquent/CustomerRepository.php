@@ -4,13 +4,15 @@ namespace App\Repositories\Eloquent\CustomerEloquent;
 
 use App\Models\Customer;
 use App\Repositories\Interfaces\Customer\CustomerContract;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class CustomerRepository implements CustomerContract
 {
-    public function index(string $id, int $paginate)
+    public function index(string $id)
     {
-        return Customer::where('owner_id', $id)->paginate($paginate);
+        return Customer::where('owner_id', $id)->get();
+        
     }
 
     public function store(array $data)
@@ -34,6 +36,11 @@ class CustomerRepository implements CustomerContract
 
     public function update(array $data, string $customerId)
     {
+        if($customerId === 1)
+        {
+            throw new Exception('O cliente padrão não pode ser alterado');
+        };
+
         Log::channel('customers')->debug('Started update - Customers');
         $customer = $this->findById($data['owner_id'], $customerId);
 
@@ -44,9 +51,7 @@ class CustomerRepository implements CustomerContract
             'phone' => formatPhone($data['phone']), 
             'cep' => formatCEP($data['cep']),
             'address' => $data['address'],
-            'number' => $data['number'],
-            'cnae' => $data['cnae'],
-            'activity' => $data['activity'],
+            'number' => $data['number']
 
         ]);
 

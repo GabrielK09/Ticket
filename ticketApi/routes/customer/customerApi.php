@@ -5,9 +5,10 @@ use App\Http\Controllers\Customer\CustomerController;
 
 Route::prefix('customer')->group(function() {
     Route::controller(CustomerController::class)->group(function() {
-        Route::get('/all/{paginate}', 'index');
+        Route::get('/all/{id}', 'index');
         Route::post('/create', 'store');
-        Route::put('/update/{id}', 'update');
-        Route::put('/{owner_id}/{id}/{action}', 'activeOrDisable');
+        Route::get('/{ownerId}/customer-data/{id}', 'show');
+        Route::put('/update/{customerId}', 'update');
+        Route::put('/new-status-customer', 'activeOrDisable');
     });
 }); 

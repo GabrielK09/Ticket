@@ -83,7 +83,10 @@
     const ticketRows = ref<ticketRows[]>([
         { label: 'DashBoard', icon: 'dashboard', name: 'dashboard', path: ''},
         { label: 'Clientes', icon: 'group', name: 'customers', path: 'customers'},
+        { label: 'Técnicos', icon: 'assignment_ind', name: 'assignment_ind', path: 'technicals'},
         { label: 'Tickets', icon: 'confirmation_number', name: 'ticket', path: 'ticket'},
+        { label: 'Histórico', icon: 'history', name: 'history', path: 'history' },
+        { label: 'Formas de pagamento', icon: 'add_card', name: 'add_card', path: 'pay_ment_forms' },
 
     ]);
 
@@ -112,7 +115,7 @@
     };
 
     const changeCompany = () => {
-        LocalStorage.remove('companie_id');
+        LocalStorage.remove('owner_id');
         LocalStorage.remove('companie_name');  
         
         router.replace({
@@ -173,7 +176,7 @@
     };
 
     onMounted(() => {
-        if(!LocalStorage.getItem('companie_id') && !LocalStorage.getItem('companie_name')) {
+        if(!LocalStorage.getItem('owner_id') || !LocalStorage.getItem('companie_name')) {
             router.replace({
                 path: '/owners'
 

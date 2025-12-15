@@ -17,6 +17,13 @@ func ReadFile() (bool, error) {
 
 	fileData, err := os.ReadFile(defaultEnvDir)
 
+	log.Println("File Data: ", fileData)
+
+	if len(fileData) == 0 {
+		return false, nil
+
+	}
+
 	if err != nil {
 		log.Printf("Erro ao ler o arquivo: %s", defaultEnvDir)
 		return false, err

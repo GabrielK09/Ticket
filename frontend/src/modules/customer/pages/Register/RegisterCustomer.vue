@@ -31,7 +31,7 @@
                         outlined
                         stack-label
                         dense
-                        class="mb-4"
+                        class="mb-8"
                     />
 
                     <q-input 
@@ -85,6 +85,7 @@
                         class="mb-4"
                         :error="!!formErrors.cnpj_cpf"
                         :error-message="formErrors.cnpj_cpf"
+                        @blur="CNPJData(customer.cnpj_cpf)"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -191,6 +192,7 @@
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { createCustomer } from '../../customerService';
+    import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     import * as Yup from 'yup';
 
     const customerSchema = Yup.object({
@@ -223,7 +225,33 @@
         address: '',
         number: '',
         customerType: 'Jurídica'
+
     });
+
+    const CNPJData = async (val: string): Promise<any> => {
+        if(val.replace(/\D/g, '').length === 14) 
+        {
+            const res = await getCNPJData(val);
+            const data: ReturnCNPJData = res.data;
+
+            if(res.success)
+            {
+                customer.value.address = data.address.street;
+                customer.value.number = data.address.number;
+                customer.value.cep = data.address.zip;
+                customer.value.company_name = data.company.name;
+                customer.value.trade_name = data.company.name;
+                
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: 'CNPJ inválido ou não localizado!',
+
+                });
+            };
+        };
+    };
 
     const submitCustomer = async () => {
         try {
@@ -238,6 +266,11 @@
                     position: 'top',
                     message: res.data.message
                     
+                });
+                
+                router.replace({
+                    path: 'customers'
+
                 });
                 
             } else {
@@ -276,29 +309,5 @@
             };
         };
     };
+
 </script>
-
-<style lang="scss">
-    @media (max-width: 1336px) {
-        .register-title {
-            text-align: center;
-        }
-
-        .back-customer-label {
-            display: none;
-        }
-
-        .back-row {
-            width: 1rem;
-            height: 1rem;
-        }
-    }
-
-    @media (min-width: 1336px) {
-        .back-row {
-            width: 0.75rem;
-            height: 0.75rem;
-
-        }
-    }
-</style>

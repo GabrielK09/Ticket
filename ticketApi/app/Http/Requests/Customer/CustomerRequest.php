@@ -17,9 +17,10 @@ class CustomerRequest extends FormRequest
     }
 
     protected function prepareForValidation()
-    {
+    {    
         $this->merge([
-            'cnpj_cpf' => $this->cnpj_cpf ? formatCPFCNPJ($this->cnpj_cpf) : null
+            'cnpj_cpf' => $this->cnpj_cpf ? formatCPFCNPJ($this->cnpj_cpf) : null,
+            'cep' => $this->cep ? formatCEP($this->cep) : null,
         ]);
     }
 
@@ -64,6 +65,7 @@ class CustomerRequest extends FormRequest
             'cnpj_cpf.string' => 'O CPF/CNPJ precisa ser um formato válido!',
             'cnpj_cpf.max' => 'O CPF/CNPJ precisa ter no máximo 14 caracteres!',
             'cnpj_cpf.unique' => 'Esse CPF/CNPJ já está cadastrado!',
+            'cnpj_cpf.prohibited' => 'O CPF/CNPJ não pode ser alterado!',
             
             'phone.required' => 'O telefone da empresa é obrigatório!',
             'phone.string' => 'O telefone da empresa precisa estar em um formato válido!',

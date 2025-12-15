@@ -15,6 +15,7 @@
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "@vue/compiler-sfc": "^3.5.25",
+    "apexcharts": "^5.3.6",
     "axios": "^1.2.1",
     "mitt": "^3.0.1",
     "qrcode": "^1.5.4",

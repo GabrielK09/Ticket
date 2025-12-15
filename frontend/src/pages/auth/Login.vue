@@ -96,8 +96,6 @@
         });
 
         const res = await loginService(loginData.value.email, loginData.value.password);
-
-        console.log(res);
                 
         if(res.success)
         {            

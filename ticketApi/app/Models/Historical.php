@@ -11,13 +11,13 @@ class Historical extends Model
     protected $fillable = [
         'owner_id',
         'customer_id',
-        'techinical_id',
+        'technical_id',
         'description',
         'customer_id',
         'customer',
         'enterprise',
-        'techinical_id',
-        'techinical',
+        'technical_id',
+        'technical',
         'old_status',
         'new_status',
     ];

@@ -1,13 +1,13 @@
-<template>
+<template>    
     <section class="text-2xl">
         <div
             class="m-2"
-        >        
-            <h2 class="text-gray-600 register-title m-2">Cadastre sua empresa!</h2>
+        >
+            <h2 class="text-gray-600 register-title m-2">Cadastrar um(a) novo(a) cliente</h2>
 
             <div class="ml-2 text-xs">
                 <div 
-                    @click="router.replace({ path: '/owners' })"
+                    @click="router.replace({ path: `/${LocalStorage.getItem('companie_name')}/admin/customers` })"
                     class="flex mb-auto mt-auto cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 back-row">
@@ -20,23 +20,23 @@
             </div>
 
             <q-form
-                @submit="submitRegisterOwner"
+                @submit="updateCustomer"
                 class="q-gutter-md mt-4 form"
             >
                 <div class="p-4 inputs">
                     <q-select 
-                        v-model="owner.ownerType" 
-                        :options="ownerTypes" 
+                        v-model="customer.customerType" 
+                        :options="customerTypes" 
                         label="Tipo de cadastro" 
                         outlined
                         stack-label
                         dense
-                        class="mb-6"
+                        class="mb-8"
                     />
 
                     <q-input 
                         label="" 
-                        v-model="owner.company_name" 
+                        v-model="customer.company_name" 
                         stack-label
                         outlined
                         type="text"
@@ -53,7 +53,7 @@
                     </q-input>
                 
                     <q-input 
-                        v-model="owner.trade_name" 
+                        v-model="customer.trade_name" 
                         type="text" 
                         label="E-mail *" 
                         stack-label
@@ -71,27 +71,26 @@
                     </q-input>
 
                     <q-input 
-                        v-model="owner.cnpj_cpf" 
+                        v-model="customer.cnpj_cpf" 
                         type="text" 
                         label="E-mail *" 
                         stack-label
                         outlined
                         dense
                         :mask="
-                            owner.ownerType === 'Jurídica'
+                            customer.customerType === 'Jurídica'
                             ? '##.###.###/####-##'
                             : '###.###.###-##'
                         "
                         class="mb-4"
                         :error="!!formErrors.cnpj_cpf"
                         :error-message="formErrors.cnpj_cpf"
-                        :rules="[owner.ownerType !== 'Jurídica' ? validateCPF : null]"
-                        @update:model-value="CNPJData"
+                        :disable="true"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
                                 {{ 
-                                    owner.ownerType === 'Jurídica' 
+                                    customer.customerType === 'Jurídica' 
                                     ? 'CNPJ'
                                     : 'CPF'
                                 }} <span class="text-red-500">*</span>
@@ -100,7 +99,7 @@
                     </q-input>
 
                     <q-input 
-                        v-model="owner.phone" 
+                        v-model="customer.phone" 
                         type="text" 
                         label="" 
                         stack-label
@@ -119,7 +118,7 @@
                     </q-input>
 
                     <q-input 
-                        v-model="owner.cep" 
+                        v-model="customer.cep" 
                         type="text" 
                         label="" 
                         stack-label
@@ -138,7 +137,7 @@
                     </q-input>
 
                     <q-input 
-                        v-model="owner.address" 
+                        v-model="customer.address" 
                         type="text" 
                         label="" 
                         stack-label
@@ -156,7 +155,7 @@
                     </q-input>
 
                     <q-input 
-                        v-model="owner.number" 
+                        v-model="customer.number" 
                         type="text" 
                         label="" 
                         stack-label
@@ -173,48 +172,11 @@
                         </template>
                     </q-input>
 
-                    <q-input 
-                        v-model="owner.cnae" 
-                        type="number"
-                        label="" 
-                        stack-label
-                        outlined
-                        dense
-                        class="mb-4 q-input"
-                        :error="!!formErrors.cnae"
-                        :error-message="formErrors.cnae"
-                        maxlength="14"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                CNAE <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
-
-                    <q-input 
-                        v-model="owner.activity" 
-                        type="text" 
-                        label="" 
-                        stack-label
-                        outlined
-                        dense
-                        class="mb-4"
-                        :error="!!formErrors.activity"
-                        :error-message="formErrors.activity"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                Atividade <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
-
                     <div class="flex flex-center">
                         <q-btn 
                             color="primary" 
                             type="submit" 
-                            label="Cadastrar empresa"
+                            label="Cadastrar cliente"
                             no-caps
 
                         />
@@ -228,38 +190,35 @@
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
     import { ref } from 'vue';
-    import { ownerRegister } from '../services/ownerServices';
+    import { onMounted } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
+    import { getCustomerDataService, updateCustomerService } from '../../customerService';
     import * as Yup from 'yup';
-    import { useRouter } from 'vue-router';
-    import { validateCPF } from 'src/util/validate/validateCPFCNPJ';
-import { getCNPJData } from 'src/services/cnpjService/cnpjService';
+
+    const customerSchema = Yup.object({
+        company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
+        trade_name: Yup.string().required('O nome fantasia do cliente é obrigatório!'),
+        phone: Yup.string().required('O telefone do cliente é obrigatório!'),
+        cep: Yup.string().required('O CEP do cliente é obrigatório!'),
+        address: Yup.string().required('O endereço do cliente é obrigatório!'),
+        number: Yup.string().required('O número do cliente é obrigatório!'), 
+    });
 
     const $q = useQuasar();
     const router = useRouter();
+    const route = useRoute();
+    const customerId = route.params.customer_id as string;
     const formErrors = ref<Record<string, string>>({});
+    const ownerId: string = LocalStorage.getItem('owner_id');
+    const companyName = LocalStorage.getItem('companie_name');
 
-    const ownerTypes: string[] = [
+    const customerTypes: string[] = [
         'Jurídica',
         'Física'
     ];
 
-    const ownerSchema = Yup.object({
-        user_id: Yup.string().required(''),
-        company_name: Yup.string().required('A razão social da empresa é obrigatório!'),
-        trade_name: Yup.string().required('O nome fantasia da empresa é obrigatório!'),
-        cnpj_cpf: Yup.string().required('O CPF/CNPJ da empresa é obrigatório!'),
-        phone: Yup.string().required('O telefone da empresa é obrigatório!'),
-        cep: Yup.string().required('O CEP da empresa é obrigatório!'),
-        address: Yup.string().required('O endereço da empresa é obrigatório!'),
-        number: Yup.string().required('O número da empresa é obrigatório!'), 
-        cnae: Yup.string().required('O CNAE da empresa é obrigatório!'),
-        activity: Yup.string().required('A atividade da empresa é obrigatório!'),
-
-    });
-    
-    const owner = ref<ownerContract>({
-        id: null,
-        user_id: LocalStorage.getItem('user_id'),
+    const customer = ref<customerContract>({
+        owner_id: LocalStorage.getItem('owner_id'),
         company_name: '',
         trade_name: '',
         cnpj_cpf: '',
@@ -267,38 +226,74 @@ import { getCNPJData } from 'src/services/cnpjService/cnpjService';
         cep: '',
         address: '',
         number: '',
-        cnae: '',
-        activity: '',
-        ownerType: 'Jurídica'
-    });
-    
-    const submitRegisterOwner = async () => {
-        try {
-            await ownerSchema.validate(owner.value, { abortEarly: false });
+        customerType: 'Jurídica'
 
-            const res = await ownerRegister(owner.value);
+    });
+
+    const getCustomerData = async () => {
+        const res = await getCustomerDataService(customerId, ownerId);
+        const data: customerContract = res.data;
+
+        if(res.success)
+        {
+            customer.value = {
+                owner_id: LocalStorage.getItem('owner_id'),
+                company_name: data.company_name,
+                trade_name: data.trade_name,
+                cnpj_cpf: data.cnpj_cpf,
+                phone: data.phone,
+                cep: data.cep,
+                address: data.address,
+                number: data.number,
+                customerType: data.cnpj_cpf.length === 14 ? 'Jurídica' : 'Física'
+            };  
+        } else {
+            $q.notify({
+                type: 'negative',
+                position: 'top',
+                message: res.message
+
+            });
+        };
+    };
+
+    const updateCustomer = async () => {
+        try {
+            await customerSchema.validate(customer.value, { abortEarly: false });
+
+            const payLoad = {
+                owner_id: LocalStorage.getItem('owner_id'),
+                company_name: customer.value.company_name,
+                trade_name: customer.value.trade_name,
+                phone: customer.value.phone,
+                cep: customer.value.cep,
+                address: customer.value.address,
+                number: customer.value.number,  
+            };
+            
+            const res = await updateCustomerService(payLoad, customerId);
 
             if(res.success)
             {
                 $q.notify({
                     type: 'positive',
-                    message: res.message,
-                    position: 'top'
+                    position: 'top',
+                    message: res.message
+
                 });
-
-                router.replace({
-                    path: '/owners'
-
+                
+                router.replace({ 
+                    path: `/${companyName}/admin/customers`
                 });
             } else {
-                 $q.notify({
+                $q.notify({
                     type: 'negative',
                     position: 'top',
                     message: res.message
 
-                });   
+                });
             };
-
+            
         } catch (error) {
             if(error.inner)
             {
@@ -306,6 +301,7 @@ import { getCNPJData } from 'src/services/cnpjService/cnpjService';
 
                 error.inner.forEach((err: any) => {
                     formErrors.value[err.path] = err.message;
+
                     $q.notify({
                         type: 'negative',
                         position: 'top',
@@ -313,59 +309,30 @@ import { getCNPJData } from 'src/services/cnpjService/cnpjService';
 
                     });
                 });  
-            };
-        };
-    };
-
-    const CNPJData = async (val: string): Promise<any> => {
-        if(val.replace(/\D/g, '').length === 14) 
-        {
-            const res = await getCNPJData(val);
-            const data: ReturnCNPJData = res.data;
-
-            console.log(res);
-
-            if(res.success)
-            {
-                owner.value.address = data.address.street;
-                owner.value.number = data.address.number;
-                owner.value.cep = data.address.zip;
-                owner.value.company_name = data.company.name;
-                owner.value.trade_name = data.company.name;
-                
             } else {
                 $q.notify({
                     type: 'negative',
                     position: 'top',
-                    message: 'CNPJ inválido ou não localizado!',
+                    message: error.response?.data?.message
 
                 });
-            };
+            };  
         };
     };
+
+    onMounted(() => {
+        if(customerId === '1')
+        {
+            $q.notify({
+                type: 'negative',
+                position: 'top',
+                message: 'O cliente padrão não pode ser alterado!'
+
+            });
+
+            router.replace({ path: `/${companyName}/admin/customers` });
+        };
+
+        getCustomerData();
+    });
 </script>
-
-<style lang="scss">
-    @media (max-width: 1336px) {
-        .register-title {
-            text-align: center;
-        }
-
-        .back-customer-label {
-            display: none;
-        }
-
-        .back-row {
-            width: 1rem;
-            height: 1rem;
-        }
-    }
-
-    @media (min-width: 1336px) {
-        .back-row {
-            width: 0.75rem;
-            height: 0.75rem;
-
-        }
-    }
-</style>

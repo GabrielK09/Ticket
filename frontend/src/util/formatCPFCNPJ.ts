@@ -4,4 +4,12 @@ export function formatCPFCNPJ(cnpjCpf: string): string {
                 : cnpjCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
                 
     return newStr;
-}
+};
+
+export function formatNoCharCPFCNPJ(cnpjCpf: string): string {
+    const newStr = cnpjCpf.length === 14
+                ? cnpjCpf.replace(/\D/g, '')
+                : cnpjCpf.replace(/\D/g, '')
+
+    return newStr;
+};

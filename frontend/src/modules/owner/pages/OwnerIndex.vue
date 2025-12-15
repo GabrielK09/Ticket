@@ -142,7 +142,9 @@
     };
 
     const joinCompanie = (companieName: string, companieId: string) => {
-        LocalStorage.setItem('companie_id', companieId);
+        console.log('companieId: ', companieId);
+        
+        LocalStorage.setItem('owner_id', companieId);
         LocalStorage.setItem('companie_name', companieName);
 
         router.replace({ 

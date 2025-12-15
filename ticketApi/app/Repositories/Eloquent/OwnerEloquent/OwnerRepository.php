@@ -14,7 +14,7 @@ class OwnerRepository implements OnwerContract
     {
 
         return Owner::where('user_id', $id)
-                        ->select('company_name', 'cnpj_cpf')
+                        ->select('id', 'company_name', 'cnpj_cpf')
                         ->get();
 
     }

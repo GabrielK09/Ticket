@@ -78,6 +78,13 @@ export default defineConfig((/* ctx */) => {
     framework: {
       config: {},
       i18n: 'de',
+
+      // ==============================================================
+      // ================== Ai pega o que ta lá no i18n ===============
+      // ==============================================================
+      
+      lang: 'pt-BR', 
+
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 

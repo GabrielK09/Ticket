@@ -12,9 +12,9 @@ class CustomerService
         protected CustomerContract $customerRepository
     ){}
 
-    public function index(string $id, int $paginate)
+    public function index(string $id)
     {
-        return $this->customerRepository->index($id, $paginate);
+        return $this->customerRepository->index($id);
     }
 
     public function store(array $data)

@@ -9,9 +9,13 @@ import (
 
 func CreateFile() (string, error) {
 	output := ".env"
-	data := []byte(fmt.Sprintf("API_URL=http://%s:8000/api/v1", pkg.GetLocalIP()))
 
-	if err := os.WriteFile(output, data, 0644); err != nil {
+	data := fmt.Sprintf(
+		"API_URL=http://%s:8000/api/v1\nAPI_CNPJ_URL=https://open.cnpja.com/office/\nAPI_CEP=https://viacep.com.br/ws/\n",
+		pkg.GetLocalIP(),
+	)
+
+	if err := os.WriteFile(output, []byte(data), 0644); err != nil {
 		log.Printf("Erro: %s", err)
 		return "", err
 	}

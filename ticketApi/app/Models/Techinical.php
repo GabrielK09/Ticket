@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Techinical extends Model
+class technical extends Model
 {
-    protected $table = 'techinicals';
+    protected $table = 'technicals';
 
     protected $fillable = [
         'company_name',
