@@ -58,5 +58,6 @@ Route::prefix('v1')->group(function() {
         // });
 
         require_once __DIR__.'/user/userApi.php';
+        require_once __DIR__.'/technicals/technicalsApi.php';
     });
 });

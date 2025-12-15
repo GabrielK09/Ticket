@@ -1,4 +1,4 @@
-export function returnErrorApi(success: boolean, message: string, data: any): any {
+export function returnSuccessApi(success: boolean, message: string, data: any): any {
     return {
         success: success,
         message: message,
@@ -6,7 +6,7 @@ export function returnErrorApi(success: boolean, message: string, data: any): an
     };
 };
 
-export function returnSuccessApi(success: boolean, message: string, data: any): any {
+export function returnErrorApi(success: boolean, message: string, data: any): any {
     return {
         success: success,
         message: message,

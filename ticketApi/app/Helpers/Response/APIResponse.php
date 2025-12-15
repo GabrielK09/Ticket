@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Log;
-
 function apiSuccess($message = 'Sucesso!', $data = [], $success = true, $status = 200)
 {
     return response()->json([
@@ -15,7 +13,6 @@ function apiSuccess($message = 'Sucesso!', $data = [], $success = true, $status 
 
 function apiError($message, $data = [], $success = false, $status = 400)
 {
-    Log::info('Chamou o apiError');
     return response()->json([
         'success' => $success,
         'message' => $message,
@@ -24,5 +21,4 @@ function apiError($message, $data = [], $success = false, $status = 400)
         
 
     ], $status);
-
-}
+};

@@ -10,5 +10,6 @@ Route::prefix('ticket')->group(function() {
         Route::put('/update/{id}', 'update');
         Route::put('/finish', 'finishTicket');
         Route::get('/show/{id}/{code}', 'show');
+        
     });
 });

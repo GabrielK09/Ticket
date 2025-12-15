@@ -86,7 +86,7 @@
                         :error="!!formErrors.cnpj_cpf"
                         :error-message="formErrors.cnpj_cpf"
                         :rules="[owner.ownerType !== 'Jurídica' ? validateCPF : null]"
-                        @update:model-value="CNPJData"
+                        @blur="CNPJData(owner.cnpj_cpf)"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -273,6 +273,13 @@ import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     });
     
     const submitRegisterOwner = async () => {
+        $q.notify({
+            position: 'top',
+            color: 'green',
+            message: 'Processando dados...' 
+
+        });
+        
         try {
             await ownerSchema.validate(owner.value, { abortEarly: false });
 
