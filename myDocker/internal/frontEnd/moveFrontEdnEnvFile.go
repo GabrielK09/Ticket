@@ -2,6 +2,7 @@ package frontEnd
 
 import (
 	"log"
+	"myDocker/pkg"
 	"os"
 	"path/filepath"
 )
@@ -35,20 +36,28 @@ func MoveFile() error {
 
 		}
 
-		log.Println("Arquivo criado, vai mover ele para: ", finalPath)
+		log.Println("O arquivo foi criado, vai validar o caminho: ", finalPath)
+
+		existsPath, err := pkg.CheckExistsPath(
+			finalPath,
+			"C:\\Gabriel\\MVPs\\1\\frontend",
+		)
+
+		if err != nil {
+			return err
+		}
 
 		oldPath := filepath.Join(currentPath, fileName)
-
-		newPath := filepath.Join(finalPath, fileName)
+		newPath := filepath.Join(existsPath, fileName)
 
 		err = os.Rename(oldPath, newPath)
 
 		if err != nil {
-			log.Fatalf("Erro ao mover o arquivo %s", err)
-			return err
+			log.Printf("Erro ao mover o arquivo %s\n", err)
+
 		}
 
-		log.Println("Arquivo movido")
+		log.Println("Arquivo movido para: ", existsPath)
 
 		log.Printf("Dir: %s", newPath)
 

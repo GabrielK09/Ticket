@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"errors"
+	"io/fs"
 	"log"
 	"os"
 )
@@ -9,6 +11,18 @@ func validateDir(p string) bool {
 	info, err := os.Stat(p)
 
 	return err == nil && info.IsDir()
+}
+
+func CheckExistsPath(paths ...string) (string, error) {
+	for _, path := range paths {
+		if _, err := os.Stat(path); err == nil {
+			return path, nil
+		} else if !errors.Is(err, fs.ErrNotExist) {
+			return "", err
+		}
+	}
+
+	return "", nil
 }
 
 func SetDier(firstDir, otherDir string) (string, error) {
