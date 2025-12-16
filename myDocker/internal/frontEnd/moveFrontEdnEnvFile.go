@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 )
 
-var finalPath string = "D:\\Gabriel\\MVPs\\1\\frontend"
-
 func MoveFile() error {
 	// Precisa conferir se no caminho final já tem uma .env com o IP
 
@@ -36,11 +34,12 @@ func MoveFile() error {
 
 		}
 
-		log.Println("O arquivo foi criado, vai validar o caminho: ", finalPath)
+		log.Println("O arquivo foi criado, vai validar o caminho: D:\\Gabriel\\MVPs\\1\\frontend")
 
 		existsPath, err := pkg.CheckExistsPath(
-			finalPath,
+			"D:\\Gabriel\\MVPs\\1\\frontend",
 			"C:\\Gabriel\\MVPs\\1\\frontend",
+			"C:\\Gabriel\\Projetos\\Ticket\\frontend",
 		)
 
 		if err != nil {

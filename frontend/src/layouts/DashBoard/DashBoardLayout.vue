@@ -23,7 +23,7 @@
                         v-ripple
                         clickable
                         :key="row.name"
-                        :to="`/${companyName}/admin/${row.path}`"
+                        :to="`/${companyNameUrl}/admin/${row.path}`"
                         :active="route.path === row.path"
                         class="rounded mt-3"
                         active-class="my-link"
@@ -79,6 +79,7 @@
     const router = useRouter();
     const drawerLeft = ref<boolean>(true);
     const companyName = LocalStorage.getItem('companie_name');
+    const companyNameUrl = LocalStorage.getItem('companie_name_url');
         
     const ticketRows = ref<ticketRows[]>([
         { label: 'DashBoard', icon: 'dashboard', name: 'dashboard', path: ''},
@@ -90,7 +91,7 @@
 
     ]);
 
-    const changeCompanyDialog = () => {
+    const changeCompanyDialog = (): void => {
         $q.dialog({
             message: 'Deseja realmente trocar de empresa?',
 
@@ -114,9 +115,10 @@
         });
     };
 
-    const changeCompany = () => {
+    const changeCompany = (): void => {
         LocalStorage.remove('owner_id');
         LocalStorage.remove('companie_name');  
+        LocalStorage.remove('companie_name_url');  
         
         router.replace({
             path: '/owners'
@@ -124,7 +126,7 @@
         });
     };
 
-    const logoutDialog = () => {
+    const logoutDialog = (): void => {
         $q.dialog({
             message: 'Deseja realmente sair?',
             cancel: {
@@ -147,7 +149,7 @@
         });
     };
 
-    const logout = async() => {
+    const logout = async(): Promise<void>=> {
         const res = await logoutService();
 
         if(res.success)
@@ -159,7 +161,6 @@
             });
 
             LocalStorage.remove('auth_token');
-            
             LocalStorage.remove('user_id');
             LocalStorage.remove('user');
 

@@ -124,7 +124,11 @@
     let showOptions = ref<boolean>(false);
     let showUserData = ref<boolean>(false);
 
-    const index = async () => {
+    function formatCompanieNameForUrl(companieName: string): string {
+        return companieName.split(' ')[0];
+    };
+
+    const index = async (): Promise<void> => {
         const res = await getAllCompanies(userId);
 
         if(res.success)
@@ -141,23 +145,22 @@
         };
     };
 
-    const joinCompanie = (companieName: string, companieId: string) => {
-        console.log('companieId: ', companieId);
-        
+    const joinCompanie = (companieName: string, companieId: string): void => {        
         LocalStorage.setItem('owner_id', companieId);
         LocalStorage.setItem('companie_name', companieName);
+        LocalStorage.setItem('companie_name_url', formatCompanieNameForUrl(companieName));
 
         router.replace({ 
-            path: `${companieName}/admin`
+            path: `${companieName.split(' ')[0]}/admin`
         });
     };
 
-    const updateView = () => {
+    const updateView = (): void => {
         location.reload();
 
     };
 
-    const logoutDialog = () => {
+    const logoutDialog = (): void => {
         $q.dialog({
             message: 'Deseja realmente sair?',
             cancel: {
@@ -181,7 +184,7 @@
         });
     };
 
-    const logout = async() => {
+    const logout = async(): Promise<void> => {
         const res = await logoutService();
 
         if(res.success)
@@ -209,7 +212,7 @@
         };
     };
     
-    const tryClipBoard = async() => {
+    const tryClipBoard = async(): Promise<void> => {
         console.log('Init tryClipBoard');
         
         try {

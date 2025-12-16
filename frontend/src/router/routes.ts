@@ -86,7 +86,10 @@ const routes: RouteRecordRaw[] = [
         path: '/',
         component: () => import('src/pages/home/HomePage.vue')
     },
-
+    {
+        path: '/teste',
+        component: () => import('src/modules/test/test.vue')
+    },
     {
         path: '/:catchAll(.*)*',
         component: () => import('src/pages/ErrorNotFound.vue')

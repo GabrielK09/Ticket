@@ -113,7 +113,7 @@
  
     const $q = useQuasar();
     const searchInput = ref('');
-    const companyName = LocalStorage.getItem('companie_name');
+    const companyName = LocalStorage.getItem('companie_name_url');
     const ownerId: string = LocalStorage.getItem('owner_id');
     const allCustomers = ref<customerContract[]>([]);
     const customers = ref<customerContract[]>([]);

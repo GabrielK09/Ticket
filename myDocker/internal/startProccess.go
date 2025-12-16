@@ -10,9 +10,10 @@ import (
 func Start() error {
 	ip := pkg.GetLocalIP()
 
-	backEndDir, err := pkg.SetDier(
+	backEndDir, err := pkg.CheckExistsPath(
 		"D:\\Gabriel\\MVPs\\1\\ticketApi",
 		"C:\\Gabriel\\MVPs\\1\\ticketApi",
+		"C:\\Gabriel\\Projetos\\Ticket\\ticketApi",
 	)
 
 	if err != nil {
@@ -27,9 +28,10 @@ func Start() error {
 
 	// -------------------------------- \\
 
-	frontEndDir, err := pkg.SetDier(
+	frontEndDir, err := pkg.CheckExistsPath(
 		"D:\\Gabriel\\MVPs\\1\\frontend",
 		"C:\\Gabriel\\MVPs\\1\\frontend",
+		"C:\\Gabriel\\Projetos\\Ticket\\frontend",
 	)
 
 	if err != nil {
