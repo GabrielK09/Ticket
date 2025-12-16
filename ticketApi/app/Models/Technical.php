@@ -4,11 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class technical extends Model
+class Technical extends Model
 {
     protected $table = 'technicals';
 
+    protected $primaryKey = 'technical_id';
+
     protected $fillable = [
+        'technical_id',
+        'owner_id',
         'company_name',
         'trade_name',
         'cnpj_cpf',
@@ -18,5 +22,6 @@ class technical extends Model
         'number',  
         'gender',  
         'availability',  
+        'active',  
     ];
 }

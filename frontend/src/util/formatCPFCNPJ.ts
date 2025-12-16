@@ -5,11 +5,3 @@ export function formatCPFCNPJ(cnpjCpf: string): string {
                 
     return newStr;
 };
-
-export function formatNoCharCPFCNPJ(cnpjCpf: string): string {
-    const newStr = cnpjCpf.length === 14
-                ? cnpjCpf.replace(/\D/g, '')
-                : cnpjCpf.replace(/\D/g, '')
-
-    return newStr;
-};

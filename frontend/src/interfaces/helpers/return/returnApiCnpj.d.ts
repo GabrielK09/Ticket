@@ -7,7 +7,6 @@ type Address = {
 };
 
 type Company = { name: string };
-
 interface ReturnCNPJData {
     company: Company;
     address: Address;

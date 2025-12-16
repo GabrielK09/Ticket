@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('number', 10);
             $table->string('gender', 1);
             $table->boolean('availability')->default(1);
+            $table->boolean('active')->default(1);
             $table->timestamps();
         });
     }

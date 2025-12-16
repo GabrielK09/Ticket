@@ -3,30 +3,40 @@
         <div
             class="m-2"
         >
-            <h2 class="text-gray-600 register-title m-2">Cadastrar um(a) novo(a) cliente</h2>
+            <h2 class="text-gray-600 register-title m-2">Cadastrar um(a) novo(a) técnico</h2>
 
             <div class="ml-2 text-xs">
                 <div 
-                    @click="router.replace({ path: `/${LocalStorage.getItem('companie_name')}/admin/customers` })"
+                    @click="router.replace({ path: `/${LocalStorage.getItem('companie_name')}/admin/technicals` })"
                     class="flex mb-auto mt-auto cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 back-row">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
                     </svg>      
-                    <span class="back-customer-label">
+                    <span class="back-technicel-label">
                         Voltar para listagem
                     </span>
                 </div>
             </div>
 
             <q-form
-                @submit="submitCustomer"
+                @submit="submitTechnicel"
                 class="q-gutter-md mt-4 form"
             >
                 <div class="p-4 inputs">
                     <q-select 
-                        v-model="customer.customerType" 
-                        :options="customerTypes" 
+                        v-model="technicel.gender" 
+                        :options="technicelGenders" 
+                        label="Gênero" 
+                        outlined
+                        stack-label
+                        dense
+                        class="mb-8"
+                    />
+                    
+                    <q-select 
+                        v-model="technicel.technicelTypes" 
+                        :options="technicelTypes" 
                         label="Tipo de cadastro" 
                         outlined
                         stack-label
@@ -36,7 +46,7 @@
 
                     <q-input 
                         label="" 
-                        v-model="customer.company_name" 
+                        v-model="technicel.company_name" 
                         stack-label
                         outlined
                         type="text"
@@ -53,7 +63,7 @@
                     </q-input>
                 
                     <q-input 
-                        v-model="customer.trade_name" 
+                        v-model="technicel.trade_name" 
                         type="text" 
                         label="E-mail *" 
                         stack-label
@@ -71,26 +81,26 @@
                     </q-input>
 
                     <q-input 
-                        v-model="customer.cnpj_cpf" 
+                        v-model="technicel.cnpj_cpf" 
                         type="text" 
                         label="E-mail *" 
                         stack-label
                         outlined
                         dense
                         :mask="
-                            customer.customerType === 'Jurídica'
+                            technicel.technicelTypes === 'Jurídica'
                             ? '##.###.###/####-##'
                             : '###.###.###-##'
                         "
                         class="mb-4"
                         :error="!!formErrors.cnpj_cpf"
                         :error-message="formErrors.cnpj_cpf"
-                        @blur="CNPJData(customer.cnpj_cpf)"
+                        @blur="CNPJData(technicel.cnpj_cpf)"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
                                 {{ 
-                                    customer.customerType === 'Jurídica' 
+                                    technicel.technicelTypes === 'Jurídica' 
                                     ? 'CNPJ'
                                     : 'CPF'
                                 }} <span class="text-red-500">*</span>
@@ -99,7 +109,7 @@
                     </q-input>
 
                     <q-input 
-                        v-model="customer.phone" 
+                        v-model="technicel.phone" 
                         type="text" 
                         label="" 
                         stack-label
@@ -118,7 +128,7 @@
                     </q-input>
 
                     <q-input 
-                        v-model="customer.cep" 
+                        v-model="technicel.cep" 
                         type="text" 
                         label="" 
                         stack-label
@@ -128,7 +138,7 @@
                         class="mb-4"
                         :error="!!formErrors.cep"
                         :error-message="formErrors.cep"
-                        @blur="CEPData(customer.cep)"
+                        @blur="CEPData(technicel.cep)"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -138,7 +148,7 @@
                     </q-input>
 
                     <q-input 
-                        v-model="customer.address" 
+                        v-model="technicel.address" 
                         type="text" 
                         label="" 
                         stack-label
@@ -156,7 +166,7 @@
                     </q-input>
 
                     <q-input 
-                        v-model="customer.number" 
+                        v-model="technicel.number" 
                         type="text" 
                         label="" 
                         stack-label
@@ -177,7 +187,7 @@
                         <q-btn 
                             color="primary" 
                             type="submit" 
-                            label="Cadastrar cliente"
+                            :label="`Cadastrar ${returnGender(technicel.gender)}`"
                             no-caps
 
                         />
@@ -192,13 +202,13 @@
     import { LocalStorage, useQuasar } from 'quasar';
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
-    import { createCustomer } from '../../customerService';
+    import { createTechnicel } from '../../technicalsService';
     import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     import * as Yup from 'yup';
 import formatValues from 'src/util/formatValues';
 import { getCepData } from 'src/services/cep/cepService';
 
-    const customerSchema = Yup.object({
+    const technicelSchema = Yup.object({
         company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
         trade_name: Yup.string().required('O nome fantasia do cliente é obrigatório!'),
         cnpj_cpf: Yup.string().required('O CPF/CNPJ do cliente é obrigatório!'),
@@ -206,11 +216,18 @@ import { getCepData } from 'src/services/cep/cepService';
         cep: Yup.string().required('O CEP do cliente é obrigatório!'),
         address: Yup.string().required('O endereço do cliente é obrigatório!'),
         number: Yup.string().required('O número do cliente é obrigatório!'), 
+        gender: Yup.string().required('O genêro do técnico é obrigatório!')
     });
 
-    const customerTypes: string[] = [
+    const technicelTypes: string[] = [
         'Jurídica',
         'Física'
+    ];
+
+    const technicelGenders: string[] = [
+        'M',
+        'F',
+        'O',
     ];
 
     const formErrors = ref<Record<string, string>>({});
@@ -218,7 +235,7 @@ import { getCepData } from 'src/services/cep/cepService';
     const router = useRouter();
     const $q = useQuasar();
 
-    const customer = ref<customerContract>({
+    const technicel = ref<technicalsContract>({
         owner_id: LocalStorage.getItem('owner_id'),
         company_name: '',
         trade_name: '',
@@ -227,9 +244,18 @@ import { getCepData } from 'src/services/cep/cepService';
         cep: '',
         address: '',
         number: '',
-        customerType: 'Jurídica'
+        gender: 'M',
+        availability: false,
+        technicelTypes: 'Jurídica',
 
     });
+
+    const returnGender = (gender: string): string => {
+        if(gender.toUpperCase() === 'O') return 'Técnic'; 
+        if(gender.toUpperCase() === 'F') return 'Técnica'; 
+        return 'Técnico'; 
+
+    };
 
     const CEPData = async (val: string): Promise<any> => {
         if(formatValues(val).length === 8) 
@@ -239,7 +265,7 @@ import { getCepData } from 'src/services/cep/cepService';
 
             if(res.success)
             {
-                customer.value.address = data.logradouro || data.bairro;
+                technicel.value.address = data.logradouro || data.bairro;
                   
             } else {
                 $q.notify({
@@ -259,11 +285,11 @@ import { getCepData } from 'src/services/cep/cepService';
 
             if(res.success)
             {
-                customer.value.address = data.address.street;
-                customer.value.number = data.address.number;
-                customer.value.cep = data.address.zip;
-                customer.value.company_name = data.company.name;
-                customer.value.trade_name = data.company.name;
+                technicel.value.address = data.address.street;
+                technicel.value.number = data.address.number;
+                technicel.value.cep = data.address.zip;
+                technicel.value.company_name = data.company.name;
+                technicel.value.trade_name = data.company.name;
                 
             } else {
                 $q.notify({
@@ -276,11 +302,11 @@ import { getCepData } from 'src/services/cep/cepService';
         };
     };
 
-    const submitCustomer = async () => {
+    const submitTechnicel = async () => {
         try {
-            await customerSchema.validate(customer.value, { abortEarly: false });
+            await technicelSchema.validate(technicel.value, { abortEarly: false });
             
-            const res = await createCustomer(customer.value);
+            const res = await createTechnicel(technicel.value);
 
             if(res.success)
             {
@@ -292,7 +318,7 @@ import { getCepData } from 'src/services/cep/cepService';
                 });
                 
                 router.replace({
-                    path: 'customers'
+                    path: 'technicels'
 
                 });
                 

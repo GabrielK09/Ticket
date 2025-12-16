@@ -5,14 +5,14 @@
                 class="m-2"
             >
                 <div class="flex justify-between">
-                    <h2 class="text-gray-600 m-2">Clientes</h2>
+                    <h2 class="text-gray-600 m-2">Técnicos</h2>
 
                     <div class="mt-auto mb-auto">
                         <q-btn 
                             no-caps 
                             class="bg-sky-500 text-white" 
-                            label="Cadastrar novo cliente"
-                            :to="`/${companyName}/register/customer`"
+                            label="Cadastrar novo técnico"
+                            :to="`/${companyName}/register/technicel`"
                         />
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                 <div class="">
                     <q-table
                         borded
-                        :rows="customers"
+                        :rows="technicels"
                         :columns="columns"
                         row-key="name"
                         class="rounded-xl"
@@ -38,7 +38,7 @@
                                 </template>
 
                                 <template v-slot:label>
-                                    <span class="text-xs">Buscar por um cliente ...</span>
+                                    <span class="text-xs">Buscar por um técnico(a) ...</span>
                                 </template>
                             </q-input>
                         </template>
@@ -53,26 +53,26 @@
                                     <template v-if="col.name === 'actions'">
                                         <q-btn 
                                             :class="{
-                                                'bg-sky-500 text-white': props.row.customer_id !== 1 && isActive(props.row.active),
-                                                'bg-gray-500 text-white': props.row.customer_id === 1 || !isActive(props.row.active),
+                                                'bg-sky-500 text-white': props.row.technical_id !== 1 && isActive(props.row.active),
+                                                'bg-gray-500 text-white': props.row.technical_id === 1 || !isActive(props.row.active),
                                             }"
 
                                             icon="edit" 
                                             size="10px"
-                                            :to="`/${companyName}/edit/customer/${props.row.customer_id}`"
-                                            :disable="props.row.customer_id === 1 || !isActive(props.row.active)"
+                                            :to="`/${companyName}/edit/technical/${props.row.technical_id}`"
+                                            :disable="props.row.technical_id === 1 || !isActive(props.row.active)"
                                         />
 
                                         <q-btn 
                                             :class="{
-                                                'bg-red-500 text-white': props.row.customer_id !== 1 && isActive(props.row.active),
-                                                'bg-green-500 text-white': props.row.customer_id !== 1 && !isActive(props.row.active),
-                                                'bg-gray-500 text-white': props.row.customer_id === 1 || !isActive(props.row.active),
+                                                'bg-red-500 text-white': props.row.technical_id !== 1 && isActive(props.row.active),
+                                                'bg-green-500 text-white': props.row.technical_id !== 1 && !isActive(props.row.active),
+                                                'bg-gray-500 text-white': props.row.technical_id === 1 || !isActive(props.row.active),
                                             }"
                                             class="ml-4"
                                             :icon="isActive(props.row.active) ? 'delete' : 'add'" 
                                             size="10px"
-                                            @click="showDialogDisableCustomer(props.row.customer_id, props.row.active)"
+                                            @click="showDialogDisableTechnical(props.row.technical_id, props.row.active)"
                                         />
                                     </template>
 
@@ -93,7 +93,7 @@
                         <template v-slot:no-data>
                             <div class="ml-auto mr-auto">
                                 <q-icon name="warning" size="30px"/>
-                                <span class="mt-auto mb-auto ml-2 text-xs">Sem clientes cadastrados</span>
+                                <span class="mt-auto mb-auto ml-2 text-xs">Sem técnicos cadastrados</span>
 
                             </div>
                         </template>
@@ -109,21 +109,20 @@
     import { isActive } from 'src/util/isActive/isActive';
     import { formatCPFCNPJ } from 'src/util/formatCPFCNPJ';
     import { onMounted, ref } from 'vue';
-    import { getAllTechnicalsService } from '../technicalsService';
-    //import { disableOrActiveCustomerService, getAllCustomersService } from '../technicalsService';
+    import { getAllTechnicalsService, disableOrActiveTechnicelService } from '../technicalsService';
  
     const $q = useQuasar();
     const searchInput = ref('');
     const companyName = LocalStorage.getItem('companie_name');
     const ownerId: string = LocalStorage.getItem('owner_id');
-    const allCustomers = ref<customerContract[]>([]);
-    const customers = ref<customerContract[]>([]);
+    const allTechnicals = ref<technicalsContract[]>([]);
+    const technicels = ref<technicalsContract[]>([]);
 
     const columns: QTableColumn[] = [
         {
-            field: 'customer_id',
+            field: 'technical_id',
             label: 'ID',
-            name: 'customer_id',
+            name: 'technical_id',
             align: 'center'
         },
         {
@@ -158,14 +157,14 @@
         
         if(res.success)
         {
-            customers.value = res.data;
-            allCustomers.value = [...customers.value];
+            technicels.value = res.data;
+            allTechnicals.value = [...technicels.value];
         };
     };
 
-    const showDialogDisableCustomer = (customerId: string, currentStatus: number): void  => {
+    const showDialogDisableTechnical = (technicelId: string, currentStatus: number): void  => {
         $q.dialog({
-            title: `Deseja realmente ${currentStatus === 1 ? 'desativar' : 'ativar'} esse cliente?`,
+            title: `Deseja realmente ${currentStatus === 1 ? 'desativar' : 'ativar'} esse técnico?`,
             ok: {
                 label: 'Sim',
                 color: 'green'
@@ -177,15 +176,16 @@
 
             }
         }).onOk(() => {
-            disableOrActiveCustomer(customerId, currentStatus === 1 ? 'disable' : 'active');
+            disableOrActiveTechnical(technicelId, currentStatus === 1 ? 'disable' : 'active');
 
         }).onCancel(() => {
             return;
+
         });
     };
 
-    const disableOrActiveCustomer = async (customerId: string, action: string): Promise<void> => {
-        const res = await disableOrActiveCustomerService(customerId, ownerId, action);
+    const disableOrActiveTechnical = async (technicelId: string, action: string): Promise<void> => {
+        const res = await disableOrActiveTechnicelService(technicelId, ownerId, action);
 
         if(res.success)
         {

@@ -46,6 +46,10 @@ const routes: RouteRecordRaw[] = [
                         component: () => import('src/modules/tickets/pages/Register/RegisterTickets.vue')
                     },
                     {
+                        path: 'technicel',
+                        component: () => import('src/modules/technicals/pages/Register/RegisterTechnicel.vue')
+                    },
+                    {
                         path: 'pay_ment_forms',
                         component: () => import('src/modules/payMentForms/pages/Register/RegisterPayMentForms.vue')
                     }

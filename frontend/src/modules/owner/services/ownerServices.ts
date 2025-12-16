@@ -3,7 +3,11 @@ import { returnErrorApi, returnSuccessApi } from "src/helpers/return/returnApi";
 
 export async function getAllCompanies(id: string): Promise<any> {
     try {
-        const res = await api.get(`/owner/all/${id}`);
+        const res = await api.get(`/owner/all/${id}`, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
 
         return returnSuccessApi(true, res.data.message, res.data);
 
@@ -14,7 +18,11 @@ export async function getAllCompanies(id: string): Promise<any> {
 
 export async function ownerRegister(ownerData: ownerContract): Promise<any> {
     try {
-        const res = await api.post('/owner/create', ownerData);
+        const res = await api.post('/owner/create', ownerData, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
 
         return returnSuccessApi(true, res.data.message, res.data);
 

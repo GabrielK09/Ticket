@@ -36,6 +36,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\CashRegister\CashRegisterContract::class,
             \App\Repositories\Eloquent\CashRegisterEloquent\CashRegisterRepository::class
         );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Technicel\TechnicelContract::class,
+            \App\Repositories\Eloquent\TechnicelEloquent\TechnicelRepository::class
+        );
     }
 
     /**

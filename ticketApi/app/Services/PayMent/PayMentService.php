@@ -4,7 +4,6 @@ namespace App\Services\PayMent;
 
 use App\Repositories\Interfaces\PayMentForm\PayMentFormContract;
 use Illuminate\Support\Facades\DB;
-
 class PayMentService
 {
     public function __construct(

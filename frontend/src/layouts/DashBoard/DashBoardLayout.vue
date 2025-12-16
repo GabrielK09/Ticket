@@ -40,7 +40,7 @@
                 </q-list>
             </q-toolbar>
 
-            <div class="fixed bottom-0 flex flex-center mt-4">
+            <div class="fixed bottom-0 flex flex-center mt-4 bg-[#03202e] fixed-btns">
                 <q-btn 
                     class=" mb-4" 
                     icon="store" 
@@ -187,6 +187,11 @@
 </script>
 
 <style lang="scss">
+    .dashboard {
+        height: 100vh;
+
+    }
+
     .my-link {
         color: #fff;
         background: #07425f;
@@ -201,13 +206,6 @@
             position: fixed;
             bottom: 0;
             margin: 0 0 2rem 0;
-            background-color: aqua;
         }   
-    }
-
-    @media (min-width: 1100px) {
-        .fixed-logout-button {
-            background-color: aqua;
-        }
     }
 </style>

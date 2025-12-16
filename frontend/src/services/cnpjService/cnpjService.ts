@@ -1,20 +1,18 @@
 import axios from "axios";
 import { returnSuccessApi, returnErrorApi } from "src/helpers/return/returnApi";
-import { formatNoCharCPFCNPJ } from "src/util/formatCPFCNPJ";
+import formatValues from "src/util/formatValues";
 
 export async function getCNPJData(cnpj: string): Promise<any> {
-    try {
-        console.log(process.env.API_CNPJ_URL);
-        
-        const res = await axios.get(`${process.env.API_CNPJ_URL}/${formatNoCharCPFCNPJ(cnpj)}`);
+    try {        
+        const res = await axios.get(`${process.env.API_CNPJ_URL}/${formatValues(cnpj)}`);
         const data: ReturnCNPJData = res.data;
 
-        const dataForRetur = {
+        const dataForReturn = {
             address: data.address,
             company: data.company
         };
 
-        return returnSuccessApi(true, 'Dados do CNPJ!', dataForRetur);
+        return returnSuccessApi(true, 'Dados do CNPJ!', dataForReturn);
         
     } catch (error) {
         

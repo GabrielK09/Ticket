@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Services\Technicel;
+
+use App\Repositories\Interfaces\Technicel\TechnicelContract;
+use Exception;
+use Illuminate\Support\Facades\DB;
+
+class TechnicelService
+{
+    public function __construct(
+        protected TechnicelContract $technicelRepository
+    ){}
+
+    public function index(string $id)
+    {
+        return $this->technicelRepository->index($id);
+    }
+
+    public function store(array $data)
+    {
+        return DB::transaction(fn() => $this->technicelRepository->store($data));
+    }
+
+    public function update(array $data, string $id)
+    {
+        return DB::transaction(fn() => $this->technicelRepository->update($data, $id));
+    }
+
+    public function show(string $ownerId, string $id)
+    {
+        $technicel = $this->technicelRepository->findById($ownerId, $id);
+
+        if(!$technicel)
+        {
+            throw new Exception('Cliente não localizado!', 1);
+        }
+
+        return $technicel;
+    }
+
+    public function activeOrDisable(string $ownerId, string $id, string $action)
+    {
+        $technicel = $this->technicelRepository->activeOrDisable($ownerId, $id, $action);
+        
+        if(!$technicel)
+        {
+            throw new Exception('Cliente não localizado!', 1);
+        }
+
+        return $technicel;
+    }
+
+}

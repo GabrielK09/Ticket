@@ -3,7 +3,11 @@ import { returnErrorApi, returnSuccessApi } from "src/helpers/return/returnApi";
 
 export async function getAllCustomersService(ownerId: string): Promise<any> {
     try {
-        const res = await api.get(`/customer/all/${ownerId}`)
+        const res = await api.get(`/customer/all/${ownerId}`, {
+            headers: {
+                Accept: 'application/json'
+            }
+        })
 
         return returnSuccessApi(true, res.data.mesage, res.data.data);
 
@@ -13,9 +17,13 @@ export async function getAllCustomersService(ownerId: string): Promise<any> {
     };
 };
 
-export async function createCustomer(payMent: customerContract): Promise<any> {
+export async function createCustomer(payLoad: customerContract): Promise<any> {
     try {
-        const res = await api.post('/customer/create', payMent);
+        const res = await api.post('/customer/create', payLoad, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
 
         return returnSuccessApi(true, res.data.message, res.data);
 
@@ -33,7 +41,11 @@ export async function disableOrActiveCustomerService(customerId: string, ownerId
             action: action
         };
 
-        const res = await api.put('/customer/new-status-customer', payLoad);
+        const res = await api.put('/customer/new-status-customer', payLoad, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
         
         return returnSuccessApi(true, res.data.message, res.data.data);
 
@@ -45,7 +57,11 @@ export async function disableOrActiveCustomerService(customerId: string, ownerId
 
 export async function getCustomerDataService(customerId: string, ownerId: string): Promise<any> {
     try {
-        const res = await api.get(`customer/${ownerId}/customer-data/${customerId}`);
+        const res = await api.get(`customer/${ownerId}/customer-data/${customerId}`, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
         const data: customerContract = res.data.data;
     
         const customer = {
@@ -70,7 +86,11 @@ export async function getCustomerDataService(customerId: string, ownerId: string
 
 export async function updateCustomerService(payLoad: any, customerId: string): Promise<any> {
     try {
-        const res = await api.put(`/customer/update/${customerId}`, payLoad);
+        const res = await api.put(`/customer/update/${customerId}`, payLoad, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
         
         return returnSuccessApi(true, res.data.message, res.data.data);
 

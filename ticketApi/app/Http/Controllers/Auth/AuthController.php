@@ -8,6 +8,7 @@ use App\Services\User\UserService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -23,12 +24,20 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $startLogin = microtime(true);
+
         $credentials = $request->only('email', 'password');
         $user = $this->userService->findByMail($credentials['email']);
 
         if($user && Hash::check($credentials['password'], $user->password))
         {
             $token = $user->createToken('api-token')->plainTextToken;
+
+            $endLogin = microtime(true);
+
+            $executionTime = ($startLogin - $endLogin) / 60;
+
+            Log::debug("Tempo de execução do login: {$executionTime}", );
 
             return response()->json([
                 'message' => 'Login bem sucedido!',
@@ -41,7 +50,7 @@ class AuthController extends Controller
         } else {
             throw new Exception('Credencias incorretas!');
 
-        }
+        };
     }
 
     public function logout(Request $request)
