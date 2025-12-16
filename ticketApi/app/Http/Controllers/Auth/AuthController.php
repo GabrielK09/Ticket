@@ -27,7 +27,7 @@ class AuthController extends Controller
         $startLogin = microtime(true);
 
         $credentials = $request->only('email', 'password');
-        $user = $this->userService->findByMail($credentials['email']);
+        $user = $this->userService->findByMailForAuth($credentials['email']);
 
         if($user && Hash::check($credentials['password'], $user->password))
         {

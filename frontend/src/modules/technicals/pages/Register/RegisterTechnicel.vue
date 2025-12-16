@@ -46,7 +46,7 @@
 
                     <q-input 
                         label="" 
-                        v-model="technicel.company_name" 
+                        v-model="companyNameUpper" 
                         stack-label
                         outlined
                         type="text"
@@ -63,7 +63,7 @@
                     </q-input>
                 
                     <q-input 
-                        v-model="technicel.trade_name" 
+                        v-model="tradeNameUpper" 
                         type="text" 
                         label="E-mail *" 
                         stack-label
@@ -200,13 +200,13 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { createTechnicel } from '../../technicalsService';
     import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     import * as Yup from 'yup';
-import formatValues from 'src/util/formatValues';
-import { getCepData } from 'src/services/cep/cepService';
+    import formatValues from 'src/util/formatValues';
+    import { getCepData } from 'src/services/cep/cepService';
 
     const technicelSchema = Yup.object({
         company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
@@ -247,7 +247,21 @@ import { getCepData } from 'src/services/cep/cepService';
         gender: 'M',
         availability: false,
         technicelTypes: 'Jurídica',
+    });
 
+    const companyNameUpper = computed({
+        get: () => technicel.value.company_name,
+        set: (val: string) => {
+            technicel.value.company_name = val.toUpperCase();  
+            technicel.value.trade_name = val.toUpperCase();  
+        }
+    });
+    
+    const tradeNameUpper = computed({
+        get: () => technicel.value.trade_name,
+        set: (val: string) => {
+            technicel.value.trade_name = val.toUpperCase();  
+        }
     });
 
     const returnGender = (gender: string): string => {
@@ -257,7 +271,7 @@ import { getCepData } from 'src/services/cep/cepService';
 
     };
 
-    const CEPData = async (val: string): Promise<any> => {
+    const CEPData = async (val: string): Promise<void> => {
         if(formatValues(val).length === 8) 
         {
             const res = await getCepData(val);
@@ -277,7 +291,7 @@ import { getCepData } from 'src/services/cep/cepService';
         };
     };
 
-    const CNPJData = async (val: string): Promise<any> => {
+    const CNPJData = async (val: string): Promise<void> => {
         if(formatValues(val).length === 14) 
         {
             const res = await getCNPJData(val);
@@ -285,11 +299,20 @@ import { getCepData } from 'src/services/cep/cepService';
 
             if(res.success)
             {
-                technicel.value.address = data.address.street;
-                technicel.value.number = data.address.number;
-                technicel.value.cep = data.address.zip;
-                technicel.value.company_name = data.company.name;
-                technicel.value.trade_name = data.company.name;
+                if(technicel.value.company_name !== '' || technicel.value.trade_name) 
+                {
+                    technicel.value.address = data.address.street;
+                    technicel.value.number = data.address.number;
+                    technicel.value.cep = data.address.zip;  
+                    
+                } else {
+                    technicel.value.company_name = data.company.name;
+                    technicel.value.trade_name = data.company.name;
+                    technicel.value.address = data.address.street;
+                    technicel.value.number = data.address.number;
+                    technicel.value.cep = data.address.zip;  
+                    
+                };
                 
             } else {
                 $q.notify({
@@ -302,7 +325,7 @@ import { getCepData } from 'src/services/cep/cepService';
         };
     };
 
-    const submitTechnicel = async () => {
+    const submitTechnicel = async (): Promise<void> => {
         try {
             await technicelSchema.validate(technicel.value, { abortEarly: false });
             
@@ -318,7 +341,7 @@ import { getCepData } from 'src/services/cep/cepService';
                 });
                 
                 router.replace({
-                    path: 'technicels'
+                    path: 'technicals'
 
                 });
                 
@@ -348,6 +371,7 @@ import { getCepData } from 'src/services/cep/cepService';
 
                     });
                 });  
+
             } else {
                 $q.notify({
                     type: 'negative',
@@ -358,5 +382,4 @@ import { getCepData } from 'src/services/cep/cepService';
             };
         };
     };
-
 </script>

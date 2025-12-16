@@ -45,6 +45,19 @@ class UserService
         return $user;
     }
 
+    public function findByMailForAuth(string $email)
+    {
+        $user = $this->userRepository->findByMail($email);
+
+        if(!$user)
+        {
+            throw new Exception('Credencias incorretas!');
+            
+        }
+
+        return $user;
+    }
+
     public function findById(string $id)
     {
         $user = $this->userRepository->findById($id);

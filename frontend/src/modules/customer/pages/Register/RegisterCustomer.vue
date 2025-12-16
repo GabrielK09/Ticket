@@ -36,7 +36,7 @@
 
                     <q-input 
                         label="" 
-                        v-model="customer.company_name" 
+                        v-model="companyNameUpper" 
                         stack-label
                         outlined
                         type="text"
@@ -44,6 +44,7 @@
                         class="mb-4"
                         :error="!!formErrors.company_name"
                         :error-message="formErrors.company_name"
+
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -53,7 +54,7 @@
                     </q-input>
                 
                     <q-input 
-                        v-model="customer.trade_name" 
+                        v-model="tradeNameUpper" 
                         type="text" 
                         label="E-mail *" 
                         stack-label
@@ -190,13 +191,13 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { createCustomer } from '../../customerService';
     import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     import * as Yup from 'yup';
-import formatValues from 'src/util/formatValues';
-import { getCepData } from 'src/services/cep/cepService';
+    import formatValues from 'src/util/formatValues';
+    import { getCepData } from 'src/services/cep/cepService';
 
     const customerSchema = Yup.object({
         company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
@@ -231,6 +232,21 @@ import { getCepData } from 'src/services/cep/cepService';
 
     });
 
+    const companyNameUpper = computed({
+        get: () => customer.value.company_name,
+        set: (val: string) => {
+            customer.value.company_name = val.toUpperCase();  
+            customer.value.trade_name = val.toUpperCase();  
+        }
+    });
+    
+    const tradeNameUpper = computed({
+        get: () => customer.value.trade_name,
+        set: (val: string) => {
+            customer.value.trade_name = val.toUpperCase();  
+        }
+    });
+
     const CEPData = async (val: string): Promise<any> => {
         if(formatValues(val).length === 8) 
         {
@@ -259,11 +275,18 @@ import { getCepData } from 'src/services/cep/cepService';
 
             if(res.success)
             {
-                customer.value.address = data.address.street;
-                customer.value.number = data.address.number;
-                customer.value.cep = data.address.zip;
-                customer.value.company_name = data.company.name;
-                customer.value.trade_name = data.company.name;
+                if(customer.value.company_name !== '' || customer.value.trade_name) 
+                {
+                    customer.value.address = data.address.street;
+                    customer.value.number = data.address.number;
+                    customer.value.cep = data.address.zip;  
+                } else {
+                    customer.value.company_name = data.company.name;
+                    customer.value.trade_name = data.company.name;
+                    customer.value.address = data.address.street;
+                    customer.value.number = data.address.number;
+                    customer.value.cep = data.address.zip;  
+                };
                 
             } else {
                 $q.notify({

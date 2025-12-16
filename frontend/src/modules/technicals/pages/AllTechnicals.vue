@@ -63,6 +63,7 @@
                                             :disable="props.row.technical_id === 1 || !isActive(props.row.active)"
                                         />
 
+                                        {{ props.row }}
                                         <q-btn 
                                             :class="{
                                                 'bg-red-500 text-white': props.row.technical_id !== 1 && isActive(props.row.active),
