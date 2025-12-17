@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Repositories\Eloquent\UserEloquent\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserService 
 {
@@ -56,6 +57,21 @@ class UserService
         }
 
         return $user;
+    }
+
+    public function checkExistEmail(string $email)
+    {
+        $user = $this->userRepository->findByMail($email);
+
+        Log::channel('auth')->debug('In service ' . $user);
+
+        if($user)
+        {
+            Log::channel('auth')->debug('Vai retornar ' . $user);
+            return $user;   
+        }
+
+        return null;
     }
 
     public function findById(string $id)

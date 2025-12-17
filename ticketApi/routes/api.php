@@ -9,6 +9,8 @@ Route::prefix('v1')->group(function() {
             Route::post('/register', 'register');
             Route::post('/login', 'login');
             Route::post('/logout', 'logout');
+            Route::post('/check-exists-mail', 'checkExistEmail');
+            
         });
     });
 

@@ -22,7 +22,7 @@ export async function loginService(email: string, password: string): Promise<any
     };
 };
 
-export async function registerService(name: string, email: string, password: string) {
+export async function registerService(name: string, email: string, password: string): Promise<any> {
     try {
         const res = await api.post('/auth/register', {
             name: name,
@@ -39,14 +39,28 @@ export async function registerService(name: string, email: string, password: str
     };
 };
 
-export async function logoutService() {
+export async function logoutService(): Promise<any> {
     try {
         const res = await api.post('/auth/logout');
 
         return returnSuccessApi(true, res.data.message, res.data);
     } catch (error) {
-        console.error(error);
-
         return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
-    }
-}
+    };
+};
+
+export async function checkExistEmailService(email: string): Promise<any> {
+    try {
+        const res = await api.post('/auth/check-exists-mail', {
+            email: email
+        }, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
+
+        return returnSuccessApi(true, res.data.message, res.data);
+    } catch (error) {
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
+    };
+};

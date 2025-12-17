@@ -232,7 +232,7 @@
     import * as Yup from 'yup';
     import { useRouter } from 'vue-router';
     import { validateCPF } from 'src/util/validate/validateCPFCNPJ';
-import { getCNPJData } from 'src/services/cnpjService/cnpjService';
+    import { getCNPJData } from 'src/services/cnpjService/cnpjService';
 
     const $q = useQuasar();
     const router = useRouter();

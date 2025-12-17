@@ -24,20 +24,12 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $startLogin = microtime(true);
-
         $credentials = $request->only('email', 'password');
         $user = $this->userService->findByMailForAuth($credentials['email']);
 
         if($user && Hash::check($credentials['password'], $user->password))
         {
             $token = $user->createToken('api-token')->plainTextToken;
-
-            $endLogin = microtime(true);
-
-            $executionTime = ($startLogin - $endLogin) / 60;
-
-            Log::debug("Tempo de execução do login: {$executionTime}", );
 
             return response()->json([
                 'message' => 'Login bem sucedido!',
@@ -50,6 +42,26 @@ class AuthController extends Controller
         } else {
             throw new Exception('Credencias incorretas!');
 
+        };
+    }
+
+    public function forgotPassword()
+    {
+
+    }
+
+    public function checkExistEmail(Request $request)
+    {
+        $data = $request->only('email');
+
+        $email = $this->userService->checkExistEmail($data['email']);
+        
+        if($email)
+        {    
+            throw new Exception('E-mail já cadastrado!');
+
+        } else {
+            return;
         };
     }
 

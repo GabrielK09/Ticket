@@ -33,6 +33,7 @@
                     :rules="[
                         val => !!val || 'Informe o seu e-mail!'
                     ]"
+                    @blur="checkExistEmail(registerData.email)"
                 >
                     <template v-slot:label>
                         <div class="text-sm">
@@ -138,7 +139,7 @@
             
             <div class="flex justify-center">
                 <div class="flex flex-col">
-                    <q-btn label="Entrar" class="mb-2" type="submit" color="primary" no-caps/>
+                    <q-btn label="Registrar" class="mb-2" type="submit" color="primary" no-caps/>
                     <span class="text-xs">Já possui uma conta? <span class="text-blue-400 cursor-pointer"><router-link to="/login">Entre aqui!</router-link> </span> </span>
 
                 </div>
@@ -148,14 +149,13 @@
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { useQuasar } from 'quasar';
-    import { registerService } from 'src/services/auth/authService';
+    import { checkExistEmailService, registerService } from 'src/services/auth/authService';
     import { useRouter } from 'vue-router';
     
     const router = useRouter();
     const $q = useQuasar();
-
     let hiddenPassword = ref<boolean>(false);
     let hiddenConfirmPassword = ref<boolean>(false);
 
@@ -165,6 +165,22 @@
         password: '',
         confirmPassword: '',
     });
+
+    const checkExistEmail = async (email: string): Promise<void> => {
+        if(email === '') return;
+        const res = await checkExistEmailService(email);
+
+        if(!res.success)
+        {
+            $q.notify({
+                type: 'negative',
+                message: res.message,
+                position: 'top'
+
+            });
+            registerData.value.email = '';
+        };
+    };
 
     const submitRegister = async () => {
         $q.notify({

@@ -150,5 +150,11 @@ return [
             'level' => 'debug',
             'path' => storage_path('logs/utils/util.log')
         ],
+        
+        'auth' => [
+            'driver' => 'daily',
+            'level' => 'debug',
+            'path' => storage_path('logs/auth/auth.log')
+        ],
     ],
 ];
