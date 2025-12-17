@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserRepository 
 {
-    public function store(array $data)
+    public function store(array $data): ?User
     {
         return User::create([
             'name' => $data['name'],
@@ -16,7 +16,7 @@ class UserRepository
         ]);
     }
 
-    public function update(array $data)
+    public function update(array $data): ?User
     {
         $user = $this->findById($data['user_id']);
 
@@ -28,14 +28,13 @@ class UserRepository
         return $user;
     }
 
-    public function findById(string $id)
+    public function findById(string $id): ?User
     {
         return User::findOrFail($id);
     }
 
-    public function findByMail(string $email)
+    public function findByMail(string $email): ?User
     {
-        return User::where('email', $email)->first();
+        return User::query()->where('email', $email)->first();
     }
-
 }

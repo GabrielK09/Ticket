@@ -4,8 +4,10 @@ namespace App\Services\User;
 
 use App\Repositories\Eloquent\UserEloquent\UserRepository;
 use Exception;
+use Hamcrest\StringDescription;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class UserService 
 {
@@ -35,43 +37,26 @@ class UserService
     
     public function findByMail(string $email)
     {
-        $user = $this->userRepository->findByMail($email);
+        return $this->userRepository->findByMail($email);
+    }
+
+    public function getUserForAuthOrFail(string $email) 
+    {
+        $user = $this->findByMail($email);
 
         if(!$user)
         {
-            throw new Exception('Usuário não localizado!');
-            
+            throw ValidationException::withMessages([
+                'email' => ['Credenciais incorretas.'],
+            ]);
         }
 
         return $user;
     }
 
-    public function findByMailForAuth(string $email)
+    public function emailExists(string $email): bool 
     {
-        $user = $this->userRepository->findByMail($email);
-
-        if(!$user)
-        {
-            throw new Exception('Credencias incorretas!');
-            
-        }
-
-        return $user;
-    }
-
-    public function checkExistEmail(string $email)
-    {
-        $user = $this->userRepository->findByMail($email);
-
-        Log::channel('auth')->debug('In service ' . $user);
-
-        if($user)
-        {
-            Log::channel('auth')->debug('Vai retornar ' . $user);
-            return $user;   
-        }
-
-        return null;
+        return $this->findByMail($email) !== null;
     }
 
     public function findById(string $id)

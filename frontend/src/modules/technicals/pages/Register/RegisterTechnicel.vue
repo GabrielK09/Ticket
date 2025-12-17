@@ -7,7 +7,7 @@
 
             <div class="ml-2 text-xs">
                 <div 
-                    @click="router.replace({ path: `/${LocalStorage.getItem('companie_name')}/admin/technicals` })"
+                    @click="router.replace({ path: `/${companyNameUrl}/admin/technicals` })"
                     class="flex mb-auto mt-auto cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 back-row">
@@ -20,7 +20,7 @@
             </div>
 
             <q-form
-                @submit="submitTechnicel"
+                @submit.stop="submitTechnicel"
                 class="q-gutter-md mt-4 form"
             >
                 <div class="p-4 inputs">
@@ -234,6 +234,7 @@
 
     const router = useRouter();
     const $q = useQuasar();
+    const companyNameUrl = LocalStorage.getItem('companie_name_url');
 
     const technicel = ref<technicalsContract>({
         owner_id: LocalStorage.getItem('owner_id'),
@@ -340,10 +341,7 @@
                     
                 });
                 
-                router.replace({
-                    path: 'technicals'
-
-                });
+                router.replace(`${companyNameUrl}/admin/technicals`);
                 
             } else {
                 $q.notify({

@@ -149,9 +149,9 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, ref } from 'vue';
     import { useQuasar } from 'quasar';
     import { checkExistEmailService, registerService } from 'src/services/auth/authService';
+    import { ref } from 'vue';
     import { useRouter } from 'vue-router';
     
     const router = useRouter();
@@ -168,6 +168,7 @@
 
     const checkExistEmail = async (email: string): Promise<void> => {
         if(email === '') return;
+
         const res = await checkExistEmailService(email);
 
         if(!res.success)

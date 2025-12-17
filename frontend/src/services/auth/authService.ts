@@ -62,5 +62,6 @@ export async function checkExistEmailService(email: string): Promise<any> {
         return returnSuccessApi(true, res.data.message, res.data);
     } catch (error) {
         return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
+
     };
 };

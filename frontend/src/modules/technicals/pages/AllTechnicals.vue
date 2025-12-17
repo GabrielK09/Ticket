@@ -12,7 +12,7 @@
                             no-caps 
                             class="bg-sky-500 text-white" 
                             label="Cadastrar novo técnico"
-                            :to="`/${companyName}/register/technicel`"
+                            :to="`/${companyName}/admin/register/technicel`"
                         />
                     </div>
                 </div>
@@ -63,7 +63,6 @@
                                             :disable="props.row.technical_id === 1 || !isActive(props.row.active)"
                                         />
 
-                                        {{ props.row }}
                                         <q-btn 
                                             :class="{
                                                 'bg-red-500 text-white': props.row.technical_id !== 1 && isActive(props.row.active),

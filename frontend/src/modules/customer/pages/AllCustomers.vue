@@ -56,7 +56,6 @@
                                                 'bg-sky-500 text-white': props.row.customer_id !== 1 && isActive(props.row.active),
                                                 'bg-gray-500 text-white': props.row.customer_id === 1 || !isActive(props.row.active),
                                             }"
-
                                             icon="edit" 
                                             size="10px"
                                             :to="`/${companyName}/edit/customer/${props.row.customer_id}`"
@@ -73,6 +72,7 @@
                                             :icon="isActive(props.row.active) ? 'delete' : 'add'" 
                                             size="10px"
                                             @click="showDialogDisableCustomer(props.row.customer_id, props.row.active)"
+                                            :disable="props.row.customer_id === 1 || !isActive(props.row.active)"
                                         />
                                     </template>
 

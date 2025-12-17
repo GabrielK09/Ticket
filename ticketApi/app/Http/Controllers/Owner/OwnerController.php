@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Owner\OwnerRequest;
 use App\Services\Owner\OwnerService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class OwnerController extends Controller
 {

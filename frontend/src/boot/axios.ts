@@ -28,7 +28,8 @@ export default boot(({ app, router }) => {
             
             const isPublicRoutes = [
                 '/auth/login',
-                '/auth/register'
+                '/auth/register',
+                '/check-exists-mail'
             ];
 
             const isPublic = isPublicRoutes.some(route => config.url.includes(route));

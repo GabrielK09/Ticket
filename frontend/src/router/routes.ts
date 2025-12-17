@@ -2,7 +2,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
     {
-        path: '/:company_name/admin/',
+        path: '/:company_name/admin',
         component: () => import('src/layouts/DashBoard/DashBoardLayout.vue'),
         children: [
             {
@@ -35,7 +35,7 @@ const routes: RouteRecordRaw[] = [
                 component: () => import('src/modules/technicals/pages/AllTechnicals.vue')
             },
             {
-                path: '/:company_name/register/',
+                path: 'register',
                 children: [
                     {
                         path: 'customer',
@@ -56,7 +56,7 @@ const routes: RouteRecordRaw[] = [
                 ]
             },
             {
-                path: '/:company_name/edit/',
+                path: 'edit',
                 children: [
                     {
                         path: 'customer/:customer_id',
@@ -85,10 +85,6 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/',
         component: () => import('src/pages/home/HomePage.vue')
-    },
-    {
-        path: '/teste',
-        component: () => import('src/modules/test/test.vue')
     },
     {
         path: '/:catchAll(.*)*',

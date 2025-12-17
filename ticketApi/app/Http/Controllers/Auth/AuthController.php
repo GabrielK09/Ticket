@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Services\Owner\OwnerService;
 use App\Services\User\UserService;
-use Exception;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -25,24 +25,25 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-        $user = $this->userService->findByMailForAuth($credentials['email']);
+        $user = $this->userService->getUserForAuthOrFail($credentials['email']);
 
-        if($user && Hash::check($credentials['password'], $user->password))
+        if(!Hash::check($credentials['password'], $user->password))
         {
-            $token = $user->createToken('api-token')->plainTextToken;
+            throw ValidationException::withMessages([
+                'email' => ['Credenciais incorretas.'],
 
-            return response()->json([
-                'message' => 'Login bem sucedido!',
-                'success' => true,
-                'token' => $token,
-                'user' => $user
-                
-            ], 200);
-
-        } else {
-            throw new Exception('Credencias incorretas!');
-
+            ]);
         };
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login bem sucedido!',
+            'success' => true,
+            'token' => $token,
+            'user' => $user
+            
+        ], 200);
     }
 
     public function forgotPassword()
@@ -52,17 +53,16 @@ class AuthController extends Controller
 
     public function checkExistEmail(Request $request)
     {
-        $data = $request->only('email');
+        $email = (string) $request->input('email');
 
-        $email = $this->userService->checkExistEmail($data['email']);
-        
-        if($email)
-        {    
-            throw new Exception('E-mail já cadastrado!');
+        if($this->userService->emailExists($email))
+        {   
+            throw ValidationException::withMessages([
+                'email' => ['E-mail já cadastrado!']
+            ]);
+        }
 
-        } else {
-            return;
-        };
+        return response()->noContent();
     }
 
     public function logout(Request $request)
