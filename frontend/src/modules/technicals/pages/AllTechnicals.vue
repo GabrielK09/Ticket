@@ -53,21 +53,21 @@
                                     <template v-if="col.name === 'actions'">
                                         <q-btn 
                                             :class="{
-                                                'bg-sky-500 text-white': props.row.technical_id !== 1 && isActive(props.row.active),
-                                                'bg-gray-500 text-white': props.row.technical_id === 1 || !isActive(props.row.active),
+                                                'bg-sky-500 text-white': isActive(props.row.active),
+                                                'bg-gray-500 text-white': !isActive(props.row.active),
                                             }"
 
                                             icon="edit" 
                                             size="10px"
                                             :to="`/${companyName}/edit/technical/${props.row.technical_id}`"
-                                            :disable="props.row.technical_id === 1 || !isActive(props.row.active)"
+                                            :disable="!isActive(props.row.active)"
                                         />
 
                                         <q-btn 
                                             :class="{
-                                                'bg-red-500 text-white': props.row.technical_id !== 1 && isActive(props.row.active),
-                                                'bg-green-500 text-white': props.row.technical_id !== 1 && !isActive(props.row.active),
-                                                'bg-gray-500 text-white': props.row.technical_id === 1 || !isActive(props.row.active),
+                                                'bg-red-500 text-white': isActive(props.row.active),
+                                                'bg-green-500 text-white': !isActive(props.row.active),
+                                                'bg-gray-500 text-white': !isActive(props.row.active),
                                             }"
                                             class="ml-4"
                                             :icon="isActive(props.row.active) ? 'delete' : 'add'" 

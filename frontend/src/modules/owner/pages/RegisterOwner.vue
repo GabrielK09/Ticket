@@ -1,7 +1,7 @@
 <template>
-    <section class="text-2xl">
+    <section class="text-2xl register-form">
         <div
-            class="m-2"
+            class="m-2 app"
         >        
             <h2 class="text-gray-600 register-title m-2">Cadastre sua empresa!</h2>
 
@@ -274,9 +274,11 @@
     
     const submitRegisterOwner = async () => {
         $q.notify({
-            position: 'top',
+            type: 'info',
             color: 'green',
-            message: 'Processando dados...' 
+            position: 'top',
+            message: 'Processando dados...',
+            timeout: 300
 
         });
         
@@ -301,7 +303,8 @@
                  $q.notify({
                     type: 'negative',
                     position: 'top',
-                    message: res.message
+                    message: res.message,
+                    timeout: 350
 
                 });   
             };
@@ -316,7 +319,8 @@
                     $q.notify({
                         type: 'negative',
                         position: 'top',
-                        message: err.message
+                        message: err.message,
+                        timeout: 350
 
                     });
                 });  
@@ -325,7 +329,7 @@
     };
 
     const CNPJData = async (val: string): Promise<any> => {
-        if(val.replace(/\D/g, '').length === 14) 
+        if(owner.value.ownerType === 'Jurídica' && val.replace(/\D/g, '').length === 14) 
         {
             const res = await getCNPJData(val);
             const data: ReturnCNPJData = res.data;
@@ -345,6 +349,7 @@
                     type: 'negative',
                     position: 'top',
                     message: 'CNPJ inválido ou não localizado!',
+                    timeout: 350
 
                 });
             };
@@ -369,6 +374,17 @@
     }
 
     @media (min-width: 1336px) {
+        .register-form {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }   
+
+        .register-form .app {
+            width: 40%;
+        }
+
         .back-row {
             width: 0.75rem;
             height: 0.75rem;

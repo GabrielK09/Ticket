@@ -12,7 +12,7 @@
                             no-caps 
                             class="bg-sky-500 text-white" 
                             label="Cadastrar novo cliente"
-                            :to="`/${companyName}/register/customer`"
+                            :to="`/${companyName}/admin/register/customer`"
                         />
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                                             :icon="isActive(props.row.active) ? 'delete' : 'add'" 
                                             size="10px"
                                             @click="showDialogDisableCustomer(props.row.customer_id, props.row.active)"
-                                            :disable="props.row.customer_id === 1 || !isActive(props.row.active)"
+                                            :disable="props.row.customer_id === 1"
                                         />
                                     </template>
 

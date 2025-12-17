@@ -315,7 +315,7 @@
                 });
                 
                 router.replace({
-                    path: 'customers'
+                    name: 'customers.index'
 
                 });
                 

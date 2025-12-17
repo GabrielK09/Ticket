@@ -11,27 +11,27 @@ const routes: RouteRecordRaw[] = [
             },
             {
                 path: 'customers',
-                children: [
-                    {
-                        path: '',
-                        component: () => import('src/modules/customer/pages/AllCustomers.vue')
-                    },
-                ]
+                name: 'customers.index',
+                component: () => import('src/modules/customer/pages/AllCustomers.vue')
             },
             {
                 path: 'ticket',
+                name: 'ticket.index',
                 component: () => import('src/modules/tickets/pages/AllTickets.vue')
             },
             {
                 path: 'pay_ment_forms',
+                name: 'pay_ment_forms.index',
                 component: () => import('src/modules/payMentForms/pages/AllPayMentForms.vue')
             },
             {
                 path: 'history',
+                name: 'history.index',
                 component: () => import('src/modules/history/pages/History.vue')
             },
             {
                 path: 'technicals',
+                name: 'technicals.index',
                 component: () => import('src/modules/technicals/pages/AllTechnicals.vue')
             },
             {

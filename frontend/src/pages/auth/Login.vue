@@ -91,9 +91,10 @@
         $q.notify({
             type: 'positive',
             message: 'Validando dados de login ...',
-            position: 'top'
-
-        });
+            position: 'top',
+            timeout: 200
+            
+        }); 
 
         const res = await loginService(loginData.value.email, loginData.value.password);
                 
@@ -107,7 +108,9 @@
             $q.notify({
                 type: 'positive',
                 message: res.message,
-                position: 'top'
+                position: 'top',
+                timeout: 200
+                
             });
             
             router.replace({ path: '/owners' });
@@ -116,7 +119,8 @@
             $q.notify({
                 type: 'negative',
                 message: res.message,
-                position: 'top'
+                position: 'top',
+                timeout: 350
 
             });
         };

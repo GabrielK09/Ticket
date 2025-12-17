@@ -331,17 +331,19 @@
             await technicelSchema.validate(technicel.value, { abortEarly: false });
             
             const res = await createTechnicel(technicel.value);
-
+            
             if(res.success)
             {
                 $q.notify({
                     type: 'positive',
                     position: 'top',
-                    message: res.data.message
+                    message: res.message
                     
                 });
                 
-                router.replace(`${companyNameUrl}/admin/technicals`);
+                router.replace({
+                    name: 'technicals.index'
+                });
                 
             } else {
                 $q.notify({

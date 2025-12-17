@@ -3,9 +3,8 @@
 </template>
 
 <script setup lang="ts">
-//
 </script>
 
 <style lang="scss">
-    body { overflow-y: hidden; }  
+    body { overflow-x: hidden; }  
 </style>

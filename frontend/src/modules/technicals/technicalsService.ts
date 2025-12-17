@@ -24,8 +24,8 @@ export async function createTechnicel(payLoad: technicalsContract): Promise<any>
                 Accept: 'application/json'
             }
         });
-
-        return returnSuccessApi(true, res.data.mesage, res.data.data);
+        
+        return returnSuccessApi(true, res.data.message, res.data.data);
         
     } catch (error) {
         return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);

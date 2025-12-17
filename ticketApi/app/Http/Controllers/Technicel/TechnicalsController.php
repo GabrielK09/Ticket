@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Technicel\TechnicelRequest;
 use App\Services\Technicel\TechnicelService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TechnicalsController extends Controller
 {
@@ -52,7 +53,11 @@ class TechnicalsController extends Controller
      */
     public function store(TechnicelRequest $request)
     {    
-        return apiSuccess($this->messageByGender($request->validated()['gender'], 'POST'), $this->technicelService->store($request->validated()));
+        $message = $this->messageByGender($request->validated()['gender'], 'POST');
+        
+        Log::debug('Mensagem a ser retornada: ' . $message);
+
+        return apiSuccess($message, $this->technicelService->store($request->validated()));
     }
 
     /**

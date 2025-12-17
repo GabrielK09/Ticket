@@ -30,10 +30,9 @@
                     label="E-mail" 
                     stack-label
                     class="w-full"
-                    :rules="[
-                        val => !!val || 'Informe o seu e-mail!'
-                    ]"
+                    :rules="[validateEmail]"
                     @blur="checkExistEmail(registerData.email)"
+                    
                 >
                     <template v-slot:label>
                         <div class="text-sm">
@@ -50,9 +49,7 @@
                         stack-label
                         class="mr-4 w-max"
                         no-error-icon
-                        :rules="[
-                            val => !!val || 'Informe a sua senha!'
-                        ]"
+                        :rules="[validatePassword]"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -70,7 +67,7 @@
                                 stroke-width="1.5" 
                                 stroke="currentColor" 
                                 class="size-6 cursor-pointer"
-                                >
+                            >
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
@@ -115,7 +112,7 @@
                                 stroke-width="1.5" 
                                 stroke="currentColor" 
                                 class="size-6 cursor-pointer"
-                                >
+                            >
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
@@ -151,8 +148,16 @@
 <script setup lang="ts">
     import { useQuasar } from 'quasar';
     import { checkExistEmailService, registerService } from 'src/services/auth/authService';
+    import { validateEmail, validatePassword } from 'src/util/validate/validateInputs/validateInput';
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
+
+    function checkEqualPassword (): string|boolean {
+        if(!registerData.value.password) return 'Esse campo é obrigatório!';
+        if(registerData.value.password !== registerData.value.confirmPassword) return 'As senhas não são iguais!';
+
+        return true;
+    };
     
     const router = useRouter();
     const $q = useQuasar();
@@ -165,7 +170,7 @@
         password: '',
         confirmPassword: '',
     });
-
+    
     const checkExistEmail = async (email: string): Promise<void> => {
         if(email === '') return;
 
@@ -176,7 +181,8 @@
             $q.notify({
                 type: 'negative',
                 message: res.message,
-                position: 'top'
+                position: 'top',
+                timeout: 350
 
             });
             registerData.value.email = '';
@@ -187,7 +193,8 @@
         $q.notify({
             type: 'positive',
             message: 'Validando dados ...',
-            position: 'top'
+            position: 'top',
+            timeout: 250
 
         });
 
@@ -198,7 +205,9 @@
             $q.notify({
                 type: 'positive',
                 message: data.message,
-                position: 'top'
+                position: 'top',
+                timeout: 250
+
             });
 
             router.replace({
@@ -209,25 +218,13 @@
             $q.notify({
                 type: 'negative',
                 message: data.message,
-                position: 'top'
+                position: 'top',
+                timeout: 350
 
             });
         };
     };
 
-    const checkEqualPassword = (val: any) => {
-        if(!val)
-        {
-            return 'Esse campo é obrigatório!';
-        };
-
-        if(val !== registerData.value.password)
-        {
-            return 'As senhas não são iguais!';
-        };
-
-        return true;
-    };
 </script>
 
 <style lang="scss">

@@ -12,7 +12,7 @@
                             no-caps 
                             class="bg-sky-500 text-white" 
                             label="Cadastrar novo ticket"
-                            :to="`/${LocalStorage.getItem('companie_name')}/register/ticket`"
+                            :to="`/${'a'}/admin//register/ticket`"
                         />
                     </div>
                 </div>
