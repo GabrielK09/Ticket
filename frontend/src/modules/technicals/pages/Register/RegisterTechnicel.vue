@@ -20,7 +20,7 @@
             </div>
 
             <q-form
-                @submit.stop="submitTechnicel"
+                @submit.prevent="submitTechnicel"
                 class="q-gutter-md mt-4 form"
             >
                 <div class="p-4 inputs">
@@ -188,6 +188,7 @@
                             color="primary" 
                             type="submit" 
                             :label="`Cadastrar ${returnGender(technicel.gender)}`"
+                            :loading="loadingLogin"
                             no-caps
 
                         />
@@ -249,6 +250,8 @@
         availability: false,
         technicelTypes: 'Jurídica',
     });
+
+    let loadingLogin = ref<boolean>(false);
 
     const companyNameUpper = computed({
         get: () => technicel.value.company_name,

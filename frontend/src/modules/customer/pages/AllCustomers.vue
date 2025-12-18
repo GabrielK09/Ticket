@@ -56,9 +56,9 @@
                                                 'bg-sky-500 text-white': props.row.customer_id !== 1 && isActive(props.row.active),
                                                 'bg-gray-500 text-white': props.row.customer_id === 1 || !isActive(props.row.active),
                                             }"
-                                            icon="edit" 
+                                            icon="edit_square" 
                                             size="10px"
-                                            :to="`/${companyName}/edit/customer/${props.row.customer_id}`"
+                                            :to="`/${companyName}/admin/edit/customer/${props.row.customer_id}`"
                                             :disable="props.row.customer_id === 1 || !isActive(props.row.active)"
                                         />
 

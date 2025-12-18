@@ -7,7 +7,7 @@
 
             <div class="ml-2 text-xs">
                 <div 
-                    @click="router.replace({ path: `/${LocalStorage.getItem('companie_name')}/admin/customers` })"
+                    @click="router.replace({ path: `/${companyName}/admin/customers` })"
                     class="flex mb-auto mt-auto cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 back-row">
@@ -210,7 +210,7 @@
     const customerId = route.params.customer_id as string;
     const formErrors = ref<Record<string, string>>({});
     const ownerId: string = LocalStorage.getItem('owner_id');
-    const companyName = LocalStorage.getItem('companie_name');
+    const companyName = LocalStorage.getItem('companie_name_url');
 
     const customerTypes: string[] = [
         'Jurídica',

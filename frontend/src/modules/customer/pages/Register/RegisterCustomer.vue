@@ -7,7 +7,7 @@
 
             <div class="ml-2 text-xs">
                 <div 
-                    @click="router.replace({ path: `/${LocalStorage.getItem('companie_name')}/admin/customers` })"
+                    @click="router.replace({ path: `/${companyName}/admin/customers` })"
                     class="flex mb-auto mt-auto cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 back-row">
@@ -20,7 +20,7 @@
             </div>
 
             <q-form
-                @submit="submitCustomer"
+                @submit.prevent="submitCustomer"
                 class="q-gutter-md mt-4 form"
             >
                 <div class="p-4 inputs">
@@ -180,7 +180,7 @@
                             type="submit" 
                             label="Cadastrar cliente"
                             no-caps
-
+                            :loading="loadingLogin"
                         />
                     </div>
                 </div>
@@ -231,6 +231,10 @@
         customerType: 'Jurídica'
 
     });
+
+    const companyName = LocalStorage.getItem('companie_name_url');
+
+    let loadingLogin = ref<boolean>(false);
 
     const companyNameUpper = computed({
         get: () => customer.value.company_name,

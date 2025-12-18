@@ -57,9 +57,11 @@ const routes: RouteRecordRaw[] = [
             },
             {
                 path: 'edit',
+                name: 'edit',
                 children: [
                     {
                         path: 'customer/:customer_id',
+                        name: 'edit.customer.id',
                         component: () => import('src/modules/customer/pages/Update/UpdateRegisterCustomer.vue')
                     }
                 ]

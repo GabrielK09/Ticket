@@ -212,9 +212,7 @@
         };
     };
     
-    const tryClipBoard = async(): Promise<void> => {
-        console.log('Init tryClipBoard');
-        
+    const tryClipBoard = async(): Promise<void> => {        
         try {
             if(await clipBoardFunction())
             {
@@ -226,8 +224,12 @@
                 });
             };
         } catch (error) {
-            console.error('Erro:', error);
-              
+            $q.notify({
+                type: 'negative',
+                message: 'Erro na operção',
+                position: 'top'
+
+            });
         };
     };
 

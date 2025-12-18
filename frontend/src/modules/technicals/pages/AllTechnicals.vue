@@ -44,36 +44,104 @@
                         </template>
 
                         <template v-slot:body="props">
-                            <q-tr :props="props">
+                            <q-tr 
+                                :props="props"
+                            >
                                 <q-td
+                                    class="overflow-hidden z-50"
                                     v-for="col in props.cols"
                                     :key="col.name"
                                     :props="props"
                                 >
                                     <template v-if="col.name === 'actions'">
+                                        <!--
+                                        
+
+                                       
+                                        -->
                                         <q-btn 
                                             :class="{
                                                 'bg-sky-500 text-white': isActive(props.row.active),
                                                 'bg-gray-500 text-white': !isActive(props.row.active),
                                             }"
 
-                                            icon="edit" 
+                                            icon="settings"
                                             size="10px"
-                                            :to="`/${companyName}/edit/technical/${props.row.technical_id}`"
+                                            @click=""
                                             :disable="!isActive(props.row.active)"
-                                        />
+                                        >                                        
+                                            <q-menu>
+                                                <q-list style="min-width: 100px;">
+                                                    <q-item>
+                                                        <q-item-section>
+                                                            <q-btn 
+                                                                :class="{
+                                                                    'bg-sky-500 text-white': isActive(props.row.active),
+                                                                    'bg-gray-500 text-white': !isActive(props.row.active),
+                                                                }"
 
-                                        <q-btn 
-                                            :class="{
-                                                'bg-red-500 text-white': isActive(props.row.active),
-                                                'bg-green-500 text-white': !isActive(props.row.active),
-                                                'bg-gray-500 text-white': !isActive(props.row.active),
-                                            }"
-                                            class="ml-4"
-                                            :icon="isActive(props.row.active) ? 'delete' : 'add'" 
-                                            size="10px"
-                                            @click="showDialogDisableTechnical(props.row.technical_id, props.row.active)"
-                                        />
+                                                                icon="edit_square" 
+                                                                size="10px"
+                                                                :to="`/${companyName}/admin/edit/technical/${props.row.technical_id}`"
+                                                                :disable="!isActive(props.row.active)"
+                                                            >
+                                                                <template v-slot:default>
+                                                                    <span class="edit-btn">Editar</span>
+                                                                </template>
+                                                            </q-btn>    
+                                                        </q-item-section>
+                                                    </q-item>
+
+                                                    <q-separator />
+
+                                                    <q-item>
+                                                        <q-item-section>
+                                                             <q-btn 
+                                                                :class="{
+                                                                    'bg-red-500 text-white': isActive(props.row.active),
+                                                                    'bg-green-500 text-white': !isActive(props.row.active),
+                                                                    'bg-gray-500 text-white': !isActive(props.row.active),
+                                                                }"
+                                                                :icon="isActive(props.row.active) ? 'delete' : 'add'" 
+                                                                size="10px"
+                                                                @click="showDialogDisableTechnical(props.row.technical_id, props.row.active)"
+                                                            >
+                                                                <template v-slot:default>
+                                                                    <span class="delete-btn">Desativar</span>
+                                                                </template>
+                                                            </q-btn>    
+                                                        </q-item-section>
+                                                    </q-item>
+
+                                                    <q-separator />
+
+                                                    <q-item>
+                                                        <q-item-section>
+                                                            <q-btn 
+                                                                :class="{
+                                                                    'bg-green-400 text-white': isActive(props.row.active),
+                                                                    'bg-green-500 text-white': !isActive(props.row.active),
+                                                                    'bg-gray-500 text-white': !isActive(props.row.active),
+                                                                }"
+                                                                icon="attach_money" 
+                                                                size="10px"
+                                                                @click="commissionManagement(
+                                                                    props.row.company_name,
+                                                                    props.row.technical_id,
+
+                                                                )"
+                                                            >
+                                                                <template v-slot:default>
+                                                                    <span class="attach_money-btn">Comissão</span>
+                                                                </template>
+                                                            </q-btn>    
+                                                        </q-item-section>
+                                                    </q-item>
+                                                </q-list>
+                                            </q-menu>
+
+                                        </q-btn>
+                                        
                                     </template>
 
                                     <template v-else>
@@ -102,6 +170,14 @@
             </div>
         </section>
     </q-page>
+
+    <Commission-technical-management
+        v-if="showCommissionManagement"
+        :show-dialog="showCommissionManagement"
+        :technical-name="selectedTechnical"
+        :technical-id="selectedTechnicalId"
+        @update:show-dialog="showCommissionManagement = $event"
+    />
 </template>
 
 <script setup lang="ts">
@@ -110,6 +186,7 @@
     import { formatCPFCNPJ } from 'src/util/formatCPFCNPJ';
     import { onMounted, ref } from 'vue';
     import { getAllTechnicalsService, disableOrActiveTechnicelService } from '../technicalsService';
+    import CommissionTechnicalManagement from 'src/components/Technical/CommissionTechnicalManagement.vue';
  
     const $q = useQuasar();
     const searchInput = ref('');
@@ -117,7 +194,7 @@
     const ownerId: string = LocalStorage.getItem('owner_id');
     const allTechnicals = ref<technicalsContract[]>([]);
     const technicels = ref<technicalsContract[]>([]);
-
+    
     const columns: QTableColumn[] = [
         {
             field: 'technical_id',
@@ -151,6 +228,10 @@
             align: 'center'
         }
     ];
+
+    let showCommissionManagement = ref<boolean>(false);
+    let selectedTechnical = ref<string>('');
+    let selectedTechnicalId = ref<string>('');
 
     const index = async (): Promise<void> => {
         const res = await getAllTechnicalsService(ownerId);
@@ -206,8 +287,29 @@
             });
         };
     };
+
+    const commissionManagement = (name: string, technicalId: string): void => {
+        showCommissionManagement.value = !showCommissionManagement.value;
+        selectedTechnical.value = name;
+        selectedTechnicalId.value = technicalId;
+    };
     
     onMounted(() => {
         index();
     });
 </script>   
+
+<style lang="scss">
+    .delete-btn {
+        font-size: .55rem;
+    }
+
+    @media (max-width: 1100px) {    
+        .delete-btn, 
+        .edit-btn,
+        .attach_money-btn {
+            display: none;
+        }
+    }
+    
+</style>

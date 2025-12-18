@@ -20,7 +20,7 @@
             </div>
 
             <q-form
-                @submit="submitRegisterOwner"
+                @submit.prevent="submitRegisterOwner"
                 class="q-gutter-md mt-4 form"
             >
                 <div class="p-4 inputs">
@@ -214,6 +214,7 @@
                         <q-btn 
                             color="primary" 
                             type="submit" 
+                            :loading="loadingLogin"
                             label="Cadastrar empresa"
                             no-caps
 
@@ -237,6 +238,8 @@
     const $q = useQuasar();
     const router = useRouter();
     const formErrors = ref<Record<string, string>>({});
+
+    let loadingLogin = ref<boolean>(false);
 
     const ownerTypes: string[] = [
         'Jurídica',
@@ -282,6 +285,8 @@
 
         });
         
+        loadingLogin.value = true;
+
         try {
             await ownerSchema.validate(owner.value, { abortEarly: false });
 
@@ -325,6 +330,8 @@
                     });
                 });  
             };
+        } finally {
+            loadingLogin.value = false;
         };
     };
 

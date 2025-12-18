@@ -1,7 +1,6 @@
 <template>
     <div class="login-form">
         <q-form
-            @submit="submitLogin"
             class="q-gutter-md bg-gray-50 border rounded-md p-8"
         >
             <h3 class="text-center text-2xl">Login</h3>
@@ -12,6 +11,8 @@
                     label="E-mail" 
                     stack-label
                     class="input-email"
+                    :error="!!formErrors.email"
+                    :error-message="formErrors.email"
                     :rules="[
                         val => !!val || 'Informe o seu e-mail!'
                     ]"
@@ -20,19 +21,21 @@
 
                 <q-input 
                     v-model="loginData.password" 
-                    :type="!hiddenPassword ? 'password' : 'text'" 
+                    :type="!showPassword ? 'password' : 'text'" 
                     label="Senha" 
                     stack-label
                     class="input-password"
                     no-error-icon
+                    :error="!!formErrors.password"
+                    :error-message="formErrors.password"
                     :rules="[
                         val => !!val || 'Informe a sua senha!'
                     ]"
                 >
                     <template v-slot:append>
                         <svg 
-                            v-if="!hiddenPassword"
-                            @click="hiddenPassword = !hiddenPassword"
+                            v-if="!showPassword"
+                            @click="showPassword = !showPassword"
                             xmlns="http://www.w3.org/2000/svg" 
                             fill="none" 
                             viewBox="0 0 24 24" 
@@ -45,8 +48,8 @@
                         </svg>
 
                         <svg 
-                            v-if="hiddenPassword"
-                            @click="hiddenPassword = !hiddenPassword"
+                            v-if="showPassword"
+                            @click="showPassword = !showPassword"
                             xmlns="http://www.w3.org/2000/svg" 
                             fill="none" 
                             viewBox="0 0 24 24" 
@@ -62,7 +65,15 @@
             
             <div class="flex justify-center">
                 <div class="flex flex-col">
-                    <q-btn label="Entrar" class="mb-2" type="submit" color="primary" no-caps/>
+                    <q-btn 
+                        label="Entrar" 
+                        class="mb-2" 
+                        color="primary" 
+                        no-caps
+                        @click="submitLogin"
+                        :loading="loadingLogin"
+                    />
+
                     <span class="text-xs">Ainda não tem uma conta? <span class="text-blue-400 cursor-pointer"><router-link to="/register">Se registre agora!</router-link> </span> </span>
 
                 </div>
@@ -76,11 +87,21 @@
     import { LocalStorage, useQuasar } from 'quasar';
     import { loginService } from 'src/services/auth/authService';
     import { useRouter } from 'vue-router';
+    import * as Yup from 'yup';
 
     const router = useRouter();
     const $q = useQuasar();
 
-    let hiddenPassword = ref<boolean>(false);
+    let loadingLogin = ref<boolean>(false);
+    let showPassword = ref<boolean>(false);
+
+    const formErrors = ref<Record<string, string>>({});
+
+    const loginSchema = Yup.object({
+        email: Yup.string().required('O e-mail é necessário!'),
+        password: Yup.string().required('A senha é necessário!')
+
+    });
 
     const loginData = ref<authContract>({
         email: '',
@@ -88,42 +109,75 @@
     });
 
     const submitLogin = async () => {
-        $q.notify({
-            type: 'positive',
-            message: 'Validando dados de login ...',
-            position: 'top',
-            timeout: 200
-            
-        }); 
+        loadingLogin.value = true;
 
-        const res = await loginService(loginData.value.email, loginData.value.password);
-                
-        if(res.success)
-        {            
-            LocalStorage.set('auth_token', res.token);
-            
-            LocalStorage.set('user_id', res.user.id);
-            LocalStorage.set('user', res.user.name);
-
+        try {        
+            await loginSchema.validate(loginData.value, { abortEarly: false });
+        
             $q.notify({
                 type: 'positive',
-                message: res.message,
+                message: 'Validando dados de login ...',
                 position: 'top',
                 timeout: 200
                 
-            });
+            }); 
             
-            router.replace({ path: '/owners' });
+            const res = await loginService(loginData.value.email, loginData.value.password);
+                    
+            if(res.success)
+            {            
+                LocalStorage.set('auth_token', res.token);
+                
+                LocalStorage.set('user_id', res.user.id);
+                LocalStorage.set('user', res.user.name);
+    
+                $q.notify({
+                    type: 'positive',
+                    message: res.message,
+                    position: 'top',
+                    timeout: 200
+                    
+                });
+                
+                router.replace({ path: '/owners' });
+    
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    message: res.message,
+                    position: 'top',
+                    timeout: 350
+    
+                });
+            };
+            
+        } catch (error) {
+            if(error.inner)
+            {
+                formErrors.value = {};
 
-        } else {
-            $q.notify({
-                type: 'negative',
-                message: res.message,
-                position: 'top',
-                timeout: 350
+                error.inner.forEach((err: any) => {
+                    formErrors.value[err.path] = err.message;
 
-            });
-        };
+                    $q.notify({
+                        type: 'negative',
+                        position: 'top',
+                        message: err.message
+
+                    });
+                });  
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: error.response?.data?.message
+
+                });
+            };
+        } finally {
+            loadingLogin.value = false;
+
+        };       
     };
 </script>
 

@@ -36,11 +36,6 @@ class CustomerRepository implements CustomerContract
 
     public function update(array $data, string $customerId)
     {
-        if($customerId === 1)
-        {
-            throw new Exception('O cliente padrão não pode ser alterado');
-        };
-
         Log::channel('customers')->debug('Started update - Customers');
         $customer = $this->findById($data['owner_id'], $customerId);
 
