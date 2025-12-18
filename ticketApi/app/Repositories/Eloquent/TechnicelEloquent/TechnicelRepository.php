@@ -82,7 +82,7 @@ class TechnicelRepository implements TechnicelContract
     {
         $alreadyHave = $this->getCommissionByTechnical($data['technical_id']);
 
-        if($alreadyHave) return;
+        if($alreadyHave) return;  
 
         $technicel = $this->findById($data['owner_id'], $data['technical_id']);
         $maxId = TechnicelCommission::where('owner_id', $data['owner_id'])->max('technicel_commission_id');

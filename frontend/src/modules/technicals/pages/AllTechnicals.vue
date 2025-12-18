@@ -54,11 +54,6 @@
                                     :props="props"
                                 >
                                     <template v-if="col.name === 'actions'">
-                                        <!--
-                                        
-
-                                       
-                                        -->
                                         <q-btn 
                                             :class="{
                                                 'bg-sky-500 text-white': isActive(props.row.active),
@@ -70,7 +65,10 @@
                                             @click=""
                                             :disable="!isActive(props.row.active)"
                                         >                                        
-                                            <q-menu>
+                                            <q-menu
+                                                transition-show="jump-down"
+                                                transition-hide="jump-up"
+                                            >
                                                 <q-list style="min-width: 100px;">
                                                     <q-item>
                                                         <q-item-section>

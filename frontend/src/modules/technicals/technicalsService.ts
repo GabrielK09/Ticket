@@ -65,7 +65,7 @@ export async function getCommissionByTechnical(technicelId: string): Promise<any
             }
         });  
         
-        return returnSuccessApi(true, res.data.message, res.data.data);
+        return returnSuccessApi(true, '', res.data.data);
 
     } catch (error) {
         return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);

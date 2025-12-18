@@ -1,10 +1,5 @@
 <template>
     <q-dialog v-model="internalDialog" persistent>
-        <q-intersection @visibility="onVisible">
-                <q-skeleton type="rect" height="180px" animation="wave" />
-        </q-intersection>
-
-
         <q-card>
             <q-card-section>
                 <span
@@ -40,7 +35,6 @@
                             label="%"
                             :flat="commissionTechnical.commission_type === 'R$'"
                             @click="commissionTechnical.commission_type = '%'"
-
                         />
                     </div>
                 </div>
@@ -56,9 +50,8 @@
                 <q-btn 
                     title="Salvar"
                     icon="save" 
-                    no-caps
                     color="primary"
-                    @click.prevent="handleSubmit"
+                    @click="handleSubmit"
                     :loading="showLoading"
                 />
             </q-card-actions>
@@ -69,8 +62,13 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { commissionTechnicalService, getCommissionByTechnical, updateCommissionTechnicalService } from 'src/modules/technicals/technicalsService';
-    import { onMounted, ref, watch } from 'vue';
+    import { 
+        commissionTechnicalService, 
+        getCommissionByTechnical, 
+        updateCommissionTechnicalService 
+    } from 'src/modules/technicals/technicalsService';
+
+    import { onMounted, onUnmounted, ref, watch } from 'vue';
     import * as Yup from 'yup';
 
     const $q = useQuasar();
@@ -102,7 +100,6 @@
     const internalDialog = ref(props.showDialog);
 
     let showLoading = ref<boolean>(false);
-    let loadingSkeleton = ref<boolean>(false);
     let alreadyHave = ref<boolean>(false);
     
     watch(() => props.showDialog, val => {
@@ -110,7 +107,7 @@
     });
 
     const handleSubmit = () => {
-        console.warn('Vai chamar handleSubmit');
+        console.warn('Vai chamar handleSubmit: alreadyHave.value: ', alreadyHave.value);
 
         if(alreadyHave.value)
         {
@@ -205,6 +202,7 @@
 
                 });
             };
+
         } catch (error) {
             if(error.inner)
             {
@@ -229,8 +227,10 @@
 
                 });
             };
+
         } finally {
             showLoading.value = false;
+
         };
     };
 
@@ -239,35 +239,33 @@
     };
 
     const onVisible = async () => {
-
+        return false;
     };
 
     onMounted(async () => {
-        try {
-            const res = await getCommissionByTechnical(props.technicalId);
+        const res = await getCommissionByTechnical(props.technicalId);
+        
+        if(res.data !== null)
+        {
+            alreadyHave.value = true;
+            
+            commissionTechnical.value = {
+                owner_id: res.data.owner_id,
+                technical_id: res.data.technical_id,
+                commission_type: res.data.commission_type,
+                commission_value: res.data.commission_value
+            };     
 
-            if(res.data !== null)
-            {
-                alreadyHave.value = true;
-                
-                commissionTechnical.value = {
-                    owner_id: res.data.owner_id,
-                    technical_id: res.data.owner_id,
-                    commission_type: res.data.commission_type,
-                    commission_value: res.data.commission_value
-                };
-                
-            };
-
+        } else {
             alreadyHave.value = false;
-
-        } catch (error) {
-            $q.notify({
-                type: 'negative',
-                position: 'top',
-                message: error.response?.data?.message
-
-            });
         };
+
+        console.log('Valor atual: ', alreadyHave.value);
+        
+    });
+
+    onUnmounted(() => {
+        alreadyHave.value = false;
+
     });
 </script>
