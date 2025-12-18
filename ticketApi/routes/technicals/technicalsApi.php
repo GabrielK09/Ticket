@@ -8,6 +8,7 @@ Route::prefix('/technicel')->group(function() {
         Route::get('/all/{id}', 'index');
         Route::post('/create', 'store');
         Route::put('/new-status-technical', 'activeOrDisable');
+        Route::post('/create/commission', 'commissionManagement');
 
     });
 });

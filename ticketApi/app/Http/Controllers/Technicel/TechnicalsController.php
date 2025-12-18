@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Technicel;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Technicel\TechnicelCommissionRequest;
 use App\Http\Requests\Technicel\TechnicelRequest;
 use App\Services\Technicel\TechnicelService;
 use Illuminate\Http\Request;
@@ -98,5 +99,10 @@ class TechnicalsController extends Controller
         $technicel = $this->show($data['owner_id'], $data['technical_id']);
         
         return apiSuccess($this->returnNameByGender($technicel->gender) . "{$actionMessage} com sucesso!", $this->technicelService->activeOrDisable($data['owner_id'], $data['technical_id'], $data['action']));
+    }
+
+    public function commissionManagement(TechnicelCommissionRequest $request)
+    {
+        return apiSuccess('Comissão cadastrada com sucesso!', $this->technicelService->commissionManagement($request->validated()));
     }
 }

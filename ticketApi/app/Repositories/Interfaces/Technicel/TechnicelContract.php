@@ -11,5 +11,6 @@ interface TechnicelContract
     public function update(array $data, string $technicelId);
     public function activeOrDisable(string $ownerId, string $id, string $action);
     public function findById(string $ownerId, string $technicelId);
+    public function commissionManagement(array $data);
 
 }

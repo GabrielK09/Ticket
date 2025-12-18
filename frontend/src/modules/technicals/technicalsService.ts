@@ -54,3 +54,19 @@ export async function disableOrActiveTechnicelService(technicelId: string, owner
 
     };
 };
+
+export async function commissionTechnicalService(payLoad: commissionTechnical): Promise<any> {
+    try {  
+          const res = await api.post('/technicel/create/commission', payLoad, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
+        
+        return returnSuccessApi(true, res.data.message, res.data.data);
+
+    } catch (error) {
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
+
+    };   
+};

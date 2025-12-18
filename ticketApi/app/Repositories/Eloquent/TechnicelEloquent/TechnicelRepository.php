@@ -3,6 +3,7 @@
 namespace App\Repositories\Eloquent\TechnicelEloquent;
 
 use App\Models\Technical;
+use App\Models\TechnicelCommission;
 use App\Repositories\Interfaces\Technicel\TechnicelContract;
 use Exception;
 
@@ -74,5 +75,20 @@ class TechnicelRepository implements TechnicelContract
         $action === 'active' ? $technicel->update(['active' => 1]) : $technicel->update(['active' => 0]);
 
         return $technicel->fresh();
+    }
+
+    public function commissionManagement(array $data)
+    {
+        $technicel = $this->findById($data['owner_id'], $data['id']);
+        $maxId = TechnicelCommission::where('owner_id', $data['owner_id'])->max('technicel_commission_id');
+
+        return TechnicelCommission::create([
+            'owner_id' => $data['owner_id'],
+            'technicel_commission_id' => $maxId ? $maxId + 1 : 1,
+            'technical_id' => $technicel->technical_id,
+            'technical_name' => $technicel->company_name,
+            'commission_value' => $data['commission_value'],
+            'commission_type' => $data['commission_type'],
+        ]);
     }
 }

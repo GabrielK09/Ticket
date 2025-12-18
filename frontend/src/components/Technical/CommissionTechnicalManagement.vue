@@ -8,31 +8,34 @@
                     Cadastro de comissões do funcionário: <span class="font-bold">{{ props.technicalId }}-{{ props.technicalName }}</span>
                 </span>
 
-                <div class="flex m-2">
+                <div class="p-2 m-4">
                     <q-input 
-                        v-model="text" 
+                        v-model="commissionTechnical.commission_value" 
                         stack-label
-                        type="text"
+                        type="number"
                         outlined
                         label="Valor" 
                     />
                     
-                    <div class="ml-2 flex flex-col">
-                        <span>Tipo de comissão</span>
+                    <div class="mt-4 border rounded-md p-4 flex flex-col">
+                        <span class="text-center mb-4">Tipo de comissão</span>
 
                         <q-btn 
                             color="primary" 
                             no-capas
                             label="R$"
                             class="mb-1"
-                            
+                            :flat="commissionTechnical.commission_type === '%'"
+                            @click="commissionTechnical.commission_type = 'R$'"
                         />
 
                         <q-btn 
                             color="primary" 
                             no-capas
                             label="%"
-                            flat
+                            :flat="commissionTechnical.commission_type === 'R$'"
+                            @click="commissionTechnical.commission_type = '%'"
+
                         />
                     </div>
                 </div>
@@ -42,7 +45,7 @@
                     title="Sair"
                     icon="close" 
                     color="red" 
-                    @click="close" 
+                    @click.prevent="close" 
                 />
 
                 <q-btn 
@@ -50,6 +53,8 @@
                     icon="save" 
                     no-caps
                     color="primary"
+                    @click.prevent="commissionTechnicalSubmit"
+                    :loading="showLoading"
                 />
             </q-card-actions>
         </q-card>
@@ -58,7 +63,12 @@
 </template>
 
 <script setup lang="ts">
+    import { LocalStorage, useQuasar } from 'quasar';
+    import { commissionTechnicalService } from 'src/modules/technicals/technicalsService';
     import { ref, watch } from 'vue';
+    import * as Yup from 'yup';
+
+    const $q = useQuasar();
 
     const props = defineProps<{
         showDialog: boolean,
@@ -70,13 +80,80 @@
         'update:showDialog'
     ]);
 
-    const commissionType = ref<'%'|'R$'>('R$');
+    const formErrors = ref<Record<string, string>>({});
 
+    const commissionTechnicalSchema = Yup.object({
+        commission_value: Yup.number().required(),
+        commission_type: Yup.string().required(),
+    });
+
+    const commissionTechnical = ref<commissionTechnical>({
+        owner_id: LocalStorage.getItem('owner_id'),
+        technical_id: props.technicalId,
+        commission_type: 'R$',
+        commission_value: 0
+    });
+    
     const internalDialog = ref(props.showDialog);
-
+    let showLoading = ref<boolean>(false);
+    
     watch(() => props.showDialog, val => {
         internalDialog.value = val;
     });
+
+    const commissionTechnicalSubmit = async() => {
+        showLoading.value = true;
+        try {
+            await commissionTechnicalSchema.validate(commissionTechnical.value, { abortEarly: false });
+
+            const res = await commissionTechnicalService(commissionTechnical.value);
+
+            if(res.success)
+            {
+                $q.notify({
+                    type: 'positive',
+                    position: 'top',
+                    message: res.message
+                });
+
+                emits('update:showDialog', false);
+
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: res.message
+
+                });
+            };
+        } catch (error) {
+            if(error.inner)
+            {
+                formErrors.value = {};
+
+                error.inner.forEach((err: any) => {
+                    formErrors.value[err.path] = err.message;
+
+                    $q.notify({
+                        type: 'negative',
+                        position: 'top',
+                        message: err.message
+
+                    });
+                });  
+
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: error.response?.data?.message
+
+                });
+            };
+        } finally {
+            showLoading.value = false;
+        };
+    };
 
     const close = () => {
         emits('update:showDialog', false);

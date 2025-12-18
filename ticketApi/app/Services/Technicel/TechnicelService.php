@@ -51,4 +51,8 @@ class TechnicelService
         return $technicel;
     }
 
+    public function commissionManagement(array $data)
+    {
+        return DB::transaction(fn() => $this->technicelRepository->commissionManagement($data));
+    }
 }
