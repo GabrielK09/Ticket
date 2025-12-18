@@ -33,7 +33,7 @@ class TechnicelService
 
         if(!$technicel)
         {
-            throw new Exception('Cliente não localizado!', 1);
+            throw new Exception('Técnico não localizado!', 1);
         }
 
         return $technicel;
@@ -45,7 +45,7 @@ class TechnicelService
         
         if(!$technicel)
         {
-            throw new Exception('Cliente não localizado!', 1);
+            throw new Exception('Técnico não localizado!', 1);
         }
 
         return $technicel;
@@ -54,5 +54,17 @@ class TechnicelService
     public function commissionManagement(array $data)
     {
         return DB::transaction(fn() => $this->technicelRepository->commissionManagement($data));
+    }
+
+    public function getCommissionByTechnical(string $id)
+    {
+        $commission = $this->technicelRepository->getCommissionByTechnical($id);
+        
+        return $commission;
+    }
+
+    public function updateCommissionTechnical(array $data, string $id)
+    {
+        return DB::transaction(fn() => $this->technicelRepository->updateCommissionTechnical($data, $id));
     }
 }

@@ -36,21 +36,26 @@ const routes: RouteRecordRaw[] = [
             },
             {
                 path: 'register',
+                name: 'register',
                 children: [
                     {
                         path: 'customer',
+                        name: 'register.customer',
                         component: () => import('src/modules/customer/pages/Register/RegisterCustomer.vue')
                     },
                     {
                         path: 'ticket',
+                        name: 'register.ticket',
                         component: () => import('src/modules/tickets/pages/Register/RegisterTickets.vue')
                     },
                     {
                         path: 'technicel',
+                        name: 'register.technicel',
                         component: () => import('src/modules/technicals/pages/Register/RegisterTechnicel.vue')
                     },
                     {
                         path: 'pay_ment_forms',
+                        name: 'register.pay_ment_forms',
                         component: () => import('src/modules/payMentForms/pages/Register/RegisterPayMentForms.vue')
                     }
                 ]

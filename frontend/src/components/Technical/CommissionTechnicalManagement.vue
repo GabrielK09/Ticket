@@ -1,5 +1,10 @@
 <template>
     <q-dialog v-model="internalDialog" persistent>
+        <q-intersection @visibility="onVisible">
+                <q-skeleton type="rect" height="180px" animation="wave" />
+        </q-intersection>
+
+
         <q-card>
             <q-card-section>
                 <span
@@ -53,7 +58,7 @@
                     icon="save" 
                     no-caps
                     color="primary"
-                    @click.prevent="commissionTechnicalSubmit"
+                    @click.prevent="handleSubmit"
                     :loading="showLoading"
                 />
             </q-card-actions>
@@ -64,8 +69,8 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { commissionTechnicalService } from 'src/modules/technicals/technicalsService';
-    import { ref, watch } from 'vue';
+    import { commissionTechnicalService, getCommissionByTechnical, updateCommissionTechnicalService } from 'src/modules/technicals/technicalsService';
+    import { onMounted, ref, watch } from 'vue';
     import * as Yup from 'yup';
 
     const $q = useQuasar();
@@ -83,8 +88,8 @@
     const formErrors = ref<Record<string, string>>({});
 
     const commissionTechnicalSchema = Yup.object({
-        commission_value: Yup.number().required(),
-        commission_type: Yup.string().required(),
+        commission_value: Yup.number().required('O valor de comissão precisa ser informado!').min(0, 'O valor de comissão não pode ser menor que zero!'),
+        commission_type: Yup.string().required('O tipo de comissão precisa ser informado!'),
     });
 
     const commissionTechnical = ref<commissionTechnical>({
@@ -95,14 +100,88 @@
     });
     
     const internalDialog = ref(props.showDialog);
+
     let showLoading = ref<boolean>(false);
+    let loadingSkeleton = ref<boolean>(false);
+    let alreadyHave = ref<boolean>(false);
     
     watch(() => props.showDialog, val => {
         internalDialog.value = val;
     });
 
+    const handleSubmit = () => {
+        console.warn('Vai chamar handleSubmit');
+
+        if(alreadyHave.value)
+        {
+            console.warn('Vai chamar updateCommissionTechnical');
+            updateCommissionTechnical();
+
+        } else {
+            console.warn('Vai chamar commissionTechnicalSubmit');
+            commissionTechnicalSubmit();
+
+        };
+    };
+
+    const updateCommissionTechnical = async () => {
+        showLoading.value = true;
+
+        try {
+            await commissionTechnicalSchema.validate(commissionTechnical.value, { abortEarly: false });
+
+            const res = await updateCommissionTechnicalService(commissionTechnical.value);
+
+            if(res.success)
+            {
+                $q.notify({
+                    type: 'positive',
+                    position: 'top',
+                    message: res.message
+                });
+
+                emits('update:showDialog', false);
+
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: res.message
+
+                });
+            };
+        } catch (error) {
+            if(error.inner)
+            {
+                formErrors.value = {};
+
+                error.inner.forEach((err: any) => {
+                    formErrors.value[err.path] = err.message;
+
+                    $q.notify({
+                        type: 'negative',
+                        position: 'top',
+                        message: err.message
+
+                    });
+                });  
+
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: error.response?.data?.message
+
+                });
+            };
+        } finally {
+            showLoading.value = false;
+        };
+    };
+
     const commissionTechnicalSubmit = async() => {
         showLoading.value = true;
+
         try {
             await commissionTechnicalSchema.validate(commissionTechnical.value, { abortEarly: false });
 
@@ -158,4 +237,37 @@
     const close = () => {
         emits('update:showDialog', false);
     };
+
+    const onVisible = async () => {
+
+    };
+
+    onMounted(async () => {
+        try {
+            const res = await getCommissionByTechnical(props.technicalId);
+
+            if(res.data !== null)
+            {
+                alreadyHave.value = true;
+                
+                commissionTechnical.value = {
+                    owner_id: res.data.owner_id,
+                    technical_id: res.data.owner_id,
+                    commission_type: res.data.commission_type,
+                    commission_value: res.data.commission_value
+                };
+                
+            };
+
+            alreadyHave.value = false;
+
+        } catch (error) {
+            $q.notify({
+                type: 'negative',
+                position: 'top',
+                message: error.response?.data?.message
+
+            });
+        };
+    });
 </script>

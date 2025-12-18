@@ -1,9 +1,11 @@
 import { api } from "src/boot/axios";
 import { returnErrorApi, returnSuccessApi } from "src/helpers/return/returnApi";
 
+const PREFIX_URL = '/technicel'
+
 export async function getAllTechnicalsService(ownerId: string): Promise<any> {
     try {
-        const res = await api.get(`/technicel/all/${ownerId}`, {
+        const res = await api.get(`${PREFIX_URL}/all/${ownerId}`, {
             headers: {
                 Accept: 'application/json'
             }
@@ -19,7 +21,7 @@ export async function getAllTechnicalsService(ownerId: string): Promise<any> {
 
 export async function createTechnicel(payLoad: technicalsContract): Promise<any> {
     try {
-        const res = await api.post('/technicel/create', payLoad, {
+        const res = await api.post(`${PREFIX_URL}/creat`, payLoad, {
             headers: {
                 Accept: 'application/json'
             }
@@ -41,7 +43,7 @@ export async function disableOrActiveTechnicelService(technicelId: string, owner
             action: action
         };
 
-        const res = await api.put('/technicel/new-status-technicel', payLoad, {
+        const res = await api.put(`${PREFIX_URL}/new-status-technicel`, payLoad, {
             headers: {
                 Accept: 'application/json'
             }
@@ -55,9 +57,44 @@ export async function disableOrActiveTechnicelService(technicelId: string, owner
     };
 };
 
-export async function commissionTechnicalService(payLoad: commissionTechnical): Promise<any> {
+export async function getCommissionByTechnical(technicelId: string): Promise<any> {
+    try {
+        const res = await api.get(`${PREFIX_URL}/get/${technicelId}/commission`, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });  
+        
+        return returnSuccessApi(true, res.data.message, res.data.data);
+
+    } catch (error) {
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
+        
+    };
+};  
+
+export async function updateCommissionTechnicalService(payLoad: any): Promise<any> {
+    try {
+        const res = await api.put(`${PREFIX_URL}/update/${payLoad.technical_id}/commission`, payLoad, {
+            headers: {
+                Accept: 'application/json'
+            }
+        });
+
+        console.log(res);
+        
+
+        return returnSuccessApi(true, res.data.message, res.data.data);
+
+    } catch (error) {
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
+        
+    };
+};  
+
+export async function commissionTechnicalService(payLoad: any): Promise<any> {
     try {  
-          const res = await api.post('/technicel/create/commission', payLoad, {
+          const res = await api.post(`${PREFIX_URL}/create/commission`, payLoad, {
             headers: {
                 Accept: 'application/json'
             }

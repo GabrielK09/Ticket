@@ -6,6 +6,7 @@ use App\Models\Technical;
 use App\Models\TechnicelCommission;
 use App\Repositories\Interfaces\Technicel\TechnicelContract;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class TechnicelRepository implements TechnicelContract
 {
@@ -79,7 +80,11 @@ class TechnicelRepository implements TechnicelContract
 
     public function commissionManagement(array $data)
     {
-        $technicel = $this->findById($data['owner_id'], $data['id']);
+        $alreadyHave = $this->getCommissionByTechnical($data['technical_id']);
+
+        if($alreadyHave) return;
+
+        $technicel = $this->findById($data['owner_id'], $data['technical_id']);
         $maxId = TechnicelCommission::where('owner_id', $data['owner_id'])->max('technicel_commission_id');
 
         return TechnicelCommission::create([
@@ -90,5 +95,38 @@ class TechnicelRepository implements TechnicelContract
             'commission_value' => $data['commission_value'],
             'commission_type' => $data['commission_type'],
         ]);
+    }
+
+    public function getCommissionByTechnical(string $id)
+    {
+        $technicel = TechnicelCommission::query()
+                                            ->where('technical_id', $id)
+                                            ->select(
+                                                'owner_id',
+                                                'technical_id',
+                                                'commission_type',
+                                                'commission_value',
+                                            )
+                                            ->first();
+
+        if($technicel) return $technicel;
+
+        return null;
+    }
+
+    public function updateCommissionTechnical(array $data, string $id)
+    {
+        $technicel = TechnicelCommission::query()
+                                            ->where('technical_id', $id)
+                                            ->first();
+
+        $technicel->update([
+            'commission_type' => $data['commission_type'],
+            'commission_value' => $data['commission_value']
+        ]);
+
+        $technicel->save();
+
+        return $technicel;
     }
 }
