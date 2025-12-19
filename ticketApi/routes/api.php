@@ -14,6 +14,10 @@ Route::prefix('v1')->group(function() {
         });
     });
 
+    Route::get('/test-error', function () {
+        throw new \Exception('Teste');
+    });
+
     Route::middleware('auth:sanctum')->group(function() {
         Route::prefix('auth')->group(function() {
             Route::controller(AuthController::class)->group(function() {

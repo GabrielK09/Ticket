@@ -156,5 +156,11 @@ return [
             'level' => 'debug',
             'path' => storage_path('logs/auth/auth.log')
         ],
+
+        'internal-error' => [
+            'driver' => 'slack',
+            'level' => 'critical',
+            'path' => storage_path('logs/internal/internal_error.log')
+        ]
     ],
 ];
