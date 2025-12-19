@@ -106,11 +106,11 @@ class TechnicalsController extends Controller
         return apiSuccess('Comissão cadastrada com sucesso!', $this->technicelService->commissionManagement($request->validated()));
     }
 
-    public function getCommissionByTechnical(string $id)
+    public function getCommissionByTechnical(string $ownerId, string $id)
     {
         return response()->json([
             'success' => true,
-            'data' => $this->technicelService->getCommissionByTechnical($id)
+            'data' => $this->technicelService->getCommissionByTechnical($ownerId, $id)
         ]);
     }
 

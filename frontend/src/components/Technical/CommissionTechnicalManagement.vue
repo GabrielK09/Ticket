@@ -1,6 +1,13 @@
 <template>
     <q-dialog v-model="internalDialog" persistent>
-        <q-card>
+        <q-card v-if="!showLoadingComponent">
+            <LoadingScreenComponet 
+                :module="'commission'"
+
+            />
+        </q-card>
+
+        <q-card class="w-[100%] h-[50%]" v-if="showLoadingComponent">
             <q-card-section>
                 <span
                     class="q-ml-sm"
@@ -15,6 +22,10 @@
                         type="number"
                         outlined
                         label="Valor" 
+                        placeholder="0,00"
+                        mask="##,##"
+                        fill-mask="0"
+                        reverse-fill-mask
                     />
                     
                     <div class="mt-4 border rounded-md p-4 flex flex-col">
@@ -44,7 +55,7 @@
                     title="Sair"
                     icon="close" 
                     color="red" 
-                    @click.prevent="close" 
+                    @click.prevent="showDialogClose" 
                 />
 
                 <q-btn 
@@ -57,7 +68,6 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
-
 </template>
 
 <script setup lang="ts">
@@ -67,9 +77,9 @@
         getCommissionByTechnical, 
         updateCommissionTechnicalService 
     } from 'src/modules/technicals/technicalsService';
-
-    import { onMounted, onUnmounted, ref, watch } from 'vue';
+    import { ref, watch } from 'vue';
     import * as Yup from 'yup';
+    import LoadingScreenComponet from '../_LoadingScreen/LoadingScreenComponet.vue';
 
     const $q = useQuasar();
 
@@ -100,13 +110,21 @@
     const internalDialog = ref(props.showDialog);
 
     let showLoading = ref<boolean>(false);
+    let showLoadingComponent = ref<boolean>(false);
     let alreadyHave = ref<boolean>(false);
-    
-    watch(() => props.showDialog, val => {
-        internalDialog.value = val;
-    });
 
-    const handleSubmit = () => {
+    watch(
+        () => props.technicalId,
+        async (newId, oldId) => {
+            if(props.showDialog && newId !== oldId)
+            {
+                await loadComission();
+
+            };
+        }
+    );
+
+    const handleSubmit = (): void => {
         console.warn('Vai chamar handleSubmit: alreadyHave.value: ', alreadyHave.value);
 
         if(alreadyHave.value)
@@ -121,7 +139,7 @@
         };
     };
 
-    const updateCommissionTechnical = async () => {
+    const updateCommissionTechnical = async (): Promise<void> => {
         showLoading.value = true;
 
         try {
@@ -176,7 +194,7 @@
         };
     };
 
-    const commissionTechnicalSubmit = async() => {
+    const commissionTechnicalSubmit = async(): Promise<void> => {
         showLoading.value = true;
 
         try {
@@ -193,7 +211,7 @@
                 });
 
                 emits('update:showDialog', false);
-
+                
             } else {
                 $q.notify({
                     type: 'negative',
@@ -234,38 +252,85 @@
         };
     };
 
+    const resetForm = () => {
+        alreadyHave.value = false;
+        formErrors.value = {};
+
+        commissionTechnical.value = {
+            owner_id: LocalStorage.getItem('owner_id'),
+            technical_id: props.technicalId,
+            commission_type: 'R$',
+            commission_value: 0
+        };
+    };
+
+    const loadComission = async(): Promise<void> => {
+        try {
+            resetForm();
+
+            const res = await getCommissionByTechnical(commissionTechnical.value.owner_id, props.technicalId);
+        
+            if(res?.data !== null)
+            {
+                alreadyHave.value = true;
+                
+                commissionTechnical.value = {
+                    owner_id: res.data.owner_id,
+                    technical_id: res.data.technical_id,
+                    commission_type: res.data.commission_type,
+                    commission_value: res.data.commission_value
+                };     
+            } else {
+                alreadyHave.value = false;
+
+            };
+
+        } finally {
+            showLoadingComponent.value = true;
+
+        };
+    };
+
+    watch(
+        () => props.showDialog,
+        async (open) => {
+            internalDialog.value = open;
+
+            if(open) 
+            {
+                await loadComission();
+
+            };
+        },
+        { immediate: true }
+    );
+
+    const showDialogClose = () => {
+        $q.dialog({
+            message: 'Deseja sair do cadastro de comissão?',
+            cancel: {
+                label: 'Não',
+                color: 'red',
+                push: true
+            },
+
+            ok: {
+                label: 'Sim',
+                color: 'green',
+                push: true
+            }
+
+        }).onCancel(() => {
+            return;
+
+        }).onOk(() => {
+            close();
+
+        });
+    };
+
     const close = () => {
         emits('update:showDialog', false);
+        resetForm();
     };
-
-    const onVisible = async () => {
-        return false;
-    };
-
-    onMounted(async () => {
-        const res = await getCommissionByTechnical(props.technicalId);
-        
-        if(res.data !== null)
-        {
-            alreadyHave.value = true;
-            
-            commissionTechnical.value = {
-                owner_id: res.data.owner_id,
-                technical_id: res.data.technical_id,
-                commission_type: res.data.commission_type,
-                commission_value: res.data.commission_value
-            };     
-
-        } else {
-            alreadyHave.value = false;
-        };
-
-        console.log('Valor atual: ', alreadyHave.value);
-        
-    });
-
-    onUnmounted(() => {
-        alreadyHave.value = false;
-
-    });
 </script>

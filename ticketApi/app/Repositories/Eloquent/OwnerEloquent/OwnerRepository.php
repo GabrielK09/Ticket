@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\OwnerEloquent;
 
+use App\Models\Config\Customer\CustomerConfig;
 use App\Models\Customer;
 use App\Repositories\Interfaces\Owner\OnwerContract;
 
@@ -47,6 +48,11 @@ class OwnerRepository implements OnwerContract
             'cep' => '', 
             'address' => '', 
             'number' => '', 
+        ]);
+
+        CustomerConfig::create([
+            'owner_id' => $owner->id,
+            'customer_config_id' => $owner->id,
         ]);
 
         return $owner;

@@ -4,7 +4,6 @@ namespace App\Repositories\Eloquent\CustomerEloquent;
 
 use App\Models\Customer;
 use App\Repositories\Interfaces\Customer\CustomerContract;
-use Exception;
 use Illuminate\Support\Facades\Log;
 
 class CustomerRepository implements CustomerContract

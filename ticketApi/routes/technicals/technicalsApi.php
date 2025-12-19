@@ -9,7 +9,7 @@ Route::prefix('/technicel')->group(function() {
         Route::post('/create', 'store');
         Route::put('/new-status-technical', 'activeOrDisable');
 
-        Route::get('/get/{id}/commission', 'getCommissionByTechnical');
+        Route::get('/get/{owner_id}/{id}/commission', 'getCommissionByTechnical');
         Route::put('/update/{id}/commission', 'updateCommissionTechnical');
 
         Route::post('/create/commission', 'commissionManagement');

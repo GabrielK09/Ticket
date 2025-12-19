@@ -12,7 +12,7 @@ interface TechnicelContract
     public function activeOrDisable(string $ownerId, string $id, string $action);
     public function findById(string $ownerId, string $technicelId);
     public function commissionManagement(array $data);
-    public function getCommissionByTechnical(string $id);
+    public function getCommissionByTechnical(string $ownerId, string $id);
     public function updateCommissionTechnical(array $data, string $id);
 
 }

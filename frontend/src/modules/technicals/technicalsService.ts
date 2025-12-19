@@ -21,7 +21,7 @@ export async function getAllTechnicalsService(ownerId: string): Promise<any> {
 
 export async function createTechnicel(payLoad: technicalsContract): Promise<any> {
     try {
-        const res = await api.post(`${PREFIX_URL}/creat`, payLoad, {
+        const res = await api.post(`${PREFIX_URL}/create`, payLoad, {
             headers: {
                 Accept: 'application/json'
             }
@@ -57,9 +57,9 @@ export async function disableOrActiveTechnicelService(technicelId: string, owner
     };
 };
 
-export async function getCommissionByTechnical(technicelId: string): Promise<any> {
+export async function getCommissionByTechnical(ownerId: string, technicelId: string): Promise<any> {
     try {
-        const res = await api.get(`${PREFIX_URL}/get/${technicelId}/commission`, {
+        const res = await api.get(`${PREFIX_URL}/get/${ownerId}/${technicelId}/commission`, {
             headers: {
                 Accept: 'application/json'
             }

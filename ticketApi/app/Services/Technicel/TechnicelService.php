@@ -56,9 +56,9 @@ class TechnicelService
         return DB::transaction(fn() => $this->technicelRepository->commissionManagement($data));
     }
 
-    public function getCommissionByTechnical(string $id)
+    public function getCommissionByTechnical(string $ownerId, string $id)
     {
-        $commission = $this->technicelRepository->getCommissionByTechnical($id);
+        $commission = $this->technicelRepository->getCommissionByTechnical($ownerId, $id);
         
         return $commission;
     }

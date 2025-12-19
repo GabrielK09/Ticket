@@ -12,7 +12,9 @@ class TechnicelRepository implements TechnicelContract
 {
     public function index(string $id)
     {
-        return Technical::where('owner_id', $id)->get();
+        return Technical::query()
+                            ->where('owner_id', $id)
+                            ->get();
         
     }
 
@@ -80,9 +82,7 @@ class TechnicelRepository implements TechnicelContract
 
     public function commissionManagement(array $data)
     {
-        $alreadyHave = $this->getCommissionByTechnical($data['technical_id']);
-
-        if($alreadyHave) return;  
+        if($this->getCommissionByTechnical($data['owner_id'], $data['technical_id'])) return;  
 
         $technicel = $this->findById($data['owner_id'], $data['technical_id']);
         $maxId = TechnicelCommission::where('owner_id', $data['owner_id'])->max('technicel_commission_id');
@@ -97,9 +97,10 @@ class TechnicelRepository implements TechnicelContract
         ]);
     }
 
-    public function getCommissionByTechnical(string $id)
+    public function getCommissionByTechnical(string $ownerId, string $id)
     {
         $technicel = TechnicelCommission::query()
+                                            ->where('owner_id', $ownerId)
                                             ->where('technical_id', $id)
                                             ->select(
                                                 'owner_id',
