@@ -1,4 +1,4 @@
-<template>
+<template>    
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-40 backdrop-blur-sm">
         <div class="bg-white p-8 rounded-xl shadow-lg flex flex-col items-center gap-4">
             <h1 class="text-2xl font-bold text-gray-700">{{ showMessage }}</h1>
@@ -10,7 +10,13 @@
 <script setup lang="ts">
     import { onMounted, ref } from 'vue';
 
+    const MAX_TIME = 3000;
     const showMessage = ref<string>('');
+    let internalDialog = ref<boolean>(true);
+
+    const emits = defineEmits([
+        'update:showDialog'
+    ]);
 
     const messages = {
         'commission': 'Carregando comissões ...',
@@ -26,6 +32,10 @@
     onMounted(() => {
         showMessage.value = messages[props.module];
         
+        setTimeout(() => {
+            emits('update:showDialog', false);
+
+        }, MAX_TIME);
     });
 
 </script>

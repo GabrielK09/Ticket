@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Config\Customer;
+namespace App\Services\Customer\Config;
 
 use App\Repositories\Interfaces\Customer\Config\CustomerConfigContract;
 use Illuminate\Support\Facades\DB;

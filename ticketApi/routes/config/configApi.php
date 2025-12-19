@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/config')->group(function() {
     Route::prefix('/customer')->group(function() {
         Route::controller(CustomerConfigController::class)->group(function() {
-            Route::get('/get-config', 'show');
+            Route::get('/get-config/{id}', 'show');
             Route::put('/update-config', 'update');
         });
         

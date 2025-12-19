@@ -10,12 +10,12 @@ class CustomerConfigRepository implements CustomerConfigContract
 {
     private function getFirstOrCreate(string $ownerId)
     {
-        return CustomerConfig::query()->where('ower_id', $ownerId)->firstOrCreate([
+        return CustomerConfig::firstOrCreate(
             ['owner_id' => $ownerId],
             [
                 'customer_config_id' => $ownerId
             ]
-        ]);
+        );
     }
 
     public function show(string $id)

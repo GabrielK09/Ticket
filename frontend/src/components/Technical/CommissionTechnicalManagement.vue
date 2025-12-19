@@ -7,7 +7,7 @@
             />
         </q-card>
 
-        <q-card class="w-[100%] h-[50%]" v-if="showLoadingComponent">
+        <q-card class="w-[100%] h-max" v-if="showLoadingComponent">
             <q-card-section>
                 <span
                     class="q-ml-sm"

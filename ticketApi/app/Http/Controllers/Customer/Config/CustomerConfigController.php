@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Customer\Config;
 use App\Enum\Config\DefaultMessages;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\Config\CustomerConfigRequest;
-use App\Services\Config\Customer\CustomerConfigService;
+use App\Services\Customer\Config\CustomerConfigService;
 
 class CustomerConfigController extends Controller
 {

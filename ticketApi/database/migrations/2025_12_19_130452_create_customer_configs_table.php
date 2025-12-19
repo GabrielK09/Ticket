@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_config_id')->index();
 
-            $table->foreign('owner_id')->references('owner_id')->on('owners')->cascadeOnDelete();
+            $table->foreign('owner_id')->references('id')->on('owners')->cascadeOnDelete();
+            
             $table->unsignedBigInteger('owner_id');
 
             // true = Sim

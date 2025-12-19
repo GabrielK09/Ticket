@@ -10,7 +10,8 @@
                         <q-icon 
                             name="settings" 
                             class="mb-auto mt-auto cursor-pointer"
-                            id="customer_settings"
+                            @click="showCustomerConfig = true"
+
                         />
 
                     </div>
@@ -110,6 +111,12 @@
             </div>
         </section>
     </q-page>
+
+    <CustomerConfigComponent
+        v-if="showCustomerConfig"
+        :show-dialog="showCustomerConfig"
+        @update:show-dialog="showCustomerConfig = $event"
+    />
 </template>
 
 <script setup lang="ts">
@@ -118,7 +125,8 @@
     import { formatCPFCNPJ } from 'src/util/formatCPFCNPJ';
     import { onMounted, ref } from 'vue';
     import { disableOrActiveCustomerService, getAllCustomersService } from '../customerService';
- 
+    import CustomerConfigComponent from 'src/components/Config/CustomerConfig/CustomerConfigComponent.vue';
+
     const $q = useQuasar();
     const searchInput = ref('');
     const companyName = LocalStorage.getItem('companie_name_url');
@@ -159,6 +167,8 @@
             align: 'center'
         }
     ];
+
+    let showCustomerConfig = ref<boolean>(false);
 
     const index = async (): Promise<void> => {
         const res = await getAllCustomersService(ownerId);
