@@ -36,7 +36,7 @@
 
                     <q-input 
                         label="" 
-                        v-model="customer.company_name" 
+                        v-model="companyNameUpper" 
                         stack-label
                         outlined
                         type="text"
@@ -53,7 +53,7 @@
                     </q-input>
                 
                     <q-input 
-                        v-model="customer.trade_name" 
+                        v-model="tradeNameUpper" 
                         type="text" 
                         label="E-mail *" 
                         stack-label
@@ -65,7 +65,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Nome fantasia <span class="text-red-500">*</span>
+                                Nome fantasia <span v-show="configCustomer.trande_name_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -112,7 +112,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Telefone <span class="text-red-500">*</span>
+                                Telefone <span v-show="configCustomer.phone_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -149,7 +149,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Endereço <span class="text-red-500">*</span>
+                                Endereço <span v-show="configCustomer.address_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -167,7 +167,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Número do endereço <span class="text-red-500">*</span>
+                                Número do endereço <span v-show="configCustomer.number_address_null"  class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -189,20 +189,53 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { onMounted } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import { getCustomerDataService, updateCustomerService } from '../../customerService';
     import * as Yup from 'yup';
+    import { getCustomerConfigService } from 'src/services/configs/customer/configService';
 
-    const customerSchema = Yup.object({
-        company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
-        trade_name: Yup.string().required('O nome fantasia do cliente é obrigatório!'),
-        phone: Yup.string().required('O telefone do cliente é obrigatório!'),
-        cep: Yup.string().required('O CEP do cliente é obrigatório!'),
-        address: Yup.string().required('O endereço do cliente é obrigatório!'),
-        number: Yup.string().required('O número do cliente é obrigatório!'), 
+    const OWNER_ID: string = LocalStorage.getItem('owner_id');
+
+    function convertToBool(val: any): boolean { return val === 1 ? true : false; };
+
+    let configCustomer = ref<customerConfig>({
+        owner_id: OWNER_ID,
+        default_type: 'J',
+        trande_name_null: false,
+        phone_null: false,
+        address_null: false,
+        number_address_null: false
     });
+
+    const getCustomerConfig = async(): Promise<any> => {
+        const res = await getCustomerConfigService(OWNER_ID);
+
+        const data: customerConfig = res.data;
+        
+        configCustomer.value = {
+            owner_id: OWNER_ID,
+            address_null: convertToBool(data.address_null),
+            default_type: data.default_type === 'J' ? customerTypes[0] : customerTypes[1],
+            number_address_null: convertToBool(data.number_address_null),
+            phone_null: convertToBool(data.phone_null),
+            trande_name_null: convertToBool(data.trande_name_null)
+        };
+    };
+
+    const customerSchema = computed(() =>
+        Yup.object({
+            company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
+            trade_name: configCustomer.value.trande_name_null ? Yup.string().nullable() : Yup.string().required('O nome fantasia do cliente é obrigatório!'),
+            cnpj_cpf: Yup.string().required('O CPF/CNPJ do cliente é obrigatório!'),
+            phone: configCustomer.value.phone_null ? Yup.string().nullable() : Yup.string().required('O telefone do cliente é obrigatório!'),
+            cep: Yup.string().required('O CEP do cliente é obrigatório!'),
+            address: configCustomer.value.address_null ? Yup.string().nullable() : Yup.string().required('O endereço do cliente é obrigatório!') ,
+            number: configCustomer.value.number_address_null ? Yup.string().nullable() : Yup.string().required('O número do cliente é obrigatório!')
+
+        })
+    );
 
     const $q = useQuasar();
     const router = useRouter();
@@ -228,6 +261,21 @@
         number: '',
         customerType: 'Jurídica'
 
+    });
+
+    const companyNameUpper = computed({
+        get: () => customer.value.company_name,
+        set: (val: string) => {
+            customer.value.company_name = val.toUpperCase();  
+            customer.value.trade_name = val.toUpperCase();  
+        }
+    });
+    
+    const tradeNameUpper = computed({
+        get: () => customer.value.trade_name,
+        set: (val: string) => {
+            customer.value.trade_name = val.toUpperCase();  
+        }
     });
 
     const getCustomerData = async () => {
@@ -259,7 +307,7 @@
 
     const updateCustomer = async () => {
         try {
-            await customerSchema.validate(customer.value, { abortEarly: false });
+            await customerSchema.value.validate(customer.value, { abortEarly: false });
 
             const payLoad = {
                 owner_id: LocalStorage.getItem('owner_id'),
@@ -334,5 +382,6 @@
         };
 
         getCustomerData();
+        getCustomerConfig();
     });
 </script>

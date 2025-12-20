@@ -42,7 +42,7 @@ class CustomerController extends Controller
      */
     public function update(CustomerRequest $request, string $id)
     {
-        if($request->validated()['customer_id'] === 1) throw new \Illuminate\Validation\ValidationException('O cliente padrão não pode ser alterado');
+        if($id === 1) throw new \Illuminate\Validation\ValidationException('O cliente padrão não pode ser alterado');
         return apiSuccess('Cliente alterado com sucesso!', $this->customerService->update($request->validated(), $id));   
     }
 

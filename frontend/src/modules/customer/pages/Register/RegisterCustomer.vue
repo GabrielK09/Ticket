@@ -202,11 +202,6 @@
 
     const OWNER_ID: string = LocalStorage.getItem('owner_id');
 
-    const customerType: string[] = [
-        'Júridica',
-        'Física',
-    ];
-
     function convertToBool(val: any): boolean { return val === 1 ? true : false; };
 
     let configCustomer = ref<customerConfig>({
@@ -226,13 +221,13 @@
         configCustomer.value = {
             owner_id: OWNER_ID,
             address_null: convertToBool(data.address_null),
-            default_type: data.default_type === 'J' ? customerType[0] : customerType[1],
+            default_type: data.default_type === 'J' ? customerTypes[0] : customerTypes[1],
             number_address_null: convertToBool(data.number_address_null),
             phone_null: convertToBool(data.phone_null),
             trande_name_null: convertToBool(data.trande_name_null)
         };        
 
-        customer.value.customerType = data.default_type === 'J' ? customerType[0] : customerType[1];
+        customer.value.customerType = data.default_type === 'J' ? customerTypes[0] : customerTypes[1];
         
     };
 
