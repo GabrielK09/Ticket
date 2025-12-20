@@ -6,6 +6,12 @@
             >
                 <div class="flex justify-between">
                     <h2 class="text-gray-600 m-2">Técnicos</h2>
+                    <q-icon 
+                        name="settings" 
+                        class="mb-auto mt-auto cursor-pointer"
+                        @click="showTechnicelConfig = true"
+
+                    />
 
                     <div class="mt-auto mb-auto">
                         <q-btn 
@@ -228,6 +234,7 @@
     ];
 
     let showCommissionManagement = ref<boolean>(false);
+    let showTechnicelConfig = ref<boolean>(false);
     let selectedTechnical = ref<string>('');
     let selectedTechnicalId = ref<string>('');
 

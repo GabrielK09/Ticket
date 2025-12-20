@@ -25,8 +25,6 @@ class CustomerConfigRepository implements CustomerConfigContract
 
     public function update(array $data)
     {
-        if($this->getFirstOrCreate($data['owner_id'])) return;
-    
         $config = $this->getFirstOrCreate($data['owner_id']);
 
         $config->fill([

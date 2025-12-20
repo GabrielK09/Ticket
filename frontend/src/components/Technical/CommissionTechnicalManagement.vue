@@ -50,12 +50,13 @@
                     </div>
                 </div>
             </q-card-section>
+
             <q-card-actions align="right">
                 <q-btn 
                     title="Sair"
                     icon="close" 
                     color="red" 
-                    @click.prevent="showDialogClose" 
+                    @click.prevent="close" 
                 />
 
                 <q-btn 
@@ -76,7 +77,9 @@
         commissionTechnicalService, 
         getCommissionByTechnical, 
         updateCommissionTechnicalService 
+
     } from 'src/modules/technicals/technicalsService';
+    
     import { ref, watch } from 'vue';
     import * as Yup from 'yup';
     import LoadingScreenComponet from '../_LoadingScreen/LoadingScreenComponet.vue';
@@ -304,30 +307,6 @@
         },
         { immediate: true }
     );
-
-    const showDialogClose = () => {
-        $q.dialog({
-            message: 'Deseja sair do cadastro de comissão?',
-            cancel: {
-                label: 'Não',
-                color: 'red',
-                push: true
-            },
-
-            ok: {
-                label: 'Sim',
-                color: 'green',
-                push: true
-            }
-
-        }).onCancel(() => {
-            return;
-
-        }).onOk(() => {
-            close();
-
-        });
-    };
 
     const close = () => {
         emits('update:showDialog', false);

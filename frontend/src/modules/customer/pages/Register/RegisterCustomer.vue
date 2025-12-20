@@ -66,7 +66,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Nome fantasia <span class="text-red-500">*</span>
+                                Nome fantasia <span v-show="configCustomer.trande_name_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -113,7 +113,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Telefone <span class="text-red-500">*</span>
+                                Telefone <span v-show="configCustomer.phone_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -151,7 +151,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Endereço <span class="text-red-500">*</span>
+                                Endereço <span v-show="configCustomer.address_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -169,7 +169,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Número do endereço <span class="text-red-500">*</span>
+                                Número do endereço <span v-show="configCustomer.number_address_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -191,23 +191,63 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { computed, ref } from 'vue';
+    import { computed, onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { createCustomer } from '../../customerService';
     import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     import * as Yup from 'yup';
     import formatValues from 'src/util/formatValues';
     import { getCepData } from 'src/services/cep/cepService';
+    import { getCustomerConfigService } from 'src/services/configs/customer/configService';
 
-    const customerSchema = Yup.object({
-        company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
-        trade_name: Yup.string().required('O nome fantasia do cliente é obrigatório!'),
-        cnpj_cpf: Yup.string().required('O CPF/CNPJ do cliente é obrigatório!'),
-        phone: Yup.string().required('O telefone do cliente é obrigatório!'),
-        cep: Yup.string().required('O CEP do cliente é obrigatório!'),
-        address: Yup.string().required('O endereço do cliente é obrigatório!'),
-        number: Yup.string().required('O número do cliente é obrigatório!'), 
+    const OWNER_ID: string = LocalStorage.getItem('owner_id');
+
+    const customerType: string[] = [
+        'Júridica',
+        'Física',
+    ];
+
+    function convertToBool(val: any): boolean { return val === 1 ? true : false; };
+
+    let configCustomer = ref<customerConfig>({
+        owner_id: OWNER_ID,
+        default_type: 'J',
+        trande_name_null: false,
+        phone_null: false,
+        address_null: false,
+        number_address_null: false
     });
+
+    const getCustomerConfig = async(): Promise<any> => {
+        const res = await getCustomerConfigService(OWNER_ID);
+
+        const data: customerConfig = res.data;
+        
+        configCustomer.value = {
+            owner_id: OWNER_ID,
+            address_null: convertToBool(data.address_null),
+            default_type: data.default_type === 'J' ? customerType[0] : customerType[1],
+            number_address_null: convertToBool(data.number_address_null),
+            phone_null: convertToBool(data.phone_null),
+            trande_name_null: convertToBool(data.trande_name_null)
+        };        
+
+        customer.value.customerType = data.default_type === 'J' ? customerType[0] : customerType[1];
+        
+    };
+
+    const customerSchema = computed(() =>
+        Yup.object({
+            company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
+            trade_name: configCustomer.value.trande_name_null ? Yup.string().nullable() : Yup.string().required('O nome fantasia do cliente é obrigatório!'),
+            cnpj_cpf: Yup.string().required('O CPF/CNPJ do cliente é obrigatório!'),
+            phone: configCustomer.value.phone_null ? Yup.string().nullable() : Yup.string().required('O telefone do cliente é obrigatório!'),
+            cep: Yup.string().required('O CEP do cliente é obrigatório!'),
+            address: configCustomer.value.address_null ? Yup.string().nullable() : Yup.string().required('O endereço do cliente é obrigatório!') ,
+            number: configCustomer.value.number_address_null ? Yup.string().nullable() : Yup.string().required('O número do cliente é obrigatório!')
+
+        })
+    );
 
     const customerTypes: string[] = [
         'Jurídica',
@@ -220,7 +260,7 @@
     const $q = useQuasar();
 
     const customer = ref<customerContract>({
-        owner_id: LocalStorage.getItem('owner_id'),
+        owner_id: OWNER_ID,
         company_name: '',
         trade_name: '',
         cnpj_cpf: '',
@@ -305,7 +345,7 @@
 
     const submitCustomer = async () => {
         try {
-            await customerSchema.validate(customer.value, { abortEarly: false });
+            await customerSchema.value.validate(customer.value, { abortEarly: false });
             
             const res = await createCustomer(customer.value);
 
@@ -353,11 +393,15 @@
                 $q.notify({
                     type: 'negative',
                     position: 'top',
-                    message: error.response?.data?.message
+                    message: error.response?.data?.message || 'Erro na criação do cliente!'
 
                 });
             };
         };
     };
 
+    onMounted(() => {
+        getCustomerConfig();
+        
+    }); 
 </script>

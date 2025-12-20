@@ -2,7 +2,7 @@
     <q-dialog v-model="internalDialog" persistent>
         <q-card v-if="!showLoadingComponent">
             <LoadingScreenComponet 
-                :module="'config-customer'"
+                :module="'config-technical'"
                 @update:show-dialog="showLoadingComponent = !$event"
 
             />
@@ -12,7 +12,7 @@
             <q-card-section>
                 <div class="p-2 m-4">
                     <span class="font-bold">
-                        Clientes - Configurações
+                        Técnicos - Configurações
                     </span>
 
                     <div class="">
