@@ -7,7 +7,7 @@ export async function getAllCustomersService(ownerId: string): Promise<any> {
             headers: {
                 Accept: 'application/json'
             }
-        })
+        });
 
         return returnSuccessApi(true, res.data.mesage, res.data.data);
 
@@ -24,7 +24,7 @@ export async function createCustomer(payLoad: customerContract): Promise<any> {
                 Accept: 'application/json'
             }
         });
-
+        
         return returnSuccessApi(true, res.data.message, res.data);
 
     } catch (error) {

@@ -19,6 +19,7 @@
             type: 'donut',
             
         },
+        
         series: [44, 55, 13],
         labels: ['Teste 1', 'Teste 2', 'Teste 3'],
 

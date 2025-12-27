@@ -3,8 +3,9 @@
         <q-card v-if="!showLoadingComponent">
             <LoadingScreenComponet 
                 :module="'config-customer'"
-                @update:show-dialog="showLoadingComponent = !$event"
-
+                @update:hidden-dialog="showLoadingComponent = $event"
+                @update:hidden-dialog-by-error="internalDialog = $event"
+                :show-cancel-operation="showCancelOperation"
             />
         </q-card>
 
@@ -56,7 +57,7 @@
                     title="Sair"
                     icon="close" 
                     color="red" 
-                    @click.prevent="close" 
+                    @click.prevent="emits('update:hiddenDialog', true)" 
                 />
 
                 <q-btn 
@@ -73,7 +74,7 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { onMounted, ref } from 'vue';
+    import { computed, onMounted, ref } from 'vue';
     import LoadingScreenComponet from '../../_LoadingScreen/LoadingScreenComponet.vue';
     import { getCustomerConfigService, updateCustomerConfigService } from 'src/services/configs/customer/configService';
 
@@ -83,7 +84,10 @@
         showDialog: boolean
     }>();
 
-    const internalDialog = ref(props.showDialog);
+    const internalDialog = computed({
+        get: () => props.showDialog,
+        set: (v: boolean) => emits('update:hiddenDialog', v)
+    });
 
     const customerType: string[] = [
         'Júridica',
@@ -91,33 +95,33 @@
     ];
 
     let showLoading = ref<boolean>(false);
+
+    const showCancelOperation = ref<boolean>(false);
+
     let showLoadingComponent = ref<boolean>(false);
 
     const configCustomer = ref<customerConfig>({
         owner_id: LocalStorage.getItem('owner_id'),
-        default_type: 'J',
+        default_type: 'Júridica',
         trande_name_null: false,
         phone_null: false,
         address_null: false,
         number_address_null: false
+
     });
 
-    function formatCustomerType(char: string): string
+    function formatCustomerType(char: string): 'J' | 'F'
     {
-        if(!customerType.some(types_ => types_.includes(char))) return;
-
-        return char[0];
+        return char === 'Júridica' ? 'J' : 'F';
     };
 
-    function convertToBool(val: any): boolean { return val === 1 ? true : false; };
+    function convertToBool(val: any): boolean { 
+        return val === true || val === 1 || val === '1' ;
+    };
 
     const emits = defineEmits([
-        'update:showDialog'
+        'update:hiddenDialog'
     ]);
-
-    const close = () => {
-        emits('update:showDialog', false);
-    };
 
     const saveConfigs = async(): Promise<void> => {
         showLoading.value = true;
@@ -142,7 +146,7 @@
                     message: res.message,
                 });
 
-                emits('update:showDialog', false);
+                emits('update:hiddenDialog', true);
                 
             } else {
                 $q.notify({
@@ -157,29 +161,44 @@
     };
 
     const getConfig = async(): Promise<void> => {
-        const res: any = await getCustomerConfigService(configCustomer.value.owner_id);
+        try {
+            const res: any = await getCustomerConfigService(configCustomer.value.owner_id);
 
-        const data: customerConfig = res.data;
-        
-        configCustomer.value = {
-            owner_id: data.owner_id,
-            address_null: convertToBool(data.address_null),
-            default_type: data.default_type === 'J' ? customerType[0] : customerType[1],
-            number_address_null: convertToBool(data.number_address_null),
-            phone_null: convertToBool(data.phone_null),
-            trande_name_null: convertToBool(data.trande_name_null)
-        };
+            const data: customerConfig = res.data;
+            
+            configCustomer.value = {
+                owner_id: data.owner_id,
+                address_null: convertToBool(data.address_null),
+                default_type: data.default_type === 'J' ? customerType[0] : customerType[1],
+                number_address_null: convertToBool(data.number_address_null),
+                phone_null: convertToBool(data.phone_null),
+                trande_name_null: convertToBool(data.trande_name_null)
+            };
 
-        if(!res.success)
-        {
+            if(!res.success)
+            {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: res.message,
+                });
+
+                emits('update:hiddenDialog', true);
+
+            };
+            
+            showLoading.value = true;
+
+        } catch (error) {
             $q.notify({
                 type: 'negative',
                 position: 'top',
-                message: res.message,
+                message: 'Erro ao consultar as configurações, por gentileza, contate o suporte técnico!'
+
             });
 
-            emits('update:showDialog', false);
-
+            showCancelOperation.value = true;
+            
         };
     };  
 

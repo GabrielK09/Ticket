@@ -26,7 +26,7 @@
                     </div>
                 </div>
 
-                <div class="">
+                <div>
                     <q-table
                         borded
                         :rows="customers"
@@ -115,7 +115,7 @@
     <CustomerConfigComponent
         v-if="showCustomerConfig"
         :show-dialog="showCustomerConfig"
-        @update:show-dialog="showCustomerConfig = $event"
+        @update:hidden-dialog="showCustomerConfig = !$event"
     />
 </template>
 

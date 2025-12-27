@@ -14,78 +14,71 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
-    protected $dontReport = [];
-
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    public function register()
+    public function render($request, Throwable $e)
     {
-        $this->renderable(function( Throwable $e, $request) {
-            if(! $request->expectsJson() && ! $request->is('api/*')) 
-            {
-                return null;
-
-            }
-
-            if($e instanceof ValidationException)   
-            {
-                return response()->json([
-                    'success' => false,
-                    'mesage' => 'Erro de validação!',
-                    'errors' => $e->errors()
-
-                ], 422);
-            }
-
-            if($e instanceof AuthenticationException) 
-            {
-                return response()->json([
-                    'success' => false,
-                    'mesage' => 'Usuário não autenticado!',
-
-                ], 401);
-            }
-
-            if($e instanceof AuthorizationException)
-            {
-                return response()->json([
-                    'success' => false,
-                    'mesage' => 'Usuário não autorizado!',
-
-                ], 403);
-            }
-
-            if($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException)
-            {
-                return response()->json([
-                    'success' => false,
-                    'mesage' => 'Registro não encontrado!',
-
-                ], 404);
-            }
-
-            if($e instanceof HttpException)
-            {
-                return response()->json([
-                    'success' => false,
-                    'mesage' => $e->getMessage() ?: 'Erro na requisição!',
-
-                ], $e->getStatusCode()); 
-            }
-
-            Log::channel('internal-error')->critical('Erro interno', [
-                'erro' => $e
-                
-            ]);
-
+        if($e instanceof ValidationException)   
+        {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro interno!'
-            ], 500);
-        });
+                'mesage' => 'Erro de validação!',
+                'errors' => $e->errors()
+
+            ], 422);
+        }
+
+        if($e instanceof AuthenticationException) 
+        {
+            return response()->json([
+                'success' => false,
+                'mesage' => 'Usuário não autenticado!',
+
+            ], 401);
+        }
+
+        if($e instanceof AuthorizationException)
+        {
+            return response()->json([
+                'success' => false,
+                'mesage' => 'Usuário não autorizado!',
+
+            ], 403);
+        }
+
+        if($e instanceof ModelNotFoundException)
+        {
+            return response()->json([
+                'success' => false,
+                'mesage' => 'Recurso não encontrado!',
+
+            ], 404);
+        }
+
+        if($e instanceof NotFoundHttpException)
+        {
+            return response()->json([
+                'success' => false,
+                'mesage' => 'Registro não encontrado!',
+
+            ], 404);
+        }
+
+        if($e instanceof HttpException)
+        {
+            return response()->json([
+                'success' => false,
+                'mesage' => $e->getMessage() ?: 'Erro na requisição!',
+
+            ], $e->getStatusCode()); 
+        }
+
+        Log::channel('internal-error')->critical('Erro interno', [
+            'erro' => $e
+            
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erro interno!'
+        ], 500);
     }   
 }

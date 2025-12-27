@@ -46,7 +46,7 @@ export default boot(({ app, router }) => {
 
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
-            }
+            };
 
             return config;
         },

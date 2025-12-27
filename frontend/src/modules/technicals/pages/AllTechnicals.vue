@@ -5,13 +5,15 @@
                 class="m-2"
             >
                 <div class="flex justify-between">
-                    <h2 class="text-gray-600 m-2">Técnicos</h2>
-                    <q-icon 
-                        name="settings" 
-                        class="mb-auto mt-auto cursor-pointer"
-                        @click="showTechnicelConfig = true"
+                    <div class="flex">
+                        <h2 class="text-gray-600 m-2">Técnicos</h2>
+                        <q-icon 
+                            name="settings" 
+                            class="mb-auto mt-auto cursor-pointer"
+                            @click="showTechnicelConfig = true"
 
-                    />
+                        />
+                    </div>
 
                     <div class="mt-auto mb-auto">
                         <q-btn 
@@ -23,7 +25,7 @@
                     </div>
                 </div>
 
-                <div class="">
+                <div>
                     <q-table
                         borded
                         :rows="technicels"
