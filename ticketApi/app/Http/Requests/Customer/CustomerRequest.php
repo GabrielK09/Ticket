@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Customer;
 
+use App\Enum\MessagesRequest\CommonMessagesRequest;
+use App\Enum\MessagesRequest\Customer\CustomerMessagesRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -35,15 +37,15 @@ class CustomerRequest extends FormRequest
 
         return [
             'owner_id' => ['required', 'exists:App\Models\Owner,id'],
-            'company_name' => [$required, 'max:120'],
-            'trade_name' => [$required, 'max:120'],
+            'company_name' => [$required, 'string', 'max:120'],
+            'trade_name' => [$required, 'string', 'max:120'],
             'cnpj_cpf' => [
                 $this->isMethod('post') ? 'required' : 'prohibited',
                 'max:14',
                 Rule::unique('customers', 'cnpj_cpf')->ignore($this->customer),
             ],
             'phone' => [$required, 'string', 'max:24'],
-            'cep' => [$required, 'string', 'max:8'],
+            'cep' => [$required, 'string', 'max:9'],
             'address' => [$required, 'string', 'max:60'],
             'number' => [$required, 'string', 'max:16'],
         ];
@@ -52,36 +54,38 @@ class CustomerRequest extends FormRequest
     public function messages()
     {
         return [
-            'owner_id.required' => 'O identificador do emitente é obrigatório!',
-            'owner_id.exists' => 'O identificador do emitente é inválido!',
+            'owner_id.required' => CommonMessagesRequest::OWNER_ID->value,
+            'owner_id.exists' => CommonMessagesRequest::OWNER_ID->value,
 
-            'company_name.required' => 'A razão social é obrigatório!',
-            'company_name.max' => 'A razão social precisa ter no máximo 120 caracteres!',
+            'company_name.required' => CustomerMessagesRequest::COMPAYN_NAME_REQUIRED->value,
+            'company_name.string' => CustomerMessagesRequest::COMPAYN_NAME_INVALID_FORMAT->value,
+            'company_name.max' => CustomerMessagesRequest::COMPAYN_NAME_MAX->value,
+
+            'trade_name.required' => CustomerMessagesRequest::TRADE_NAME_REQUIRED->value,
+            'trade_name.string' => CustomerMessagesRequest::TRADE_NAME_INVALID_FORMAT->value,
+            'trade_name.max' => CustomerMessagesRequest::TRADE_NAME_MAX->value,
             
-            'trade_name.required' => 'O nome fantasia é obrigatório!',
-            'trade_name.max' => 'O nome fantasia precisa ter no máximo 120 caracteres!',
+            'cnpj_cpf.required' => CommonMessagesRequest::CNPJ_CPF_REQUIRED->value,
+            'cnpj_cpf.string' => CommonMessagesRequest::CNPJ_CPF_REQUIRED->value,
+            'cnpj_cpf.max' => CommonMessagesRequest::CNPJ_CPF_INVALID_MAX->value,
+            'cnpj_cpf.unique' => CommonMessagesRequest::CNPJ_CPF_UNIQUE->value,
+            'cnpj_cpf.prohibited' => CommonMessagesRequest::CNPJ_CPF_PROHIBITED->value,
             
-            'cnpj_cpf.required' => 'O CPF/CNPJ é obrigatório!',
-            'cnpj_cpf.string' => 'O CPF/CNPJ precisa ser um formato válido!',
-            'cnpj_cpf.max' => 'O CPF/CNPJ precisa ter no máximo 14 caracteres!',
-            'cnpj_cpf.unique' => 'Esse CPF/CNPJ já está cadastrado!',
-            'cnpj_cpf.prohibited' => 'O CPF/CNPJ não pode ser alterado!',
-            
-            'phone.required' => 'O telefone da empresa é obrigatório!',
-            'phone.string' => 'O telefone da empresa precisa estar em um formato válido!',
-            'phone.max' => 'O telefone da empresa precisa ter no máximo 24 caracteres!',
+            'phone.required' => CustomerMessagesRequest::PHONE_REQUIRED->value,
+            'phone.string' => CustomerMessagesRequest::PHONE_INVALID_FORMAT->value,
+            'phone.max' => CustomerMessagesRequest::PHONE_MAX->value,
 
-            'cep.required' => 'O CEP da empresa é obrigatório!',
-            'cep.string' => 'O CEP da empresa precisa estar em um formato válido!',
-            'cep.max' => 'O CEP precisa ter no máximo 8 caracteres!',
+            'cep.required' => CustomerMessagesRequest::CEP_REQUIRED->value,
+            'cep.string' => CustomerMessagesRequest::CEP_INVALID_FORMAT->value,
+            'cep.max' => CustomerMessagesRequest::CEP_MAX->value,
 
-            'address.required' => 'O endereço fantasia é obrigatório!',
-            'address.string' => 'O endereço precisa estar em um formato válido!',
-            'address.max' => 'O endereço ter no máximo 60 caracteres!',
+            'address.required' => CustomerMessagesRequest::ADDRESS_REQUIRED->value,
+            'address.string' => CustomerMessagesRequest::ADDRESS_INVALID_FORMAT->value,
+            'address.max' => CustomerMessagesRequest::ADDRESS_MAX->value,
 
-            'number.required' => 'O número do enedereço é obrigatório!',
-            'number.string' => 'O número do enedereço precisa estar em um formato válido!',
-            'number.max' => 'O número do enedereço ter no máximo 16 caracteres!',
+            'number.required' => CustomerMessagesRequest::NUMBER_ADDRESS_REQUIRED->value,
+            'number.string' => CustomerMessagesRequest::NUMBER_ADDRESS_INVALID_FORMAT->value,
+            'number.max' => CustomerMessagesRequest::NUMBER_ADDRESS_MAX->value,
             
         ];
     }

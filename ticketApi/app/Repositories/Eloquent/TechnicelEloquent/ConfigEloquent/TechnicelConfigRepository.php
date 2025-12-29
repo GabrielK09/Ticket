@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Repositories\Eloquent\CustomerEloquent\ConfigEloquent;
+namespace App\Repositories\Eloquent\TechnicelEloquent\ConfigEloquent;
 
-use App\Models\Config\Customer\CustomerConfig;
-use App\Repositories\Interfaces\Customer\Config\CustomerConfigContract;
+use App\Models\Config\Technicel\TechnicelConfig;
 use Exception;
 
-class CustomerConfigRepository implements CustomerConfigContract
+class TechnicelConfigRepository
 {
     private function getFirstOrCreate(string $ownerId)
     {
-        return CustomerConfig::firstOrCreate(
+        return TechnicelConfig::firstOrCreate(
             ['owner_id' => $ownerId],
             [
-                'customer_config_id' => $ownerId
+                'technicel_config_id' => $ownerId
             ]
         );
     }
@@ -33,6 +32,8 @@ class CustomerConfigRepository implements CustomerConfigContract
             'phone_null' => $data['phone_null'],
             'address_null' => $data['address_null'],
             'number_address_null' => $data['number_address_null'],
+            'default_commission_type' => $data['default_commission_type'],
+            'fixed_commission_value' => $data['fixed_commission_value'],
 
         ])->save();
 

@@ -25,7 +25,7 @@ class CustomerConfigRequest extends FormRequest
         return [
             'owner_id' => ['required', 'exists:App\Models\Owner,id'],
             'default_type' => ['sometimes', 'max:1', 'string'],
-            'trande_name_null' => ['sometimes'],
+            'trade_name_null' => ['sometimes'],
             'phone_null' => ['sometimes'],
             'address_null' => ['sometimes'],
             'number_address_null' => ['sometimes'],
@@ -35,11 +35,11 @@ class CustomerConfigRequest extends FormRequest
     public function messages()
     {
         return [
-            'owner_id.required' => 'O identificador do emitente é obrigatório!',
+            'owner_id.required' => INFO_GENERAL,
             'owner_id.exists' => 'O identificador do emitente é inválido!',
 
-            'default_type.max' => ['O tipo padrão do cadastro precisa estar em um formáto válido!'],
-            'default_type.string' => ['O tipo padrão do cadastro precisa estar em um formáto válido!'],
+            'default_type.max' => 'O tipo padrão do cadastro precisa estar em um formáto válido!',
+            'default_type.string' => 'O tipo padrão do cadastro precisa estar em um formáto válido!',
 
         ];
     }

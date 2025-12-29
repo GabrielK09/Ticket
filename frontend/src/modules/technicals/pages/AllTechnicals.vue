@@ -177,12 +177,18 @@
         </section>
     </q-page>
 
-    <Commission-technical-management
+    <CommissionTechnicalManagement
         v-if="showCommissionManagement"
         :show-dialog="showCommissionManagement"
         :technical-name="selectedTechnical"
         :technical-id="selectedTechnicalId"
-        @update:show-dialog="showCommissionManagement = $event"
+        @update:hidden-dialog="showCommissionManagement = $event"
+    />
+
+    <TechnicelConfigComponent
+        v-if="showTechnicelConfig"
+        :show-dialog="showTechnicelConfig"
+        @update:hidden-dialog="showTechnicelConfig = $event"
     />
 </template>
 
@@ -193,6 +199,7 @@
     import { onMounted, ref } from 'vue';
     import { getAllTechnicalsService, disableOrActiveTechnicelService } from '../technicalsService';
     import CommissionTechnicalManagement from 'src/components/Technical/CommissionTechnicalManagement.vue';
+    import TechnicelConfigComponent from 'src/components/Config/TechnicelConfig/TechnicelConfigComponent.vue';
  
     const $q = useQuasar();
     const searchInput = ref('');
@@ -296,7 +303,7 @@
     };
 
     const commissionManagement = (name: string, technicalId: string): void => {
-        showCommissionManagement.value = !showCommissionManagement.value;
+        showCommissionManagement.value = true;
         selectedTechnical.value = name;
         selectedTechnicalId.value = technicalId;
     };

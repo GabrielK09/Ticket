@@ -1,13 +1,14 @@
 <template>
     <q-dialog v-model="internalDialog" persistent>
-        <q-card v-if="!showLoadingComponent">
+        <q-card v-if="showLoadingComponent">
             <LoadingScreenComponet 
                 :module="'commission'"
-
+                @update:hidden-dialog-by-error="internalDialog = $event"
+                :show-cancel-operation="showCancelOperation"
             />
         </q-card>
 
-        <q-card class="w-[100%] h-max" v-if="showLoadingComponent">
+        <q-card class="w-[100%] h-max" v-if="!showLoadingComponent">
             <q-card-section>
                 <span
                     class="q-ml-sm"
@@ -80,7 +81,7 @@
 
     } from 'src/modules/technicals/technicalsService';
     
-    import { ref, watch } from 'vue';
+    import { computed, onMounted, ref, watch } from 'vue';
     import * as Yup from 'yup';
     import LoadingScreenComponet from '../_LoadingScreen/LoadingScreenComponet.vue';
 
@@ -93,7 +94,7 @@
     }>();
 
     const emits = defineEmits([
-        'update:showDialog'
+        'update:hiddenDialog'
     ]);
 
     const formErrors = ref<Record<string, string>>({});
@@ -110,36 +111,15 @@
         commission_value: 0
     });
     
-    const internalDialog = ref(props.showDialog);
-
     let showLoading = ref<boolean>(false);
-    let showLoadingComponent = ref<boolean>(false);
+    let showLoadingComponent = ref<boolean>(true);
+    let showCancelOperation = ref<boolean>(false);
     let alreadyHave = ref<boolean>(false);
-
-    watch(
-        () => props.technicalId,
-        async (newId, oldId) => {
-            if(props.showDialog && newId !== oldId)
-            {
-                await loadComission();
-
-            };
-        }
-    );
 
     const handleSubmit = (): void => {
         console.warn('Vai chamar handleSubmit: alreadyHave.value: ', alreadyHave.value);
 
-        if(alreadyHave.value)
-        {
-            console.warn('Vai chamar updateCommissionTechnical');
-            updateCommissionTechnical();
-
-        } else {
-            console.warn('Vai chamar commissionTechnicalSubmit');
-            commissionTechnicalSubmit();
-
-        };
+        alreadyHave.value ? updateCommissionTechnical() : commissionTechnicalSubmit();
     };
 
     const updateCommissionTechnical = async (): Promise<void> => {
@@ -158,7 +138,7 @@
                     message: res.message
                 });
 
-                emits('update:showDialog', false);
+                emits('update:hiddenDialog', false);
 
             } else {
                 $q.notify({
@@ -213,7 +193,7 @@
                     message: res.message
                 });
 
-                emits('update:showDialog', false);
+                emits('update:hiddenDialog', false);
                 
             } else {
                 $q.notify({
@@ -268,6 +248,8 @@
     };
 
     const loadComission = async(): Promise<void> => {
+        console.log('Passou pelo loadComission');
+        
         try {
             resetForm();
 
@@ -288,28 +270,26 @@
 
             };
 
-        } finally {
-            showLoadingComponent.value = true;
+            showLoadingComponent.value = false;
 
+        } catch(error) {
+            console.error('Erro: ', error);
+            
         };
     };
 
-    watch(
-        () => props.showDialog,
-        async (open) => {
-            internalDialog.value = open;
-
-            if(open) 
-            {
-                await loadComission();
-
-            };
-        },
-        { immediate: true }
-    );
+    const internalDialog = computed({
+        get: () => props.showDialog,
+        set: (v: boolean) => emits('update:hiddenDialog', v)
+        
+    });
 
     const close = () => {
-        emits('update:showDialog', false);
+        emits('update:hiddenDialog', false);
         resetForm();
     };
+
+    onMounted(() => {
+        loadComission();
+    });
 </script>

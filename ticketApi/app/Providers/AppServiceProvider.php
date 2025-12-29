@@ -46,6 +46,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\Customer\Config\CustomerConfigContract::class,
             \App\Repositories\Eloquent\CustomerEloquent\ConfigEloquent\CustomerConfigRepository::class
         );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Technicel\Config\TechnicelConfigContract::class,
+            \App\Repositories\Eloquent\TechnicelEloquent\ConfigEloquent\TechnicelConfigRepository::class
+        );
     }
 
     /**

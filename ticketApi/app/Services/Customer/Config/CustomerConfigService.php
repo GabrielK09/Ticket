@@ -11,12 +11,9 @@ class CustomerConfigService
         protected CustomerConfigContract $customerConfigRepository
     ){}
 
-
     public function show(string $id)
     {
-        $config = $this->customerConfigRepository->show($id);
-
-        return $config;
+        return $this->customerConfigRepository->show($id);
 
     }
 

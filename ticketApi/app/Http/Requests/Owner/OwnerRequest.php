@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Owner;
 
+use App\Enum\MessagesRequest\CommonMessagesRequest;
+use App\Enum\MessagesRequest\Owner\OwnerMessagesRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -47,7 +49,7 @@ class OwnerRequest extends FormRequest
             'cep' => [$required, 'string', 'max:8', ],
             'address' => [$required, 'string', 'max:60'],
             'number' => [$required, 'string', 'max:16'],
-            'cnae' => [$required, 'max:14'],
+            'cnae' => [$required, 'string', 'max:14'],
             'activity' => [$required, 'string', 'max:120'],
         ];
     }
@@ -55,41 +57,45 @@ class OwnerRequest extends FormRequest
     public function messages()
     {
         return [
-            'user_id.required' => 'O identficador do usuário é obrigatório!',
+            'user_id.required' =>CommonMessagesRequest::USER_ID->value,
 
-            'company_name.required' => 'A razão social é obrigatório!',
-            'company_name.max' => 'A razão social precisa ter no máximo 120 caracteres!',
-            
-            'trade_name.required' => 'O nome fantasia é obrigatório!',
-            'trade_name.max' => 'O nome fantasia precisa ter no máximo 120 caracteres!',
-            
-            'cnpj_cpf.required' => 'O CPF/CNPJ é obrigatório!',
-            'cnpj_cpf.string' => 'O CPF/CNPJ precisa ser um formato válido!',
-            'cnpj_cpf.max' => 'O CPF/CNPJ precisa ter no máximo 14 caracteres!',
-            'cnpj_cpf.unique' => 'Esse CPF/CNPJ já está cadastrado!',
-            
-            'phone.required' => 'O telefone da empresa é obrigatório!',
-            'phone.string' => 'O telefone da empresa precisa estar em um formato válido!',
-            'phone.max' => 'O telefone da empresa precisa ter no máximo 24 caracteres!',
+            'company_name.required' => OwnerMessagesRequest::COMPAYN_NAME_REQUIRED->value,
+            'company_name.string' => OwnerMessagesRequest::COMPAYN_NAME_INVALID_FORMAT->value,
+            'company_name.max' => OwnerMessagesRequest::COMPAYN_NAME_MAX->value,
 
-            'cep.required' => 'O CEP da empresa é obrigatório!',
-            'cep.string' => 'O CEP da empresa precisa estar em um formato válido!',
-            'cep.max' => 'O CEP precisa ter no máximo 8 caracteres!',
-
-            'address.required' => 'O endereço fantasia é obrigatório!',
-            'address.string' => 'O endereço precisa estar em um formato válido!',
-            'address.max' => 'O endereço ter no máximo 60 caracteres!',
-
-            'number.required' => 'O número do enedereço é obrigatório!',
-            'number.string' => 'O número do enedereço precisa estar em um formato válido!',
-            'number.max' => 'O número do enedereço ter no máximo 16 caracteres!',
+            'trade_name.required' => OwnerMessagesRequest::TRADE_NAME_REQUIRED->value,
+            'trade_name.string' => OwnerMessagesRequest::TRADE_NAME_INVALID_FORMAT->value,
+            'trade_name.max' => OwnerMessagesRequest::TRADE_NAME_MAX->value,
             
-            'cnae.required' => 'O CNAE da empresa é obrigatório!',
-            'cnae.max' => 'O CNAE da empresa deve ter no máximo 24 caracteres!',
+            'cnpj_cpf.required' => CommonMessagesRequest::CNPJ_CPF_REQUIRED->value,
+            'cnpj_cpf.string' => CommonMessagesRequest::CNPJ_CPF_REQUIRED->value,
+            'cnpj_cpf.max' => CommonMessagesRequest::CNPJ_CPF_INVALID_MAX->value,
+            'cnpj_cpf.unique' => CommonMessagesRequest::CNPJ_CPF_UNIQUE->value,
+            'cnpj_cpf.prohibited' => CommonMessagesRequest::CNPJ_CPF_PROHIBITED->value,
             
-            'activity.required' => 'A atividade da empresa é obrigatório!',
-            'activity.string' => 'A atividade da empresa precisa estar em um formato válido!',
-            'activity.max' => 'A atividade da empresa ter no máximo 120 caracteres!',
+            'phone.required' => OwnerMessagesRequest::PHONE_REQUIRED->value,
+            'phone.string' => OwnerMessagesRequest::PHONE_INVALID_FORMAT->value,
+            'phone.max' => OwnerMessagesRequest::PHONE_MAX->value,
+
+            'cep.required' => OwnerMessagesRequest::CEP_REQUIRED->value,
+            'cep.string' => OwnerMessagesRequest::CEP_INVALID_FORMAT->value,
+            'cep.max' => OwnerMessagesRequest::CEP_MAX->value,
+
+            'address.required' => OwnerMessagesRequest::ADDRESS_REQUIRED->value,
+            'address.string' => OwnerMessagesRequest::ADDRESS_INVALID_FORMAT->value,
+            'address.max' => OwnerMessagesRequest::ADDRESS_MAX->value,
+
+            'number.required' => OwnerMessagesRequest::NUMBER_ADDRESS_REQUIRED->value,
+            'number.string' => OwnerMessagesRequest::NUMBER_ADDRESS_INVALID_FORMAT->value,
+            'number.max' => OwnerMessagesRequest::NUMBER_ADDRESS_MAX->value,
+
+            'cnae.required' => OwnerMessagesRequest::CNAE_REQUIRED->value,
+            'cnae.string' => OwnerMessagesRequest::CNAE_INVALID_FORMAT->value,
+            'cnae.max' => OwnerMessagesRequest::CNAE_MAX->value,
+
+            'activity.required' => OwnerMessagesRequest::ACTIVITY_REQUIRED->value,
+            'activity.string' => OwnerMessagesRequest::ACTIVITY_INVALID_FORMAT->value,
+            'activity.max' => OwnerMessagesRequest::ACTIVITY_MAX->value,
         ];
     }
 }

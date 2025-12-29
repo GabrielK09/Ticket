@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_config_id')->index();
 
             $table->foreign('owner_id')->references('id')->on('owners')->cascadeOnDelete();
-            
             $table->unsignedBigInteger('owner_id');
 
             // true = Sim
@@ -25,8 +24,8 @@ return new class extends Migration
             // J = Júridica
             // F = Física
 
-            $table->string('default_type')->default('J');
-            $table->boolean('trande_name_null')->default(false);
+            $table->string('default_type', 1)->default('J');
+            $table->boolean('trade_name_null')->default(false);
             $table->boolean('phone_null')->default(false);
             $table->boolean('address_null')->default(false);
             $table->boolean('number_address_null')->default(false);

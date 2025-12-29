@@ -1,52 +1,67 @@
 <template>
     <q-dialog v-model="internalDialog" persistent>
-        <q-card v-if="!showLoadingComponent">
+        <q-card v-if="showLoadingComponent">
             <LoadingScreenComponet 
                 :module="'config-technical'"
-                @update:show-dialog="showLoadingComponent = !$event"
-
+                @update:hidden-dialog-by-error="internalDialog = $event"
+                :show-cancel-operation="showCancelOperation"
             />
         </q-card>
 
-        <q-card class="w-[100%]" v-if="showLoadingComponent">
+        <q-card class="w-[100%]" v-if="!showLoadingComponent">
             <q-card-section>
                 <div class="p-2 m-4">
                     <span class="font-bold">
                         Técnicos - Configurações
                     </span>
 
-                    <div class="">
-                        <q-select 
-                            v-model="configCustomer.default_type" 
-                            :options="customerType"
-                            label="Tipo de cadastro padrão" 
-                            filled 
-                        />
+                    <q-select 
+                        v-model="configTechnical.default_type" 
+                        :options="customerType"
+                        option-label="label"
+                        option-value="value"
+                        emit-value
+                        map-options
+                        label="Tipo de cadastro padrão" 
+                        filled 
+                    />
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <q-checkbox 
                             left-label 
-                            v-model="configCustomer.trande_name_null" 
+                            v-model="configTechnical.trade_name_null" 
                             label="Permitir: Nome fantasia nulo"
                         />
 
                         <q-checkbox 
                             left-label 
-                            v-model="configCustomer.phone_null" 
+                            v-model="configTechnical.phone_null" 
                             label="Permitir: Telefone nulo"
                         />
                         
                         <q-checkbox 
                             left-label 
-                            v-model="configCustomer.address_null" 
+                            v-model="configTechnical.address_null" 
                             label="Permitir: Endereço nulo"
                             
                         />
 
                         <q-checkbox 
                             left-label 
-                            v-model="configCustomer.number_address_null" 
+                            v-model="configTechnical.number_address_null" 
                             label="Permitir: N° endereço nulo"
                             
+                        />
+                        
+                        <q-btn 
+                            label="s"    
+                            no-caps
+                        />
+
+                        <q-input 
+                            v-model="configTechnical.fixed_commission_value" 
+                            type="text" 
+                            label="Label" 
                         />
                     </div>
                 </div>
@@ -56,7 +71,7 @@
                     title="Sair"
                     icon="close" 
                     color="red" 
-                    @click.prevent="close" 
+                    @click.prevent="emits('update:hiddenDialog', true)" 
                 />
 
                 <q-btn 
@@ -73,9 +88,9 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { onMounted, ref } from 'vue';
+    import { computed, onMounted, ref } from 'vue';
     import LoadingScreenComponet from '../../_LoadingScreen/LoadingScreenComponet.vue';
-    import { getCustomerConfigService, updateCustomerConfigService } from 'src/services/configs/customer/configService';
+    import { getTechnicalConfigService, updateTechnicalConfigService } from 'src/services/configs/technical/technicalConfigService';
 
     const $q = useQuasar();
     
@@ -83,56 +98,61 @@
         showDialog: boolean
     }>();
 
-    const internalDialog = ref(props.showDialog);
-
-    const customerType: string[] = [
-        'Júridica',
-        'Física',
-    ];
-
-    let showLoading = ref<boolean>(false);
-    let showLoadingComponent = ref<boolean>(false);
-
-    const configCustomer = ref<customerConfig>({
-        owner_id: LocalStorage.getItem('owner_id'),
-        default_type: 'J',
-        trande_name_null: false,
-        phone_null: false,
-        address_null: false,
-        number_address_null: false
+    const internalDialog = computed({
+        get: () => props.showDialog,
+        set: (v: boolean) => emits('update:hiddenDialog', v)
     });
 
-    function formatCustomerType(char: string): string
-    {
-        if(!customerType.some(types_ => types_.includes(char))) return;
+    const customerType = [
+        {label: 'Júridica', value: 'J'},
+        {label: 'Física', value: 'F'},
+    ];
 
-        return char[0];
+    const showCancelOperation = ref<boolean>(false);
+    let showLoading = ref<boolean>(false);
+    let showLoadingComponent = ref<boolean>(true);
+
+    const configTechnical = ref<technicalConfig>({
+        owner_id: LocalStorage.getItem('owner_id'),
+        default_type: 'J',
+        trade_name_null: false,
+        phone_null: false,
+        address_null: false,
+        number_address_null: false,
+        default_commission_type: 'R$',
+        fixed_commission_value: 0
+    });
+
+
+    function formatCustomerType(char: string): 'J' | 'F'
+    {
+        return char === 'Júridica' ? 'J' : 'F';
     };
 
-    function convertToBool(val: any): boolean { return val === 1 ? true : false; };
+    function convertToBool(val: any): boolean { 
+        return val === true || val === 1 || val === '1' ;
+    };
 
     const emits = defineEmits([
-        'update:showDialog'
+        'update:hiddenDialog'
     ]);
-
-    const close = () => {
-        emits('update:showDialog', false);
-    };
 
     const saveConfigs = async(): Promise<void> => {
         showLoading.value = true;
 
         try {
-            const prePayLoad: customerConfig = {
-                owner_id: configCustomer.value.owner_id,
-                default_type: formatCustomerType(configCustomer.value.default_type),
-                trande_name_null: configCustomer.value.trande_name_null,
-                phone_null: configCustomer.value.phone_null,
-                address_null: configCustomer.value.address_null,
-                number_address_null: configCustomer.value.number_address_null,
+            const prePayLoad: technicalConfig = {
+                owner_id: configTechnical.value.owner_id,
+                default_type: formatCustomerType(configTechnical.value.default_type),
+                trade_name_null: configTechnical.value.trade_name_null,
+                phone_null: configTechnical.value.phone_null,
+                address_null: configTechnical.value.address_null,
+                number_address_null: configTechnical.value.number_address_null,
+                default_commission_type: 'R$',
+                fixed_commission_value: 0
             };
 
-            const res = await updateCustomerConfigService(prePayLoad);
+            const res = await updateTechnicalConfigService(prePayLoad);
 
             if(res.success)
             {
@@ -142,7 +162,7 @@
                     message: res.message,
                 });
 
-                emits('update:showDialog', false);
+                emits('update:hiddenDialog', false);
                 
             } else {
                 $q.notify({
@@ -157,29 +177,44 @@
     };
 
     const getConfig = async(): Promise<void> => {
-        const res: any = await getCustomerConfigService(configCustomer.value.owner_id);
+        try {
+            const res: any = await getTechnicalConfigService(configTechnical.value.owner_id);
 
-        const data: customerConfig = res.data;
-        
-        configCustomer.value = {
-            owner_id: data.owner_id,
-            address_null: convertToBool(data.address_null),
-            default_type: data.default_type === 'J' ? customerType[0] : customerType[1],
-            number_address_null: convertToBool(data.number_address_null),
-            phone_null: convertToBool(data.phone_null),
-            trande_name_null: convertToBool(data.trande_name_null)
-        };
+            const data: technicalConfig = res.data;
+            
+            configTechnical.value = {
+                owner_id: data.owner_id,
+                address_null: convertToBool(data.address_null),
+                default_type: data.default_type === 'J' ? customerType[0].value : customerType[1].value,
+                number_address_null: convertToBool(data.number_address_null),
+                phone_null: convertToBool(data.phone_null),
+                trade_name_null: convertToBool(data.trade_name_null),
+                default_commission_type: data.default_commission_type,
+                fixed_commission_value: data.fixed_commission_value
+            };
 
-        if(!res.success)
-        {
+            if(!res.success)
+            {
+                $q.notify({
+                    type: 'negative',
+                    position: 'top',
+                    message: res.message,
+                });
+
+                emits('update:hiddenDialog', true);
+            };
+
+            showLoadingComponent.value = false;
+            
+        } catch (error) {
             $q.notify({
                 type: 'negative',
                 position: 'top',
-                message: res.message,
+                message: 'Erro ao consultar as configurações, por gentileza, contate o suporte técnico!'
+
             });
 
-            emits('update:showDialog', false);
-
+            showCancelOperation.value = true;  
         };
     };  
 

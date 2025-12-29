@@ -1,15 +1,14 @@
 <template>
     <q-dialog v-model="internalDialog" persistent>
-        <q-card v-if="!showLoadingComponent">
+        <q-card v-if="showLoadingComponent">
             <LoadingScreenComponet 
                 :module="'config-customer'"
-                @update:hidden-dialog="showLoadingComponent = $event"
                 @update:hidden-dialog-by-error="internalDialog = $event"
                 :show-cancel-operation="showCancelOperation"
             />
         </q-card>
 
-        <q-card class="w-[100%]" v-if="showLoadingComponent">
+        <q-card class="w-[100%] h-max" v-if="!showLoadingComponent">
             <q-card-section>
                 <div class="p-2 m-4">
                     <span class="font-bold">
@@ -26,7 +25,7 @@
 
                         <q-checkbox 
                             left-label 
-                            v-model="configCustomer.trande_name_null" 
+                            v-model="configCustomer.trade_name_null" 
                             label="Permitir: Nome fantasia nulo"
                         />
 
@@ -76,7 +75,7 @@
     import { LocalStorage, useQuasar } from 'quasar';
     import { computed, onMounted, ref } from 'vue';
     import LoadingScreenComponet from '../../_LoadingScreen/LoadingScreenComponet.vue';
-    import { getCustomerConfigService, updateCustomerConfigService } from 'src/services/configs/customer/configService';
+    import { getCustomerConfigService, updateCustomerConfigService } from 'src/services/configs/customer/customerConfigService';
 
     const $q = useQuasar();
     
@@ -95,15 +94,13 @@
     ];
 
     let showLoading = ref<boolean>(false);
-
+    let showLoadingComponent = ref<boolean>(true);
     const showCancelOperation = ref<boolean>(false);
-
-    let showLoadingComponent = ref<boolean>(false);
 
     const configCustomer = ref<customerConfig>({
         owner_id: LocalStorage.getItem('owner_id'),
         default_type: 'Júridica',
-        trande_name_null: false,
+        trade_name_null: false,
         phone_null: false,
         address_null: false,
         number_address_null: false
@@ -130,7 +127,7 @@
             const prePayLoad: customerConfig = {
                 owner_id: configCustomer.value.owner_id,
                 default_type: formatCustomerType(configCustomer.value.default_type),
-                trande_name_null: configCustomer.value.trande_name_null,
+                trade_name_null: configCustomer.value.trade_name_null,
                 phone_null: configCustomer.value.phone_null,
                 address_null: configCustomer.value.address_null,
                 number_address_null: configCustomer.value.number_address_null,
@@ -172,7 +169,7 @@
                 default_type: data.default_type === 'J' ? customerType[0] : customerType[1],
                 number_address_null: convertToBool(data.number_address_null),
                 phone_null: convertToBool(data.phone_null),
-                trande_name_null: convertToBool(data.trande_name_null)
+                trade_name_null: convertToBool(data.trade_name_null)
             };
 
             if(!res.success)
@@ -187,7 +184,7 @@
 
             };
             
-            showLoading.value = true;
+            showLoadingComponent.value = false;
 
         } catch (error) {
             $q.notify({
@@ -198,7 +195,6 @@
             });
 
             showCancelOperation.value = true;
-            
         };
     };  
 

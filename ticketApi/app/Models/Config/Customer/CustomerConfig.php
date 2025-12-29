@@ -14,7 +14,7 @@ class CustomerConfig extends Model
         'owner_id',
         'customer_config_id',
         'default_type',
-        'trande_name_null',
+        'trade_name_null',
         'phone_null',
         'address_null',
         'number_address_null',

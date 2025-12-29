@@ -10,7 +10,7 @@
                     label="Cancelar"
                     no-caps
                     color="red"
-                    @click="emits('update:hiddenDialogByError', true)"
+                    @click="emits('update:hiddenDialogByError', false)"
                 />
             </div>
         </div>
@@ -33,12 +33,9 @@
     }>();
 
     const emits = defineEmits([
-        'update:hiddenDialog',
         'update:hiddenDialogByError'
     ]);
 
     const showMessage = computed(() => messages[props.module]);
     const showCancelOperation = computed(() => props.showCancelOperation);
-
-
 </script>

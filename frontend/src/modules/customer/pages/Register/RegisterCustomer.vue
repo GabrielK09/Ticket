@@ -66,7 +66,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Nome fantasia <span v-show="configCustomer.trande_name_null" class="text-red-500">*</span>
+                                Nome fantasia <span v-show="configCustomer.trade_name_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -207,7 +207,7 @@
     let configCustomer = ref<customerConfig>({
         owner_id: OWNER_ID,
         default_type: 'J',
-        trande_name_null: false,
+        trade_name_null: false,
         phone_null: false,
         address_null: false,
         number_address_null: false
@@ -224,7 +224,7 @@
             default_type: data.default_type === 'J' ? customerTypes[0] : customerTypes[1],
             number_address_null: convertToBool(data.number_address_null),
             phone_null: convertToBool(data.phone_null),
-            trande_name_null: convertToBool(data.trande_name_null)
+            trade_name_null: convertToBool(data.trade_name_null)
         };        
 
         customer.value.customerType = data.default_type === 'J' ? customerTypes[0] : customerTypes[1];
@@ -234,7 +234,7 @@
     const customerSchema = computed(() =>
         Yup.object({
             company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
-            trade_name: configCustomer.value.trande_name_null ? Yup.string().nullable() : Yup.string().required('O nome fantasia do cliente é obrigatório!'),
+            trade_name: configCustomer.value.trade_name_null ? Yup.string().nullable() : Yup.string().required('O nome fantasia do cliente é obrigatório!'),
             cnpj_cpf: Yup.string().required('O CPF/CNPJ do cliente é obrigatório!'),
             phone: configCustomer.value.phone_null ? Yup.string().nullable() : Yup.string().required('O telefone do cliente é obrigatório!'),
             cep: Yup.string().required('O CEP do cliente é obrigatório!'),
