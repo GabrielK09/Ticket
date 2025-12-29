@@ -69,7 +69,7 @@ class OwnerRequest extends FormRequest
             
             'cnpj_cpf.required' => CommonMessagesRequest::CNPJ_CPF_REQUIRED->value,
             'cnpj_cpf.string' => CommonMessagesRequest::CNPJ_CPF_REQUIRED->value,
-            'cnpj_cpf.max' => CommonMessagesRequest::CNPJ_CPF_INVALID_MAX->value,
+            'cnpj_cpf.max' => CommonMessagesRequest::CNPJ_CPF_MAX->value,
             'cnpj_cpf.unique' => CommonMessagesRequest::CNPJ_CPF_UNIQUE->value,
             'cnpj_cpf.prohibited' => CommonMessagesRequest::CNPJ_CPF_PROHIBITED->value,
             

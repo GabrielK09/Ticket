@@ -3,9 +3,10 @@
 namespace App\Repositories\Eloquent\TechnicelEloquent\ConfigEloquent;
 
 use App\Models\Config\Technicel\TechnicelConfig;
+use App\Repositories\Interfaces\Technicel\Config\TechnicelConfigContract;
 use Exception;
 
-class TechnicelConfigRepository
+class TechnicelConfigRepository implements TechnicelConfigContract
 {
     private function getFirstOrCreate(string $ownerId)
     {

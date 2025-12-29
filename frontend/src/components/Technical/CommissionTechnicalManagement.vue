@@ -23,10 +23,6 @@
                         type="number"
                         outlined
                         label="Valor" 
-                        placeholder="0,00"
-                        mask="##,##"
-                        fill-mask="0"
-                        reverse-fill-mask
                     />
                     
                     <div class="mt-4 border rounded-md p-4 flex flex-col">
@@ -287,6 +283,10 @@
     const close = () => {
         emits('update:hiddenDialog', false);
         resetForm();
+
+        let x = '2,2';
+
+        x.replace(/\D/g, '.')
     };
 
     onMounted(() => {
