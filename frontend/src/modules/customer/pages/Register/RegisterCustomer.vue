@@ -198,13 +198,13 @@
     import * as Yup from 'yup';
     import formatValues from 'src/util/formatValues';
     import { getCepData } from 'src/services/cep/cepService';
-    import { getCustomerConfigService } from 'src/services/configs/customer/configService';
+    import { getCustomerConfigService } from 'src/services/configs/customer/customerConfigService';
 
     const OWNER_ID: string = LocalStorage.getItem('owner_id');
 
     function convertToBool(val: any): boolean { return val === 1 ? true : false; };
 
-    let configCustomer = ref<customerConfig>({
+    const configCustomer = ref<customerConfig>({
         owner_id: OWNER_ID,
         default_type: 'J',
         trade_name_null: false,
@@ -212,6 +212,24 @@
         address_null: false,
         number_address_null: false
     });
+
+    const customer = ref<customerContract>({
+        owner_id: OWNER_ID,
+        company_name: '',
+        trade_name: '',
+        cnpj_cpf: '',
+        phone: '',
+        cep: '',
+        address: '',
+        number: '',
+        customerType: 'Jurídica'
+
+    });
+
+    function formatCustomerType(char: string): 'J'|'F'
+    {
+        return char === 'J' ? 'J' : 'F';
+    };
 
     const getCustomerConfig = async(): Promise<any> => {
         const res = await getCustomerConfigService(OWNER_ID);
@@ -221,13 +239,13 @@
         configCustomer.value = {
             owner_id: OWNER_ID,
             address_null: convertToBool(data.address_null),
-            default_type: data.default_type === 'J' ? customerTypes[0] : customerTypes[1],
+            default_type:  formatCustomerType(data.default_type),
             number_address_null: convertToBool(data.number_address_null),
             phone_null: convertToBool(data.phone_null),
             trade_name_null: convertToBool(data.trade_name_null)
         };        
 
-        customer.value.customerType = data.default_type === 'J' ? customerTypes[0] : customerTypes[1];
+        customer.value.customerType = data.default_type === 'J' ? customerTypes[0].label : customerTypes[1].label;
         
     };
 
@@ -244,28 +262,15 @@
         })
     );
 
-    const customerTypes: string[] = [
-        'Jurídica',
-        'Física'
+    const customerTypes = [
+        {label: 'Júridica', value: 'J'},
+        {label: 'Física', value: 'F'},
     ];
 
     const formErrors = ref<Record<string, string>>({});
 
     const router = useRouter();
     const $q = useQuasar();
-
-    const customer = ref<customerContract>({
-        owner_id: OWNER_ID,
-        company_name: '',
-        trade_name: '',
-        cnpj_cpf: '',
-        phone: '',
-        cep: '',
-        address: '',
-        number: '',
-        customerType: 'Jurídica'
-
-    });
 
     const companyName = LocalStorage.getItem('companie_name_url');
 

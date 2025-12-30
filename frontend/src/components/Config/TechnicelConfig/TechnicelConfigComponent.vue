@@ -17,7 +17,7 @@
 
                     <q-select 
                         v-model="configTechnical.default_type" 
-                        :options="customerType"
+                        :options="technicalType"
                         option-label="label"
                         option-value="value"
                         emit-value
@@ -103,7 +103,7 @@
         set: (v: boolean) => emits('update:hiddenDialog', v)
     });
 
-    const customerType = [
+    const technicalType = [
         {label: 'Júridica', value: 'J'},
         {label: 'Física', value: 'F'},
     ];
@@ -124,7 +124,7 @@
     });
 
 
-    function formatCustomerType(char: string): 'J' | 'F'
+    function formatTechnicalType(char: string): 'J' | 'F'
     {
         return char === 'Júridica' ? 'J' : 'F';
     };
@@ -143,7 +143,7 @@
         try {
             const prePayLoad: technicalConfig = {
                 owner_id: configTechnical.value.owner_id,
-                default_type: formatCustomerType(configTechnical.value.default_type),
+                default_type: formatTechnicalType(configTechnical.value.default_type),
                 trade_name_null: configTechnical.value.trade_name_null,
                 phone_null: configTechnical.value.phone_null,
                 address_null: configTechnical.value.address_null,
@@ -185,7 +185,7 @@
             configTechnical.value = {
                 owner_id: data.owner_id,
                 address_null: convertToBool(data.address_null),
-                default_type: data.default_type === 'J' ? customerType[0].value : customerType[1].value,
+                default_type: formatTechnicalType(data.default_type),
                 number_address_null: convertToBool(data.number_address_null),
                 phone_null: convertToBool(data.phone_null),
                 trade_name_null: convertToBool(data.trade_name_null),

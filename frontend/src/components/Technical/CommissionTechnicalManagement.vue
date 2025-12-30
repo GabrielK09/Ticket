@@ -281,7 +281,7 @@
     });
 
     const close = () => {
-        emits('update:hiddenDialog', false);
+        emits('update:hiddenDialog', true);
         resetForm();
 
         let x = '2,2';

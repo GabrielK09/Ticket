@@ -10,5 +10,5 @@ interface technicalsContract {
     gender: string;  
     availability: boolean;  
 
-    technicelTypes: string;
+    technicelType: string;
 };

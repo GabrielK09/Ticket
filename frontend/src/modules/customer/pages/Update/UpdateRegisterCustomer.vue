@@ -194,7 +194,7 @@
     import { useRoute, useRouter } from 'vue-router';
     import { getCustomerDataService, updateCustomerService } from '../../customerService';
     import * as Yup from 'yup';
-    import { getCustomerConfigService } from 'src/services/configs/customer/configService';
+    import { getCustomerConfigService } from 'src/services/configs/customer/customerConfigService';
 
     const OWNER_ID: string = LocalStorage.getItem('owner_id');
 

@@ -182,13 +182,13 @@
         :show-dialog="showCommissionManagement"
         :technical-name="selectedTechnical"
         :technical-id="selectedTechnicalId"
-        @update:hidden-dialog="showCommissionManagement = $event"
+        @update:hidden-dialog="showCommissionManagement = !$event"
     />
 
     <TechnicelConfigComponent
         v-if="showTechnicelConfig"
         :show-dialog="showTechnicelConfig"
-        @update:hidden-dialog="showTechnicelConfig = $event"
+        @update:hidden-dialog="showTechnicelConfig = !$event"
     />
 </template>
 

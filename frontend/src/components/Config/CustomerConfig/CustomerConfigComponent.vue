@@ -19,6 +19,10 @@
                         <q-select 
                             v-model="configCustomer.default_type" 
                             :options="customerType"
+                            option-label="label"
+                            option-value="value"
+                            emit-value
+                            map-options
                             label="Tipo de cadastro padrão" 
                             filled 
                         />
@@ -88,9 +92,9 @@
         set: (v: boolean) => emits('update:hiddenDialog', v)
     });
 
-    const customerType: string[] = [
-        'Júridica',
-        'Física',
+    const customerType = [
+        {label: 'Júridica', value: 'J'},
+        {label: 'Física', value: 'F'},
     ];
 
     let showLoading = ref<boolean>(false);
@@ -99,7 +103,7 @@
 
     const configCustomer = ref<customerConfig>({
         owner_id: LocalStorage.getItem('owner_id'),
-        default_type: 'Júridica',
+        default_type: 'F',
         trade_name_null: false,
         phone_null: false,
         address_null: false,
@@ -166,7 +170,7 @@
             configCustomer.value = {
                 owner_id: data.owner_id,
                 address_null: convertToBool(data.address_null),
-                default_type: data.default_type === 'J' ? customerType[0] : customerType[1],
+                default_type: formatCustomerType(data.default_type),
                 number_address_null: convertToBool(data.number_address_null),
                 phone_null: convertToBool(data.phone_null),
                 trade_name_null: convertToBool(data.trade_name_null)

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Customer\Config;
 
+use App\Enum\MessagesRequest\CommonMessagesRequest;
+use App\Enum\MessagesRequest\Customer\CustomerConfigRequest as CustomerCustomerConfigRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,7 +26,7 @@ class CustomerConfigRequest extends FormRequest
     {
         return [
             'owner_id' => ['required', 'exists:App\Models\Owner,id'],
-            'default_type' => ['sometimes', 'max:1', 'string'],
+            'default_type' => ['sometimes', 'max:1', 'string', 'in:F,J'],
             'trade_name_null' => ['sometimes'],
             'phone_null' => ['sometimes'],
             'address_null' => ['sometimes'],
@@ -35,11 +37,12 @@ class CustomerConfigRequest extends FormRequest
     public function messages()
     {
         return [
-            'owner_id.required' => INFO_GENERAL,
-            'owner_id.exists' => 'O identificador do emitente é inválido!',
+            'owner_id.required' => CommonMessagesRequest::OWNER_ID,
+            'owner_id.exists' => CommonMessagesRequest::OWNER_ID,
 
-            'default_type.max' => 'O tipo padrão do cadastro precisa estar em um formáto válido!',
-            'default_type.string' => 'O tipo padrão do cadastro precisa estar em um formáto válido!',
+            'default_type.max' => CustomerCustomerConfigRequest::DEFAULT_TYPE_MAX,
+            'default_type.string' => CustomerCustomerConfigRequest::DEFAULT_TYPE_INVALID_FORMAT,
+            'default_type.in' => CustomerCustomerConfigRequest::DEFAULT_TYPE_IN,
 
         ];
     }

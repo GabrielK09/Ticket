@@ -28,6 +28,10 @@
                         v-model="technicel.gender" 
                         :options="technicelGenders" 
                         label="Gênero" 
+                        option-label="label"
+                        option-value="value"
+                        emit-value
+                        map-options
                         outlined
                         stack-label
                         dense
@@ -35,7 +39,7 @@
                     />
                     
                     <q-select 
-                        v-model="technicel.technicelTypes" 
+                        v-model="technicel.technicelType" 
                         :options="technicelTypes" 
                         label="Tipo de cadastro" 
                         outlined
@@ -88,7 +92,7 @@
                         outlined
                         dense
                         :mask="
-                            technicel.technicelTypes === 'Jurídica'
+                            technicel.technicelType === 'Jurídica'
                             ? '##.###.###/####-##'
                             : '###.###.###-##'
                         "
@@ -100,7 +104,7 @@
                         <template v-slot:label>
                             <div class="text-sm">
                                 {{ 
-                                    technicel.technicelTypes === 'Jurídica' 
+                                    technicel.technicelType === 'Jurídica' 
                                     ? 'CNPJ'
                                     : 'CPF'
                                 }} <span class="text-red-500">*</span>
@@ -201,44 +205,39 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { computed, ref } from 'vue';
+    import { computed, onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { createTechnicel } from '../../technicalsService';
     import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     import * as Yup from 'yup';
     import formatValues from 'src/util/formatValues';
     import { getCepData } from 'src/services/cep/cepService';
+    import { getTechnicalConfigService } from 'src/services/configs/technical/technicalConfigService';
 
-    const technicelSchema = Yup.object({
-        company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
-        trade_name: Yup.string().required('O nome fantasia do cliente é obrigatório!'),
-        cnpj_cpf: Yup.string().required('O CPF/CNPJ do cliente é obrigatório!'),
-        phone: Yup.string().required('O telefone do cliente é obrigatório!'),
-        cep: Yup.string().required('O CEP do cliente é obrigatório!'),
-        address: Yup.string().required('O endereço do cliente é obrigatório!'),
-        number: Yup.string().required('O número do cliente é obrigatório!'), 
-        gender: Yup.string().required('O genêro do técnico é obrigatório!')
+    const OWNER_ID: string = LocalStorage.getItem('owner_id');
+
+    function formatTechnicalType(char: string): 'J'|'F'
+    {
+        return char === 'JúridicaJ' ? 'J' : 'F';
+    };
+
+    function convertToBool(val: any): boolean { 
+        return val === true || val === 1 || val === '1' ;
+    };
+
+    const technicelConfig = ref<technicalConfig>({
+        owner_id: OWNER_ID,
+        address_null: false,
+        default_commission_type: 'R$',
+        default_type: 'F',
+        fixed_commission_value: 0,
+        number_address_null: false,
+        phone_null: false,
+        trade_name_null: false
     });
 
-    const technicelTypes: string[] = [
-        'Jurídica',
-        'Física'
-    ];
-
-    const technicelGenders: string[] = [
-        'M',
-        'F',
-        'O',
-    ];
-
-    const formErrors = ref<Record<string, string>>({});
-
-    const router = useRouter();
-    const $q = useQuasar();
-    const companyNameUrl = LocalStorage.getItem('companie_name_url');
-
     const technicel = ref<technicalsContract>({
-        owner_id: LocalStorage.getItem('owner_id'),
+        owner_id: OWNER_ID,
         company_name: '',
         trade_name: '',
         cnpj_cpf: '',
@@ -248,8 +247,55 @@
         number: '',
         gender: 'M',
         availability: false,
-        technicelTypes: 'Jurídica',
+        technicelType: 'Jurídica',
     });
+
+    const getTechnicelConfig = async() => {
+        const res = await getTechnicalConfigService(OWNER_ID);
+
+        const data: technicalConfig = res.data;
+
+        technicelConfig.value = {
+            owner_id: data.owner_id,
+            trade_name_null: convertToBool(data.trade_name_null),
+            phone_null: convertToBool(data.phone_null),
+            address_null: convertToBool(data.address_null),
+            number_address_null: convertToBool(data.number_address_null),
+            default_type: formatTechnicalType(data.default_type),
+            default_commission_type: data.default_commission_type,
+            fixed_commission_value: data.fixed_commission_value
+        };
+
+        technicel.value.technicelType
+    };
+
+    const technicelSchema = Yup.object({
+        company_name: Yup.string().required('A razão social do cliente é obrigatório!'),
+        trade_name: technicelConfig.value.trade_name_null ? Yup.string().nullable() : Yup.string().required('O nome fantasia do cliente é obrigatório!'),
+        cnpj_cpf: Yup.string().required('O CPF/CNPJ do cliente é obrigatório!'),
+        phone: technicelConfig.value.phone_null ? Yup.string().nullable() : Yup.string().required('O telefone do cliente é obrigatório!'),
+        cep: Yup.string().required('O CEP do cliente é obrigatório!'),
+        address: technicelConfig.value.address_null ? Yup.string().nullable() : Yup.string().required('O endereço do cliente é obrigatório!'),
+        number: technicelConfig.value.number_address_null ? Yup.string().nullable() :  Yup.string().required('O número do cliente é obrigatório!'), 
+        gender: Yup.string().required('O genêro do técnico é obrigatório!')
+    });
+
+    const technicelTypes = [
+        {label: 'Júridica', value: 'J'},
+        {label: 'Física', value: 'F'},
+    ];
+
+    const technicelGenders = [
+        {label: 'Masculino', value: 'M'},
+        {label: 'Feminino', value: 'F'},
+        {label: 'Outros', value: 'O'}
+    ];
+
+    const formErrors = ref<Record<string, string>>({});
+
+    const router = useRouter();
+    const $q = useQuasar();
+    const companyNameUrl = LocalStorage.getItem('companie_name_url');
 
     let loadingLogin = ref<boolean>(false);
 
@@ -385,4 +431,8 @@
             };
         };
     };
+
+    onMounted(() => {
+        getTechnicelConfig();
+    });
 </script>
