@@ -21,7 +21,7 @@
 
             <q-form
                 @submit.prevent="submitRegisterOwner"
-                class="q-gutter-md mt-4 form"
+                class="mt-4 "
             >
                 <div class="p-4">
                     <q-select 
@@ -31,7 +31,7 @@
                         outlined
                         stack-label
                         dense
-                        class="mb-6"
+                        class="mb-8"
                     />
 
                     <q-input 
@@ -41,7 +41,7 @@
                         outlined
                         type="text"
                         dense
-                        class="mb-2"
+                        class="mb-4"
                         :error="!!formErrors.company_name"
                         :error-message="formErrors.company_name"
                     >
@@ -185,8 +185,10 @@
                         dense
                         :use-input="owner.cnae === ''"
                         input-debounce="0"
-                        class="mb-4"
+                        class="mb-8"
                         @filter="filterCnaeList"
+                        :error="!!formErrors.cnae"
+                        :error-message="formErrors.cnae"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -195,7 +197,7 @@
                         </template>
 
                         <template v-slot:selected-item="scope">
-                            <div class="h-4">
+                            <div class="w-[100%]">
                                 {{ scope.opt.label }}
                             </div>
                         </template>
@@ -233,6 +235,9 @@
             </q-form>
         </div>
     </section>
+    <pre>
+        {{ owner }}
+    </pre>
 </template>
 
 <script setup lang="ts">
@@ -308,9 +313,26 @@
         try {
             await ownerSchema.validate(owner.value, { abortEarly: false });
 
+            const prePayLoad = owner.value = {
+                id: null,
+                user_id: LocalStorage.getItem('user_id'),
+                company_name: owner.value.company_name,
+                trade_name: owner.value.trade_name,
+                cnpj_cpf: owner.value.cnpj_cpf,
+                phone: owner.value.phone,
+                cep: owner.value.cep,
+                address: owner.value.address,
+                number: owner.value.number,
+                cnae: owner.value.cnae,
+                activity: owner.value.activity,
+                ownerType: 'Jurídica'
+            };
+
+            console.log('prePayLoad: ', prePayLoad);
+            
             const res = await ownerRegister(owner.value);
 
-            if(res.success)
+            if(!res.success)
             {
                 $q.notify({
                     type: 'positive',
@@ -397,7 +419,9 @@
 
         update(() => {
             const char = val.toLowerCase();            
-            options.value = cnaeList.filter((v: cnaeListProps) => v.label.toLowerCase().indexOf(char) > -1);
+            const filtred = cnaeList.filter((v: cnaeListProps) => v.label.toLowerCase().indexOf(char) > -1);
+            options.value = filtred;
+
         });
     };
 

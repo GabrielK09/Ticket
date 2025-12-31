@@ -187,9 +187,6 @@
             </q-form>
         </div>
     </section>
-    <pre>
-        {{ configCustomer }}
-    </pre>
 </template>
 
 <script setup lang="ts">

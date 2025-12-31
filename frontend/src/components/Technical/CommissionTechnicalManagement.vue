@@ -77,7 +77,7 @@
 
     } from 'src/modules/technicals/technicalsService';
     
-    import { computed, onMounted, ref, watch } from 'vue';
+    import { computed, onMounted, ref } from 'vue';
     import * as Yup from 'yup';
     import LoadingScreenComponet from '../_LoadingScreen/LoadingScreenComponet.vue';
 
