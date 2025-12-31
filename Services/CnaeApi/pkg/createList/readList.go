@@ -42,8 +42,9 @@ func ReadList() {
 
 		dataRows = append(dataRows, data)
 
-		log.Println("-- Cnaes carregados --")
 	}
+
+	log.Println("-- Cnaes carregados --")
 }
 
 func GetCnaes(c *gin.Context) {

@@ -10,9 +10,9 @@ import (
 
 func main() {
 	createlist.ReadList()
-	router := gin.Default()
+	r := gin.Default()
 
-	router.Use(cors.New(cors.Config{
+	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"*"},
 		AllowHeaders:     []string{"Origin"},
@@ -24,7 +24,7 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	router.GET("/cnaes", createlist.GetCnaes)
+	r.GET("/cnaes", createlist.GetCnaes)
 
-	router.Run("localhost:3000")
+	r.Run()
 }
