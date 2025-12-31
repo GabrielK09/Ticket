@@ -66,7 +66,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Nome fantasia <span v-show="configCustomer.trade_name_null" class="text-red-500">*</span>
+                                Nome fantasia <span v-show="!configCustomer.trade_name_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -113,7 +113,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Telefone <span v-show="configCustomer.phone_null" class="text-red-500">*</span>
+                                Telefone <span v-show="!configCustomer.phone_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -151,7 +151,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Endereço <span v-show="configCustomer.address_null" class="text-red-500">*</span>
+                                Endereço <span v-show="!configCustomer.address_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -169,7 +169,7 @@
                     >
                         <template v-slot:label>
                             <div class="text-sm">
-                                Número do endereço <span v-show="configCustomer.number_address_null" class="text-red-500">*</span>
+                                Número do endereço <span v-show="!configCustomer.number_address_null" class="text-red-500">*</span>
                             </div>
                         </template>
                     </q-input>
@@ -187,6 +187,9 @@
             </q-form>
         </div>
     </section>
+    <pre>
+        {{ configCustomer }}
+    </pre>
 </template>
 
 <script setup lang="ts">

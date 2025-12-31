@@ -8,7 +8,7 @@ function replaceNumbersFunction(string $value): string {
 
 function formatPhone(string $phone): string {
     Log::channel('utils')->debug('Start formatPhone');
-
+    
     return replaceNumbersFunction($phone);
 }
 

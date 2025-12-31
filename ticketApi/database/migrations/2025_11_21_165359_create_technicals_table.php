@@ -17,12 +17,12 @@ return new class extends Migration
             $table->foreign('owner_id')->references('id')->on('owners')->cascadeOnDelete();
             $table->unsignedBigInteger('owner_id');
             $table->string('company_name', 120);
-            $table->string('trade_name', 120);
+            $table->string('trade_name', 120)->nullable();
             $table->string('cnpj_cpf', 14);
-            $table->string('phone', 24);
+            $table->string('phone', 24)->nullable();
             $table->string('cep', 60);
-            $table->string('address', 60);
-            $table->string('number', 10);
+            $table->string('address', 60)->nullable();
+            $table->string('number', 10)->nullable();
             $table->string('gender', 1);
             $table->boolean('availability')->default(1);
             $table->boolean('active')->default(1);

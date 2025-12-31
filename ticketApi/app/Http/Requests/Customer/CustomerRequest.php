@@ -4,12 +4,16 @@ namespace App\Http\Requests\Customer;
 
 use App\Enum\MessagesRequest\CommonMessagesRequest;
 use App\Enum\MessagesRequest\Customer\CustomerMessagesRequest;
+use App\Services\Customer\Config\CustomerConfigService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-
 class CustomerRequest extends FormRequest
 {
+    public function __construct(
+        protected CustomerConfigService $customerConfigService   
+    ){}
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,6 +27,7 @@ class CustomerRequest extends FormRequest
         $this->merge([
             'cnpj_cpf' => $this->cnpj_cpf ? formatCPFCNPJ($this->cnpj_cpf) : null,
             'cep' => $this->cep ? formatCEP($this->cep) : null,
+            'phone' => $this->phone ? formatPhone($this->phone) : null
         ]);
     }
 
@@ -33,21 +38,22 @@ class CustomerRequest extends FormRequest
      */
     public function rules(): array
     {
-        $required = $this->isMethod('post') ? 'required' : 'sometimes';
+        $config = $this->customerConfigService->show($this->owner_id);
+        Log::debug($this->phone);
 
         return [
             'owner_id' => ['required', 'exists:App\Models\Owner,id'],
-            'company_name' => [$required, 'string', 'max:120'],
-            'trade_name' => [$required, 'string', 'max:120'],
+            'company_name' => ['required', 'string', 'max:120'],
+            'trade_name' => [$config['trade_name_null'] ? 'sometimes' : 'required' , 'string', 'max:120'],
             'cnpj_cpf' => [
                 $this->isMethod('post') ? 'required' : 'prohibited',
                 'max:14',
                 Rule::unique('customers', 'cnpj_cpf')->ignore($this->customer),
             ],
-            'phone' => [$required, 'string', 'max:24'],
-            'cep' => [$required, 'string', 'max:9'],
-            'address' => [$required, 'string', 'max:60'],
-            'number' => [$required, 'string', 'max:16'],
+            'phone' => [$config['phone_null'] ? 'sometimes' : ['required' , 'string', 'max:24']],
+            'cep' => ['required', 'string', 'max:9'],
+            'address' => [$config['address_null'] ? 'sometimes' : ['required' , 'string', 'max:60']],
+            'number' => [$config['number_address_null'] ? 'sometimes' : ['required' , 'string', 'max:16']],
         ];
     }
 
@@ -67,7 +73,7 @@ class CustomerRequest extends FormRequest
             
             'cnpj_cpf.required' => CommonMessagesRequest::CNPJ_CPF_REQUIRED->value,
             'cnpj_cpf.string' => CommonMessagesRequest::CNPJ_CPF_REQUIRED->value,
-            'cnpj_cpf.max' => CommonMessagesRequest::CNPJ_CPF_INVALID_MAX->value,
+            'cnpj_cpf.max' => CommonMessagesRequest::CNPJ_CPF_MAX->value,
             'cnpj_cpf.unique' => CommonMessagesRequest::CNPJ_CPF_UNIQUE->value,
             'cnpj_cpf.prohibited' => CommonMessagesRequest::CNPJ_CPF_PROHIBITED->value,
             

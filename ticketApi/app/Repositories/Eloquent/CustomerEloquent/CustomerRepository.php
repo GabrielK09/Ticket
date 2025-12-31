@@ -25,9 +25,9 @@ class CustomerRepository implements CustomerContract
             'customer_id' => $maxId ? $maxId + 1 : 1,
             'company_name' => $data['company_name'],
             'trade_name' => $data['trade_name'],
-            'cnpj_cpf' => formatCPFCNPJ($data['cnpj_cpf']),
-            'phone' => formatPhone($data['phone']), 
-            'cep' => formatCEP($data['cep']),
+            'cnpj_cpf' => $data['cnpj_cpf'],
+            'phone' => $data['phone'], 
+            'cep' => $data['cep'],
             'address' => $data['address'],
             'number' => $data['number'],
         ]);

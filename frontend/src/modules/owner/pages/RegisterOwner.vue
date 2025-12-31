@@ -173,6 +173,7 @@
                         </template>
                     </q-input>
 
+                    <!--
                     <q-input 
                         v-model="owner.cnae" 
                         type="number"
@@ -191,6 +192,28 @@
                             </div>
                         </template>
                     </q-input>
+                    -->
+
+                    <q-select 
+                        v-model="owner.cnae" 
+                        :options="cnaeList" 
+                        option-value="cnae"
+                        label=""
+                        stack-label
+                        emit-value
+                        use-input
+                        map-options
+                        outlined
+                        dense
+                        class="mb-4 q-input"
+                    >
+                        <template v-slot:label>
+                            <div class="text-sm">
+                                CNAE <span class="text-red-500">*</span>
+                            </div>
+                        </template>
+
+                    </q-select>
 
                     <q-input 
                         v-model="owner.activity" 
@@ -228,23 +251,26 @@
 
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
-    import { ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     import { ownerRegister } from '../services/ownerServices';
     import * as Yup from 'yup';
     import { useRouter } from 'vue-router';
     import { validateCPF } from 'src/util/validate/validateCPFCNPJ';
     import { getCNPJData } from 'src/services/cnpjService/cnpjService';
+    import { cnaeApiService } from 'src/services/api/cnaeApi/cnaeApi';
 
     const $q = useQuasar();
     const router = useRouter();
     const formErrors = ref<Record<string, string>>({});
 
-    let loadingLogin = ref<boolean>(false);
-
     const ownerTypes: string[] = [
         'Jurídica',
         'Física'
     ];
+
+    let cnaeList = ref<any[]>([]);
+
+    let loadingLogin = ref<boolean>(false);
 
     const ownerSchema = Yup.object({
         user_id: Yup.string().required(''),
@@ -280,8 +306,7 @@
             type: 'info',
             color: 'green',
             position: 'top',
-            message: 'Processando dados...',
-            timeout: 300
+            message: 'Processando dados...'
 
         });
         
@@ -308,8 +333,7 @@
                  $q.notify({
                     type: 'negative',
                     position: 'top',
-                    message: res.message,
-                    timeout: 350
+                    message: res.message
 
                 });   
             };
@@ -324,8 +348,7 @@
                     $q.notify({
                         type: 'negative',
                         position: 'top',
-                        message: err.message,
-                        timeout: 350
+                        message: err.message
 
                     });
                 });  
@@ -355,13 +378,24 @@
                 $q.notify({
                     type: 'negative',
                     position: 'top',
-                    message: 'CNPJ inválido ou não localizado!',
-                    timeout: 350
+                    message: 'CNPJ inválido ou não localizado!'
 
                 });
             };
         };
     };
+
+    const getCnaeApi = async() => {
+        cnaeList.value = (await cnaeApiService()).map(i => ({
+            label: `${i.cnae} - ${i.description}`,
+            value: i.cnae
+        }));
+        
+    };
+
+    onMounted(() => {
+        getCnaeApi();
+    });
 </script>
 
 <style lang="scss">

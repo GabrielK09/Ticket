@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Customer\Config;
 
 use App\Enum\MessagesRequest\CommonMessagesRequest;
-use App\Enum\MessagesRequest\Customer\CustomerConfigRequest as CustomerCustomerConfigRequest;
+use App\Enum\MessagesRequest\Customer\CustomerConfigMessagesRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,9 +40,9 @@ class CustomerConfigRequest extends FormRequest
             'owner_id.required' => CommonMessagesRequest::OWNER_ID,
             'owner_id.exists' => CommonMessagesRequest::OWNER_ID,
 
-            'default_type.max' => CustomerCustomerConfigRequest::DEFAULT_TYPE_MAX,
-            'default_type.string' => CustomerCustomerConfigRequest::DEFAULT_TYPE_INVALID_FORMAT,
-            'default_type.in' => CustomerCustomerConfigRequest::DEFAULT_TYPE_IN,
+            'default_type.max' => CustomerConfigMessagesRequest::DEFAULT_TYPE_MAX,
+            'default_type.string' => CustomerConfigMessagesRequest::DEFAULT_TYPE_INVALID_FORMAT,
+            'default_type.in' => CustomerConfigMessagesRequest::DEFAULT_TYPE_IN,
 
         ];
     }

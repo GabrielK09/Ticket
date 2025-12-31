@@ -7,6 +7,7 @@ declare module 'vue' {
     interface ComponentCustomProperties {
         $axios: AxiosInstance;
         $api: AxiosInstance;
+        $apiService: AxiosInstance;
     }
 }
 
@@ -18,6 +19,11 @@ declare module 'vue' {
 // for each client)
 const api = axios.create({ 
     baseURL: process.env.API_URL
+
+});
+
+const apiService = axios.create({
+    baseURL: process.env.API_SERVICES
 
 });
 
@@ -80,4 +86,4 @@ export default boot(({ app, router }) => {
     //       so you can easily perform requests against your app's API
 });
 
-export { api };
+export { api, apiService };
