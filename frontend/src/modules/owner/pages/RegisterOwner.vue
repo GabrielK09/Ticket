@@ -23,7 +23,7 @@
                 @submit.prevent="submitRegisterOwner"
                 class="q-gutter-md mt-4 form"
             >
-                <div class="p-4 inputs">
+                <div class="p-4">
                     <q-select 
                         v-model="owner.ownerType" 
                         :options="ownerTypes" 
@@ -41,7 +41,7 @@
                         outlined
                         type="text"
                         dense
-                        class="mb-4"
+                        class="mb-2"
                         :error="!!formErrors.company_name"
                         :error-message="formErrors.company_name"
                     >
@@ -162,7 +162,7 @@
                         stack-label
                         outlined
                         dense
-                        class="mb-4"
+                        class="mb-1"
                         :error="!!formErrors.number"
                         :error-message="formErrors.number"
                     >
@@ -173,39 +173,20 @@
                         </template>
                     </q-input>
 
-                    <!--
-                    <q-input 
-                        v-model="owner.cnae" 
-                        type="number"
-                        label="" 
-                        stack-label
-                        outlined
-                        dense
-                        class="mb-4 q-input"
-                        :error="!!formErrors.cnae"
-                        :error-message="formErrors.cnae"
-                        maxlength="14"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                CNAE <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
-                    -->
-
                     <q-select 
                         v-model="owner.cnae" 
-                        :options="cnaeList" 
+                        :options="options" 
                         option-value="cnae"
                         label=""
                         stack-label
                         emit-value
-                        use-input
                         map-options
                         outlined
                         dense
-                        class="mb-4 q-input"
+                        :use-input="owner.cnae === ''"
+                        input-debounce="0"
+                        class="mb-4"
+                        @filter="filterCnaeList"
                     >
                         <template v-slot:label>
                             <div class="text-sm">
@@ -213,6 +194,11 @@
                             </div>
                         </template>
 
+                        <template v-slot:selected-item="scope">
+                            <div class="h-4">
+                                {{ scope.opt.label }}
+                            </div>
+                        </template>
                     </q-select>
 
                     <q-input 
@@ -259,6 +245,12 @@
     import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     import { cnaeApiService } from 'src/services/api/cnaeApi/cnaeApi';
 
+    type cnaeListProps = {
+        label: string;
+        value: string;
+        attachment: string;
+    };
+
     const $q = useQuasar();
     const router = useRouter();
     const formErrors = ref<Record<string, string>>({});
@@ -268,7 +260,8 @@
         'Física'
     ];
 
-    let cnaeList = ref<any[]>([]);
+    let cnaeList: any[] = [] ;
+    let options = ref(cnaeList);
 
     let loadingLogin = ref<boolean>(false);
 
@@ -386,11 +379,26 @@
     };
 
     const getCnaeApi = async() => {
-        cnaeList.value = (await cnaeApiService()).map(i => ({
-            label: `${i.cnae} - ${i.description}`,
+        options.value = (await cnaeApiService()).map(i => ({
+            label: `${i.cnae} - ${i.description} - Anexo: ${i.attachment}`,
             value: i.cnae
         }));
-        
+
+        cnaeList = options.value;
+    };
+
+    const filterCnaeList = (val: string, update: any): any => {
+        if(val === ''){            
+            update(() => {
+                options.value = cnaeList;
+            });
+            return;
+        };
+
+        update(() => {
+            const char = val.toLowerCase();            
+            options.value = cnaeList.filter((v: cnaeListProps) => v.label.toLowerCase().indexOf(char) > -1);
+        });
     };
 
     onMounted(() => {
