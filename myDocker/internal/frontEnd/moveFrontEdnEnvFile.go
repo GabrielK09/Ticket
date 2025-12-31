@@ -10,7 +10,11 @@ import (
 func MoveFile() error {
 	// Precisa conferir se no caminho final já tem uma .env com o IP
 
-	existsFileButOtherIp, err := ReadFile()
+	existsFileButOtherIp, err := ReadFile(
+		"D:\\Gabriel\\MVPs\\1\\frontend",
+		"C:\\Gabriel\\MVPs\\1\\frontend",
+		"C:\\Gabriel\\Projetos\\Ticket\\frontend",
+	)
 
 	if err != nil {
 		return err

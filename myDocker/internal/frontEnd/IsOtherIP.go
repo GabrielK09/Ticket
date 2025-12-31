@@ -1,6 +1,7 @@
 package frontEnd
 
 import (
+	"fmt"
 	"log"
 	"myDocker/pkg"
 	"os"
@@ -11,13 +12,43 @@ type ByteSlic []byte
 
 func (v ByteSlic) convertToString() string { return string(v) }
 
-func ReadFile() (bool, error) {
+func getEnvLine(content, key string) (string, bool) {
+	lines := strings.Split(content, "\n")
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		parts := strings.SplitN(line, "=", 2)
+
+		if len(parts) != 2 {
+			continue
+		}
+
+		if parts[0] == key {
+			return line, true
+		}
+	}
+
+	return "", false
+}
+
+func ReadFile(paths ...string) (bool, error) {
 	currentIp := pkg.GetLocalIP()
-	defaultEnvDir := "D:\\Gabriel\\MVPs\\1\\frontend\\.env"
 
-	fileData, err := os.ReadFile(defaultEnvDir)
+	path, err := pkg.CheckExistsPath(paths...)
 
-	log.Println("File Data: ", fileData)
+	if err != nil {
+		log.Println("Erro ao checar os caminhos:", err)
+		return false, err
+	}
+
+	newPath := fmt.Sprintf("%s/.env", path)
+
+	fileData, err := os.ReadFile(newPath)
 
 	if len(fileData) == 0 {
 		return false, nil
@@ -25,19 +56,33 @@ func ReadFile() (bool, error) {
 	}
 
 	if err != nil {
-		log.Printf("Erro ao ler o arquivo: %s", defaultEnvDir)
+		log.Printf("Erro ao ler o arquivo: %s", newPath)
 		return false, err
 
 	}
 
 	strFileData := ByteSlic(fileData).convertToString()
 
-	if strings.Contains(strFileData, currentIp.To16().String()) {
-		log.Printf("A .env atual: %s já tem o IP atual: %s, não vai trocar", strFileData, currentIp)
-		return true, nil
+	apiURL, apiURLok := getEnvLine(strFileData, "API_URL")
+	apiService, apiServiceok := getEnvLine(strFileData, "API_SERVICES")
+
+	if apiURLok && apiServiceok {
+		apiURLValue := strings.Split(apiURL, "=")
+		apiServiceValue := strings.Split(apiService, "=")
+
+		log.Printf("Valores: 1: %s | 2: %s", apiURLValue[1], apiServiceValue[1])
+
+		if strings.Contains(apiURLValue[1], currentIp.To16().String()) && strings.Contains(apiServiceValue[1], currentIp.To16().String()) {
+			log.Printf("A .env atual:\n%s já tem o IP atual:\n%s, não vai trocar", strFileData, currentIp)
+			return true, nil
+
+		} else {
+			log.Printf("A .env atual:\n%s não tem o IP atual:\n%s, vai trocar", strFileData, currentIp)
+			return false, nil
+		}
 
 	} else {
-		log.Printf("A .env atual: %s não tem o IP atual: %s, vai trocar", strFileData, currentIp)
+		log.Printf("N tem ok")
 		return false, nil
 	}
 }

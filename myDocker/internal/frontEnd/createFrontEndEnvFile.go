@@ -11,7 +11,8 @@ func CreateFile() (string, error) {
 	output := ".env"
 
 	data := fmt.Sprintf(
-		"API_URL=http://%s:8000/api/v1\nAPI_CNPJ_URL=https://open.cnpja.com/office/\nAPI_CEP=https://viacep.com.br/ws/\n",
+		"API_URL=http://%s:8000/api/v1\nAPI_CNPJ_URL=https://open.cnpja.com/office/\nAPI_CEP=https://viacep.com.br/ws/\nAPI_SERVICES=http://%s:8080",
+		pkg.GetLocalIP(),
 		pkg.GetLocalIP(),
 	)
 
