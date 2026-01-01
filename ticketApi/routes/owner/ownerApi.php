@@ -8,5 +8,6 @@ Route::prefix('owner')->group(function() {
         Route::get('/all/{id}', 'index');
         Route::post('/create', 'store');
         Route::put('/update/{id}', 'update');
+        Route::get('/check-exists-cnpj-cpf/{cnpjcpf}', 'checkExistsCnpjCpf');
     });
 }); 

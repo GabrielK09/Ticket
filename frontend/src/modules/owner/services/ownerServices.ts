@@ -30,3 +30,18 @@ export async function ownerRegister(ownerData: ownerContract): Promise<any> {
         return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
     };
 };
+
+export async function checkExistsCnpjCpfService(cnpjCpf: string): Promise<any>
+{
+    try {
+        const res = await api.get(`/owner/check-exists-cnpj-cpf/${cnpjCpf}`);
+
+        console.log(res);
+        
+
+        return returnSuccessApi(true, res.data.message, res.data);
+
+    } catch (error) {
+        return returnErrorApi(false, error.response.data?.message || 'Erro na operação!', error.response?.data?.data);
+    };
+};

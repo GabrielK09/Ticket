@@ -77,7 +77,7 @@
 
     } from 'src/modules/technicals/technicalsService';
     
-    import { computed, onMounted, ref } from 'vue';
+    import { computed, onMounted, ref, watch } from 'vue';
     import * as Yup from 'yup';
     import LoadingScreenComponet from '../_LoadingScreen/LoadingScreenComponet.vue';
 
@@ -281,12 +281,10 @@
     });
 
     const close = () => {
-        emits('update:hiddenDialog', true);
+        emits('update:hiddenDialog', false);
         resetForm();
 
-        let x = '2,2';
-
-        x.replace(/\D/g, '.')
+        
     };
 
     onMounted(() => {

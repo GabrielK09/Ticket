@@ -8,4 +8,6 @@ interface OnwerContract extends BaseApiContract
 {
     public function index(string $id);
     public function findByUserId(string $id);    
+    public function checkExistsCnpjCpf(string $cnpjCpf);    
+    
 }

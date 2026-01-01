@@ -20,7 +20,7 @@ class OwnerRepository implements OnwerContract
 
     }
 
-    public function store(array $data)
+    public function store(array $data): Owner
     {
         Log::channel('owners')->debug('Started store - Owners');
 
@@ -58,7 +58,7 @@ class OwnerRepository implements OnwerContract
         return $owner;
     }
 
-    public function update(array $data, string $id)
+    public function update(array $data, string $id): Owner
     {
         Log::channel('owners')->debug('Started update - Owners');
         $owner = Owner::findOrFail($id);
@@ -84,13 +84,18 @@ class OwnerRepository implements OnwerContract
         return $owner->fresh();
     }
 
-    public function findById(string $id)
+    public function findById(string $id): Owner
     {
         return Owner::findOrFail($id);
     }
 
-    public function findByUserId(string $id)
+    public function findByUserId(string $id): Owner
     {
         return Owner::where('user_id', $id)->first();
+    }
+
+    public function checkExistsCnpjCpf(string $cnpjCpf): Owner
+    {
+        return Owner::where('cnpj_cpf', $cnpjCpf)->select('cnpj_cpf')->first();
     }
 }

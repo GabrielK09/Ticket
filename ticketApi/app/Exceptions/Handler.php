@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\OwnerExceptions\ExistsCNPJCPF;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -69,6 +70,14 @@ class Handler extends ExceptionHandler
                 'mesage' => $e->getMessage() ?: 'Erro na requisição!',
 
             ], $e->getStatusCode()); 
+        }
+
+        if($e instanceof ExistsCNPJCPF)
+        {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
 
         Log::channel('internal-error')->critical('Erro interno', [

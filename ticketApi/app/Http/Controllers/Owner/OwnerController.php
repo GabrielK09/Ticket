@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Owner;
 
+use App\Enum\Config\DefaultMessages;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Owner\OwnerRequest;
 use App\Services\Owner\OwnerService;
@@ -47,5 +48,10 @@ class OwnerController extends Controller
     public function show(string $id)
     {
         return apiSuccess('Emitente localizado com sucesso!', $this->ownerService->show($id));
+    }
+
+    public function checkExistsCnpjCpf(string $cnpjCpf)
+    {
+        return apiSuccess(DefaultMessages::NO_CONTENT_MESSAGE, $this->ownerService->show($cnpjCpf));
     }
 }

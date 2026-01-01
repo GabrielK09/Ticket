@@ -2,6 +2,7 @@
 
 namespace App\Services\Owner;
 
+use App\Exceptions\OwnerExceptions\ExistsCNPJCPF;
 use App\Repositories\Interfaces\Owner\OnwerContract;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -50,5 +51,15 @@ class OwnerService
         }
 
         return $owner;
+    }
+
+    public function checkExistsCnpjCpf(string $cnpjCpf)
+    {
+        if($this->ownerRepository->checkExistsCnpjCpf($cnpjCpf) === $cnpjCpf)
+        {
+            throw new ExistsCNPJCPF('Esse CNPJ/CPF já está cadastrado!');
+        }
+
+        return;
     }
 }

@@ -1,238 +1,161 @@
 <template>
-    <section class="text-2xl register-form">
-        <div
-            class="m-2 app"
-        >        
-            <h2 class="text-gray-600 register-title m-2">Cadastre sua empresa!</h2>
-
-            <div class="ml-2 text-xs">
-                <div 
+    <section class="register-form">
+        <div class="m-2 app">
+            <div class="q-pa-sm">
+                <div
                     @click="router.replace({ path: '/owners' })"
-                    class="flex mb-auto mt-auto cursor-pointer"
+                    class="flex items-center cursor-pointer text-grey-7"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 back-row">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-                    </svg>      
-                    <span class="back-customer-label">
-                        Voltar para listagem
-                    </span>
+                    <q-icon name="arrow_back" size="18px" class="q-mr-xs" />
+                    <span class="back-customer-label text-caption">Voltar para listagem</span>
                 </div>
-            </div>
 
-            <q-form
-                @submit.prevent="submitRegisterOwner"
-                class="mt-4 "
-            >
-                <div class="p-4">
-                    <q-select 
-                        v-model="owner.ownerType" 
-                        :options="ownerTypes" 
-                        label="Tipo de cadastro" 
-                        outlined
-                        stack-label
-                        dense
-                        class="mb-8"
-                    />
+                <h2 class="text-grey-7 text-h6 q-mt-md q-mb-lg register-title">
+                    Cadastre sua empresa
+                </h2>
 
-                    <q-input 
-                        label="" 
-                        v-model="owner.company_name" 
-                        stack-label
-                        outlined
-                        type="text"
-                        dense
-                        class="mb-4"
-                        :error="!!formErrors.company_name"
-                        :error-message="formErrors.company_name"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                Razão social <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
-                
-                    <q-input 
-                        v-model="owner.trade_name" 
-                        type="text" 
-                        label="E-mail *" 
-                        stack-label
-                        outlined
-                        dense
-                        class="mb-4"
-                        :error="!!formErrors.trade_name"
-                        :error-message="formErrors.trade_name"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                Nome fantasia <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
+                <q-form 
+                    @submit.prevent="submitRegisterOwner"
+                >
+                    <div class="row q-col-gutter-md">
+                        <div class="col-12 col-md-6">
+                            <q-select
+                                v-model="owner.ownerType"
+                                :options="ownerTypes"
+                                label="Tipo de cadastro"
+                                outlined
+                                dense
+                                emit-value
+                                map-options
+                                :options-dense="true"
+                            />
+                        </div>
 
-                    <q-input 
-                        v-model="owner.cnpj_cpf" 
-                        type="text" 
-                        label="E-mail *" 
-                        stack-label
-                        outlined
-                        dense
-                        :mask="
-                            owner.ownerType === 'Jurídica'
-                            ? '##.###.###/####-##'
-                            : '###.###.###-##'
-                        "
-                        class="mb-4"
-                        :error="!!formErrors.cnpj_cpf"
-                        :error-message="formErrors.cnpj_cpf"
-                        :rules="[owner.ownerType !== 'Jurídica' ? validateCPF : null]"
-                        @blur="CNPJData(owner.cnpj_cpf)"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                {{ 
-                                    owner.ownerType === 'Jurídica' 
-                                    ? 'CNPJ'
-                                    : 'CPF'
-                                }} <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model="owner.cnpj_cpf"
+                                outlined
+                                dense
+                                :label="owner.ownerType === 'Jurídica' ? 'CNPJ *' : 'CPF *'"
+                                :mask="owner.ownerType === 'Jurídica' ? '##.###.###/####-##' : '###.###.###-##'"
+                                :error="!!formErrors.cnpj_cpf"
+                                :rules="[owner.ownerType !== 'Jurídica' ? validateCPF : null, checkExistsCnpjCpf]"
+                                :error-message="formErrors.cnpj_cpf"
+                                @blur="CNPJData(owner.cnpj_cpf)"
+                            />
+                        </div>
 
-                    <q-input 
-                        v-model="owner.phone" 
-                        type="text" 
-                        label="" 
-                        stack-label
-                        outlined
-                        dense
-                        mask="(##) ####-####"
-                        class="mb-4"
-                        :error="!!formErrors.phone"
-                        :error-message="formErrors.phone"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                Telefone <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model.trim="owner.company_name"
+                                outlined
+                                dense
+                                :label="owner.ownerType === 'Jurídica' ? 'Razão social *' : 'Nome completo *'"
+                                :error="!!formErrors.company_name"
+                                :error-message="formErrors.company_name"
+                            />
+                        </div>
 
-                    <q-input 
-                        v-model="owner.cep" 
-                        type="text" 
-                        label="" 
-                        stack-label
-                        outlined
-                        dense
-                        mask="#####-###"
-                        class="mb-4"
-                        :error="!!formErrors.cep"
-                        :error-message="formErrors.cep"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                CEP <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model.trim="owner.trade_name"
+                                outlined
+                                dense
+                                label="Nome fantasia *"
+                                :error="!!formErrors.trade_name"
+                                :error-message="formErrors.trade_name"
+                            />
+                        </div>
 
-                    <q-input 
-                        v-model="owner.address" 
-                        type="text" 
-                        label="" 
-                        stack-label
-                        outlined
-                        dense
-                        class="mb-4"
-                        :error="!!formErrors.address"
-                        :error-message="formErrors.address"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                Endereço <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model="owner.phone"
+                                outlined
+                                dense
+                                label="Telefone *"
+                                mask="(##) #####-####"
+                                :error="!!formErrors.phone"
+                                :error-message="formErrors.phone"
+                            />
+                        </div>
 
-                    <q-input 
-                        v-model="owner.number" 
-                        type="text" 
-                        label="" 
-                        stack-label
-                        outlined
-                        dense
-                        class="mb-1"
-                        :error="!!formErrors.number"
-                        :error-message="formErrors.number"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                Número do endereço <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model="owner.cep"
+                                outlined
+                                dense
+                                label="CEP *"
+                                mask="#####-###"
+                                :error="!!formErrors.cep"
+                                :error-message="formErrors.cep"
+                            />
+                        </div>
 
-                    <q-select 
-                        v-model="owner.cnae" 
-                        :options="options" 
-                        option-value="cnae"
-                        label=""
-                        stack-label
-                        emit-value
-                        map-options
-                        outlined
-                        dense
-                        :use-input="owner.cnae === ''"
-                        input-debounce="0"
-                        class="mb-8"
-                        @filter="filterCnaeList"
-                        :error="!!formErrors.cnae"
-                        :error-message="formErrors.cnae"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                CNAE <span class="text-red-500">*</span>
-                            </div>
-                        </template>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model.trim="owner.address"
+                                outlined
+                                dense
+                                label="Endereço *"
+                                :error="!!formErrors.address"
+                                :error-message="formErrors.address"
+                            />
+                        </div>
 
-                        <template v-slot:selected-item="scope">
-                            <div class="w-[100%]">
-                                {{ scope.opt.label }}
-                            </div>
-                        </template>
-                    </q-select>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model.trim="owner.number"
+                                outlined
+                                dense
+                                label="Número *"
+                                :error="!!formErrors.number"
+                                :error-message="formErrors.number"
+                            />
+                        </div>
 
-                    <q-input 
-                        v-model="owner.activity" 
-                        type="text" 
-                        label="" 
-                        stack-label
-                        outlined
-                        dense
-                        class="mb-4"
-                        :error="!!formErrors.activity"
-                        :error-message="formErrors.activity"
-                    >
-                        <template v-slot:label>
-                            <div class="text-sm">
-                                Atividade <span class="text-red-500">*</span>
-                            </div>
-                        </template>
-                    </q-input>
+                        <div class="col-12">
+                            <q-select
+                                v-model="owner.cnae"
+                                :options="options"
+                                option-value="value"
+                                option-label="label"
+                                outlined
+                                dense
+                                label="CNAE *"
+                                use-input
+                                input-debounce="0"
+                                clearable
+                                hide-selected
+                                fill-input
+                                @filter="filterCnaeList"
+                                :error="!!formErrors.cnae"
+                                :error-message="formErrors.cnae"
+                            />
+                        </div>
 
-                    <div class="flex flex-center">
-                        <q-btn 
-                            color="primary" 
-                            type="submit" 
-                            :loading="loadingLogin"
-                            label="Cadastrar empresa"
-                            no-caps
+                        <div class="col-12">
+                            <q-input
+                                v-model.trim="owner.activity"
+                                outlined
+                                dense
+                                label="Atividade *"
+                                :error="!!formErrors.activity"
+                                :error-message="formErrors.activity"
+                            />
+                        </div>
 
-                        />
+                        <div class="col-12 flex flex-center q-mt-md">
+                            <q-btn
+                                color="primary"
+                                type="submit"
+                                no-caps
+                                label="Cadastrar"
+                                :loading="loadingLogin"
+                            />
+                        </div>
                     </div>
-                </div>
-            </q-form>
+                </q-form>
+            </div>
         </div>
     </section>
     <pre>
@@ -243,12 +166,13 @@
 <script setup lang="ts">
     import { LocalStorage, useQuasar } from 'quasar';
     import { onMounted, ref } from 'vue';
-    import { ownerRegister } from '../services/ownerServices';
+    import { checkExistsCnpjCpfService, ownerRegister } from '../services/ownerServices';
     import * as Yup from 'yup';
     import { useRouter } from 'vue-router';
     import { validateCPF } from 'src/util/validate/validateCPFCNPJ';
     import { getCNPJData } from 'src/services/cnpjService/cnpjService';
     import { cnaeApiService } from 'src/services/api/cnaeApi/cnaeApi';
+import { formatCPFCNPJ } from 'src/util/formatCPFCNPJ';
 
     type cnaeListProps = {
         label: string;
@@ -311,8 +235,7 @@
         loadingLogin.value = true;
 
         try {
-            await ownerSchema.validate(owner.value, { abortEarly: false });
-
+            const cnaeObject: any = owner.value.cnae;            
             const prePayLoad = owner.value = {
                 id: null,
                 user_id: LocalStorage.getItem('user_id'),
@@ -323,16 +246,17 @@
                 cep: owner.value.cep,
                 address: owner.value.address,
                 number: owner.value.number,
-                cnae: owner.value.cnae,
+                cnae: cnaeObject.value,
                 activity: owner.value.activity,
                 ownerType: 'Jurídica'
             };
 
-            console.log('prePayLoad: ', prePayLoad);
+
+            await ownerSchema.validate(prePayLoad, { abortEarly: false });
             
             const res = await ownerRegister(owner.value);
 
-            if(!res.success)
+            if(res.success)
             {
                 $q.notify({
                     type: 'positive',
@@ -425,9 +349,14 @@
         });
     };
 
-    onMounted(() => {
-        getCnaeApi();
-    });
+    const checkExistsCnpjCpf = (val: string) => {
+        if(val === '') return;
+        if(formatCPFCNPJ(val).length < 14) return;
+
+        return true;
+    };
+
+    onMounted(getCnaeApi);
 </script>
 
 <style lang="scss">
